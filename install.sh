@@ -24,4 +24,4 @@ if [ -d "$SCRIPT_DIR/common" ]; then
   cp -r "$SCRIPT_DIR/common" "$CONFIG_DIR/common"
 fi
 
-echo "Done. $(ls "$CONFIG_DIR/skills/" | grep -c /) skills and $(ls "$CONFIG_DIR/agents/" | wc -l) agents installed."
+echo "Done. $(ls -d "$CONFIG_DIR/skills/"*/ 2>/dev/null | wc -l) skills and $(ls "$CONFIG_DIR/agents/" | wc -l) agents installed."
