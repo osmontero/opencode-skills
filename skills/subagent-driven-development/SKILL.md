@@ -46,14 +46,14 @@ digraph process {
 
     subgraph cluster_per_task {
         label="Per Task";
-        "Dispatch implementer sub-agent (./implementer-prompt.md)" [shape=box];
+        "Dispatch implementer sub-agent (@implementer)" [shape=box];
         "Implementer sub-agent asks questions?" [shape=diamond];
         "Answer questions, provide context" [shape=box];
         "Implementer sub-agent implements, tests, commits, self-reviews" [shape=box];
-        "Dispatch spec reviewer sub-agent (./spec-reviewer-prompt.md)" [shape=box];
+        "Dispatch spec reviewer sub-agent (@spec-reviewer)" [shape=box];
         "Spec reviewer sub-agent confirms code matches spec?" [shape=diamond];
         "Implementer sub-agent fixes spec gaps" [shape=box];
-        "Dispatch code quality reviewer sub-agent (./code-quality-reviewer-prompt.md)" [shape=box];
+        "Dispatch code quality reviewer sub-agent (@code-quality-reviewer)" [shape=box];
         "Code quality reviewer sub-agent approves?" [shape=diamond];
         "Implementer sub-agent fixes quality issues" [shape=box];
         "Mark task complete in TodoWrite" [shape=box];
@@ -64,22 +64,22 @@ digraph process {
     "Dispatch final code reviewer sub-agent for entire implementation" [shape=box];
     "Use finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
 
-    "Read plan, extract all tasks with full text, note context, create TodoWrite" -> "Dispatch implementer sub-agent (./implementer-prompt.md)";
-    "Dispatch implementer sub-agent (./implementer-prompt.md)" -> "Implementer sub-agent asks questions?";
+    "Read plan, extract all tasks with full text, note context, create TodoWrite" -> "Dispatch implementer sub-agent (@implementer)";
+    "Dispatch implementer sub-agent (@implementer)" -> "Implementer sub-agent asks questions?";
     "Implementer sub-agent asks questions?" -> "Answer questions, provide context" [label="yes"];
-    "Answer questions, provide context" -> "Dispatch implementer sub-agent (./implementer-prompt.md)";
+    "Answer questions, provide context" -> "Dispatch implementer sub-agent (@implementer)";
     "Implementer sub-agent asks questions?" -> "Implementer sub-agent implements, tests, commits, self-reviews" [label="no"];
-    "Implementer sub-agent implements, tests, commits, self-reviews" -> "Dispatch spec reviewer sub-agent (./spec-reviewer-prompt.md)";
-    "Dispatch spec reviewer sub-agent (./spec-reviewer-prompt.md)" -> "Spec reviewer sub-agent confirms code matches spec?";
+    "Implementer sub-agent implements, tests, commits, self-reviews" -> "Dispatch spec reviewer sub-agent (@spec-reviewer)";
+    "Dispatch spec reviewer sub-agent (@spec-reviewer)" -> "Spec reviewer sub-agent confirms code matches spec?";
     "Spec reviewer sub-agent confirms code matches spec?" -> "Implementer sub-agent fixes spec gaps" [label="no"];
-    "Implementer sub-agent fixes spec gaps" -> "Dispatch spec reviewer sub-agent (./spec-reviewer-prompt.md)" [label="re-review"];
-    "Spec reviewer sub-agent confirms code matches spec?" -> "Dispatch code quality reviewer sub-agent (./code-quality-reviewer-prompt.md)" [label="yes"];
-    "Dispatch code quality reviewer sub-agent (./code-quality-reviewer-prompt.md)" -> "Code quality reviewer sub-agent approves?";
+    "Implementer sub-agent fixes spec gaps" -> "Dispatch spec reviewer sub-agent (@spec-reviewer)" [label="re-review"];
+    "Spec reviewer sub-agent confirms code matches spec?" -> "Dispatch code quality reviewer sub-agent (@code-quality-reviewer)" [label="yes"];
+    "Dispatch code quality reviewer sub-agent (@code-quality-reviewer)" -> "Code quality reviewer sub-agent approves?";
     "Code quality reviewer sub-agent approves?" -> "Implementer sub-agent fixes quality issues" [label="no"];
-    "Implementer sub-agent fixes quality issues" -> "Dispatch code quality reviewer sub-agent (./code-quality-reviewer-prompt.md)" [label="re-review"];
+    "Implementer sub-agent fixes quality issues" -> "Dispatch code quality reviewer sub-agent (@code-quality-reviewer)" [label="re-review"];
     "Code quality reviewer sub-agent approves?" -> "Mark task complete in TodoWrite" [label="yes"];
     "Mark task complete in TodoWrite" -> "More tasks remain?";
-    "More tasks remain?" -> "Dispatch implementer sub-agent (./implementer-prompt.md)" [label="yes"];
+    "More tasks remain?" -> "Dispatch implementer sub-agent (@implementer)" [label="yes"];
     "More tasks remain?" -> "Dispatch final code reviewer sub-agent for entire implementation" [label="no"];
     "Dispatch final code reviewer sub-agent for entire implementation" -> "Use finishing-a-development-branch";
 }
@@ -118,11 +118,11 @@ Implementer sub-agents report one of four statuses. Handle each appropriately:
 
 **Never** ignore an escalation or force the same model to retry without changes. If the implementer said it's stuck, something needs to change.
 
-## Prompt Templates
+## Agent References
 
-- `./implementer-prompt.md` - Dispatch implementer sub-agent
-- `./spec-reviewer-prompt.md` - Dispatch spec compliance reviewer sub-agent
-- `./code-quality-reviewer-prompt.md` - Dispatch code quality reviewer sub-agent
+- `implementer` (global agent) - Dispatch implementer sub-agent
+- `spec-reviewer` (global agent) - Dispatch spec compliance reviewer sub-agent
+- `code-quality-reviewer` (global agent) - Dispatch code quality reviewer sub-agent
 
 ## Example Workflow
 
@@ -268,7 +268,8 @@ Done!
 **Required workflow skills:**
 - **using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
 - **writing-plans** - Creates the plan this skill executes
-- **requesting-code-review** - Code review template for reviewer sub-agents
+- **requesting-code-review** - Code review workflow for reviewer sub-agents
+- **code-quality-reviewer** - Global agent for code quality review
 - **finishing-a-development-branch** - Complete development after all tasks
 
 **Sub-agents should use:**

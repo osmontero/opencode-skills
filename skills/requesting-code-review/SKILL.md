@@ -30,16 +30,15 @@ BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
 HEAD_SHA=$(git rev-parse HEAD)
 ```
 
-**2. Dispatch code-reviewer sub-agent using the Task tool:**
+**2. Dispatch `code-reviewer` or `code-quality-reviewer` global agent using the Task tool:**
 
-Use Task tool with code-reviewer prompt template at `code-reviewer.md`
+The `code-reviewer` and `code-quality-reviewer` agents are registered globally with appropriate review checklists. Invoke with context about what was implemented, plan reference, and git diff range. The agent will use `git diff {BASE_SHA}..{HEAD_SHA}` to inspect changes.
 
-**Placeholders:**
-- `{WHAT_WAS_IMPLEMENTED}` - What you just built
-- `{PLAN_OR_REQUIREMENTS}` - What it should do
-- `{BASE_SHA}` - Starting commit
-- `{HEAD_SHA}` - Ending commit
-- `{DESCRIPTION}` - Brief summary
+**Context to include in your Task tool prompt:**
+- What you just built (brief summary)
+- What it should do (plan or requirements reference)
+- Starting commit SHA (`BASE_SHA`)
+- Ending commit SHA (`HEAD_SHA`)
 
 **3. Act on feedback:**
 - Fix Critical issues immediately
@@ -102,5 +101,3 @@ You: [Fix progress indicators]
 - Push back with technical reasoning
 - Show code/tests that prove it works
 - Request clarification
-
-See template at: requesting-code-review/code-reviewer.md
