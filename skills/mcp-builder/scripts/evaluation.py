@@ -1,6 +1,6 @@
 """MCP Server Evaluation Harness
 
-This script evaluates MCP servers by running test questions against them using Claude.
+This script evaluates MCP servers by running test questions against them using an LLM agent.
 """
 
 import argparse
