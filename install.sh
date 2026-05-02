@@ -2,13 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-
-# Detect config directory (macOS vs Linux)
-if [ "$(uname)" = "Darwin" ]; then
-  CONFIG_DIR="$HOME/Library/Application Support/opencode"
-else
-  CONFIG_DIR="$HOME/.config/opencode"
-fi
+CONFIG_DIR="$HOME/.config/opencode"
 
 # Ensure target directories exist
 mkdir -p "$CONFIG_DIR/skills" "$CONFIG_DIR/agents"
