@@ -2,19 +2,41 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-CONFIG_DIR="$HOME/.config/opencode"
+
+# Detect config directory (macOS vs Linux)
+if [ "$(uname)" = "Darwin" ]; then
+  CONFIG_DIR="$HOME/Library/Application Support/opencode"
+else
+  CONFIG_DIR="$HOME/.config/opencode"
+fi
 
 # Ensure target directories exist
 mkdir -p "$CONFIG_DIR/skills" "$CONFIG_DIR/agents"
 
-# Install skills
+# Clean and install skills — remove any skill not in the repo
 echo "Installing skills to $CONFIG_DIR/skills/..."
+for d in "$CONFIG_DIR/skills"/*/; do
+  name="$(basename "$d")"
+  if [ ! -d "$SCRIPT_DIR/skills/$name" ]; then
+    echo "  Removing $name (no longer in repo)"
+    rm -rf "$d"
+  fi
+done
 for d in "$SCRIPT_DIR/skills"/*/; do
-  cp -r "$d" "$CONFIG_DIR/skills/"
+  name="$(basename "$d")"
+  cp -r "$d" "$CONFIG_DIR/skills/$name"
 done
 
-# Install agents
+# Clean and install agents — remove any agent not in the repo
 echo "Installing agents to $CONFIG_DIR/agents/..."
+for f in "$CONFIG_DIR/agents/"*.md; do
+  [ -f "$f" ] || continue
+  name="$(basename "$f")"
+  if [ ! -f "$SCRIPT_DIR/agents/$name" ]; then
+    echo "  Removing $name (no longer in repo)"
+    rm "$f"
+  fi
+done
 cp "$SCRIPT_DIR/agents/"* "$CONFIG_DIR/agents/"
 
 # Install common scripts (shared office utilities)
