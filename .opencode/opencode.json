@@ -158,5 +158,23 @@
         "BRAVE_API_KEY": "{env:BRAVE_API_KEY}"
       }
     }
+  },
+  "lsp": {
+    "gopls": {
+      "command": ["gopls"],
+      "extensions": [".go"]
+    },
+    "rust": {
+      "command": ["rust-analyzer"],
+      "extensions": [".rs"]
+    },
+    "dart": {
+      "command": ["dart", "language-server", "--client-id=opencode"],
+      "extensions": [".dart"]
+    },
+    "java": {
+      "command": ["jdtls"],
+      "extensions": [".java"]
+    }
   }
 }
