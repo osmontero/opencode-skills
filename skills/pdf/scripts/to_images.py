@@ -26,15 +26,21 @@ def main():
         scale = args.dpi / 72
         ext = args.format
 
+        page_count = 0
         for i, page in enumerate(doc):
-            render = page.render(scale=scale)
+            bitmap = page.render(scale=scale)
             filename = f"page_{i + 1:03d}.{ext}"
             filepath = f"{args.output_dir}/{filename}"
-            render.save(filepath)
-            print(f"  {filepath} ({render.width}x{render.height})")
+            pil_img = bitmap.to_pil()
+            pil_img.save(filepath)
+            print(f"  {filepath} ({bitmap.width}x{bitmap.height})")
+            page_count += 1
 
-        doc.close()
-        print(f"\nConverted {len(doc)} page(s) at {args.dpi} DPI.")
+        try:
+            doc.close()
+        except Exception:
+            pass
+        print(f"\nConverted {page_count} page(s) at {args.dpi} DPI.")
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)

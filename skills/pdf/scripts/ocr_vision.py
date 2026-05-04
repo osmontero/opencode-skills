@@ -29,7 +29,7 @@ except ImportError:
 
 
 API_BASE = "https://apis.threatwinds.com/api/ai/v1"
-DEFAULT_MODEL = "threatwinds/qwen-3.6"
+DEFAULT_MODEL = "qwen-3.6"
 DEFAULT_PROMPT = (
     "Extract all visible text from this document image. Preserve the layout and "
     "structure as much as possible. If there are tables, represent them as markdown "
@@ -55,12 +55,15 @@ def pdf_to_images(pdf_path, output_dir, dpi=150):
     images = []
 
     for i, page in enumerate(doc):
-        render = page.render(scale=scale)
+        bitmap = page.render(scale=scale)
         path = os.path.join(output_dir, f"page_{i + 1:03d}.png")
-        render.save(path)
+        bitmap.to_pil().save(path)
         images.append(path)
 
-    doc.close()
+    try:
+        doc.close()
+    except Exception:
+        pass
     return images
 
 

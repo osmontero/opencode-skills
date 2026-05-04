@@ -5,7 +5,6 @@ import json
 import sys
 
 from pypdf import PdfReader, PdfWriter
-from pypdf.generic import NameObject, TextStringObject
 
 
 def main():
@@ -35,7 +34,7 @@ def main():
         if missing:
             print(f"Warning: fields not found in form: {missing}")
 
-        writer.update_page_form_field_fields(field_values)
+        writer.update_page_form_field_values(None, field_values)
 
         with open(args.output, "wb") as f:
             writer.write(f)
