@@ -185,7 +185,7 @@ For scanned PDFs, text extraction will return empty results. Use the LLM vision-
 Uses `threatwinds/qwen-3.6` via the ThreatWinds AI API to extract text, tables, and structured data from scanned document images.
 
 **Prerequisites:**
-- `THREATWINDS_API_KEY` environment variable set
+- `THREATWINDS_API_KEY` environment variable must be set. If the script cannot find it, it will exit with an error and instructions on how to set it.
 - Python 3.12 with `pypdfium2` installed
 
 ```bash
