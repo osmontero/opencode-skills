@@ -42,6 +42,15 @@ reliable when files are focused. Keep this in mind:
 - In existing codebases, follow established patterns. Improve code you're touching
   the way a good developer would, but don't restructure things outside your task.
 
+## File Writing Limit
+
+**Each edit or write operation is limited to ~1000 tokens of output.** You cannot
+write a large file in one step — it will fail with API error 500. For any file
+that exceeds ~1000 tokens:
+1. Write the skeleton first (imports, signatures, section comments)
+2. Fill in one section per edit (~1000 tokens per chunk)
+3. Final review once all sections are complete
+
 ## When You're in Over Your Head
 
 It is always OK to stop and say "this is too hard for me." Bad work is worse than

@@ -150,10 +150,10 @@ This goes without saying, but skills must not contain malware, exploit code, or 
 
 Prefer using the imperative form in instructions.
 
-**Incremental file writing (CRITICAL):** The model cannot output large files in a single call — responses exceeding ~100 lines will cause API error 500. Always instruct agents to write large files incrementally:
+**Incremental file writing (CRITICAL):** The model cannot output large files in a single call — each edit is limited to ~1000 tokens of output. Exceeding this causes API error 500. Always instruct agents to write large files incrementally:
 
 1. Write the skeleton first (imports, signatures, section comments)
-2. Fill in one section per edit call
+2. Fill in one section per edit call (~1000 tokens per chunk)
 3. Final review and commit
 
 Include this pattern in any skill that generates large outputs (documents, code files, configs). Example instruction to include:
@@ -164,7 +164,7 @@ Include this pattern in any skill that generates large outputs (documents, code 
 This document may be large. Write it incrementally to avoid API errors:
 
 1. **First pass:** Write the header, structure, and section outlines
-2. **Subsequent passes:** Edit to fill in each section one at a time
+2. **Subsequent passes:** Edit to fill in each section one at a time (~1000 tokens per edit)
 3. **Final pass:** Review the complete document, fix issues, save
 ```
 
