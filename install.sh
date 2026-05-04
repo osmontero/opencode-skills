@@ -40,4 +40,12 @@ if [ -d "$SCRIPT_DIR/common" ]; then
   cp -r "$SCRIPT_DIR/common" "$CONFIG_DIR/common"
 fi
 
+# Install opencode.json config (replaces global config)
+GLOBAL_CONFIG="$CONFIG_DIR/opencode.json"
+REPO_CONFIG="$SCRIPT_DIR/.opencode/opencode.json"
+if [ -f "$REPO_CONFIG" ]; then
+  echo "Installing opencode.json config..."
+  cp "$REPO_CONFIG" "$GLOBAL_CONFIG"
+fi
+
 echo "Done. $(ls -d "$CONFIG_DIR/skills/"*/ 2>/dev/null | wc -l) skills and $(ls "$CONFIG_DIR/agents/" | wc -l) agents installed."

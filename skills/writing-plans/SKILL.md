@@ -104,6 +104,43 @@ git commit -m "feat: add specific feature"
 ```
 ````
 
+## Incremental File Writing (CRITICAL)
+
+**The model cannot output large files in a single call.** When a file exceeds ~100 lines, writing it in one step will cause the API to fail with error 500. This is a hard limitation of the underlying model, not a best practice.
+
+**Every file creation or large edit MUST be split into sequential, incremental steps:**
+
+1. **Step 1: Write the skeleton** — Create the file with imports, class/function signatures, type definitions, and section comments. No implementation bodies yet.
+2. **Step 2+: Fill in sections one at a time** — Edit the file to implement one function, class method, or logical section per step. Each edit appends or replaces a focused region.
+3. **Last step: Final review** — Read the complete file, fix inconsistencies, then commit.
+
+**For the plan document itself:** The plan is often a large file. Write it in passes:
+- **Pass 1:** Write the header, file structure map, and task outlines (no code bodies)
+- **Pass 2+:** Edit the plan to fill in each task's code blocks one at a time
+- **Pass 3:** Self-review, fix issues, save final version
+
+**In task structure, a large file looks like this:**
+
+````markdown
+- [ ] **Step 1: Write file skeleton**
+
+Create `src/path/to/largefile.py` with imports, class definitions, method signatures, and TODO comments for each section.
+
+- [ ] **Step 2: Implement Section A**
+
+Edit `src/path/to/largefile.py` — replace the TODO for Section A with the actual implementation.
+
+- [ ] **Step 3: Implement Section B**
+
+Edit `src/path/to/largefile.py` — replace the TODO for Section B with the actual implementation.
+
+- [ ] **Step 4: Final review and commit**
+
+Read the complete file. Fix any inconsistencies. Commit.
+````
+
+**Never plan a single step that creates a file longer than ~100 lines.** If a file is large, the plan must have multiple steps for that file.
+
 ## No Placeholders
 
 Every step must contain the actual content an engineer needs. These are **plan failures** — never write them:

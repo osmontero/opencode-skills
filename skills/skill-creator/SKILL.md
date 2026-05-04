@@ -8,6 +8,8 @@ description: Create new opencode skills, modify and improve existing skills, and
 
 A skill for creating new skills and iteratively improving them.
 
+**Core principle: Creating skills IS Test-Driven Development applied to process documentation.** Follow RED-GREEN-REFACTOR: run baseline tests without the skill (RED - watch agent fail), write the skill addressing those failures (GREEN - watch agent comply), then close loopholes (REFACTOR - stay compliant). If you didn't watch an agent fail without the skill, you don't know if the skill teaches the right thing.
+
 At a high level, the process of creating a skill goes like this:
 
 - Decide what you want the skill to do and roughly how it should do it
@@ -29,6 +31,33 @@ Of course, you should always be flexible and if the user is like "I don't need t
 Then after the skill is done (but again, the order is flexible), you can also run the skill description improver, which we have a whole separate script for, to optimize the triggering of the skill.
 
 Cool? Cool.
+
+## What Is a Skill
+
+A **skill** is a reference guide for proven techniques, patterns, or tools. Skills help future agent instances find and apply effective approaches.
+
+**Skills are:** Reusable techniques, patterns, tools, reference guides
+**Skills are NOT:** Narratives about how you solved a problem once
+
+### Skill Types
+
+- **Technique**: Concrete method with steps to follow (e.g., condition-based-waiting, root-cause-tracing)
+- **Pattern**: Way of thinking about problems (e.g., flatten-with-flags, test-invariants)
+- **Reference**: API docs, syntax guides, tool documentation (e.g., office docs)
+
+### When to Create a Skill
+
+**Create when:**
+- Technique wasn't intuitively obvious to you
+- You'd reference this again across projects
+- Pattern applies broadly (not project-specific)
+- Others would benefit
+
+**Don't create for:**
+- One-off solutions
+- Standard practices well-documented elsewhere
+- Project-specific conventions (put in AGENTS.md)
+- Mechanical constraints enforceable with regex/validation
 
 ## Communicating with the user
 
@@ -64,8 +93,12 @@ Check available MCPs - if useful for research (searching docs, finding similar s
 
 Based on the user interview, fill in these components:
 
-- **name**: Skill identifier
-- **description**: When to trigger, what it does. This is the primary triggering mechanism - include both what the skill does AND specific contexts for when to use it. All "when to use" info goes here, not in the body. Note: currently the agent tends to "undertrigger" skills -- to not use them when they'd be useful. To combat this, please make the skill descriptions a little bit "pushy". So for instance, instead of "How to build a simple fast dashboard to display internal company data.", you might write "How to build a simple fast dashboard to display internal company data. Make sure to use this skill whenever the user mentions dashboards, data visualization, internal metrics, or wants to display any kind of company data, even if they don't explicitly ask for a 'dashboard.'"
+- **name**: Skill identifier. Use only letters, numbers, and hyphens. Prefer gerund form (verb + -ing) for processes: `creating-skills`, `testing-skills`. Name by what you DO or core insight, not generic terms.
+- **description**: When to trigger. This is the primary triggering mechanism. **CRITICAL: Description = When to Use, NOT What the Skill Does.** Start with "Use when..." and include specific symptoms, situations, and contexts. Write in third person. **NEVER summarize the skill's process or workflow** — when a description summarizes workflow, the agent may follow the description instead of reading the full skill content. Keep under 500 characters. All "when to use" info goes here, not in the body. Note: currently the agent tends to "undertrigger" skills -- to not use them when they'd be useful. To combat this, please make the skill descriptions a little bit "pushy".
+  - Include concrete triggers: error messages, symptoms, tool names, file types
+  - Use synonyms: "timeout/hang/freeze", "cleanup/teardown/afterEach"
+  - Describe the *problem* not *language-specific symptoms*
+  - Make sure to use this skill whenever the user mentions relevant keywords, even if they don't explicitly ask for the skill by name
 - **compatibility**: Required tools, dependencies (optional, rarely needed)
 - **the rest of the skill :)**
 
@@ -117,6 +150,24 @@ This goes without saying, but skills must not contain malware, exploit code, or 
 
 Prefer using the imperative form in instructions.
 
+**Incremental file writing (CRITICAL):** The model cannot output large files in a single call — responses exceeding ~100 lines will cause API error 500. Always instruct agents to write large files incrementally:
+
+1. Write the skeleton first (imports, signatures, section comments)
+2. Fill in one section per edit call
+3. Final review and commit
+
+Include this pattern in any skill that generates large outputs (documents, code files, configs). Example instruction to include:
+
+```markdown
+## Writing Large Files
+
+This document may be large. Write it incrementally to avoid API errors:
+
+1. **First pass:** Write the header, structure, and section outlines
+2. **Subsequent passes:** Edit to fill in each section one at a time
+3. **Final pass:** Review the complete document, fix issues, save
+```
+
 **Defining output formats** - You can do it like this:
 ```markdown
 ## Report structure
@@ -139,6 +190,60 @@ Output: feat(auth): implement JWT-based authentication
 
 Try to explain to the model why things are important in lieu of heavy-handed musty MUSTs. Use theory of mind and try to make the skill general and not super-narrow to specific examples. Start by writing a draft and then look at it with fresh eyes and improve it.
 
+### Token Efficiency (Critical)
+
+The context window is a shared resource. Every token in SKILL.md competes with conversation history and other context.
+
+**Target word counts:**
+- Frequently-loaded skills: <200 words total
+- Other skills: <500 words (still be concise)
+
+**Techniques:**
+- **Default assumption: the agent is already very smart.** Only add context the agent doesn't already have. Challenge each piece: "Does the agent really need this explanation?"
+- **Move details to tool help:** Instead of documenting all flags, reference `--help`
+- **Use cross-references:** Reference other skills by name rather than repeating their workflows. Use `**REQUIRED SUB-SKILL:** Use skill-name` or `**REQUIRED BACKGROUND:** You MUST understand skill-name`. Never use `@` syntax — it force-loads files immediately, consuming context.
+- **Compress examples:** One excellent example beats many mediocre ones. Don't implement in 5+ languages. Don't create fill-in-blank templates.
+- **Eliminate redundancy:** Don't repeat what's in cross-referenced skills. Don't explain what's obvious from commands. Don't include multiple examples of the same pattern.
+- **Avoid time-sensitive information:** Don't include dates that will become outdated. Use "old patterns" sections for deprecated approaches.
+- **Use consistent terminology:** Choose one term and use it throughout.
+
+### Code Examples
+
+**One excellent example beats many mediocre ones.** Choose the most relevant language for the task (testing techniques → TypeScript/JS, system debugging → Shell/Python, data processing → Python). A good example is complete, runnable, well-commented explaining WHY, from a real scenario, and ready to adapt.
+
+### Flowchart Usage
+
+Use flowcharts (graphviz DOT format) ONLY for non-obvious decision points, process loops where the agent might stop too early, or "When to use A vs B" decisions. Never use flowcharts for reference material, code examples, linear instructions, or labels without semantic meaning.
+
+See `references/graphviz-conventions.dot` for graphviz style rules. Use `render-graphs.js` to render flowcharts to SVG for your human partner:
+```bash
+./render-graphs.js ../some-skill           # Each diagram separately
+./render-graphs.js ../some-skill --combine # All diagrams in one SVG
+```
+
+### Anti-Patterns
+
+- **Narrative examples** ("In session 2025-10-03, we found...") — Too specific, not reusable
+- **Multi-language dilution** (example-js.js, example-py.py, example-go.go) — Mediocre quality, maintenance burden
+- **Code in flowcharts** — Can't copy-paste, hard to read
+- **Generic labels** (helper1, step3, pattern4) — Labels should have semantic meaning
+- **Too many options** — Don't present multiple approaches unless necessary. Provide a default with an escape hatch.
+- **Deeply nested references** — Keep file references one level deep from SKILL.md. The agent may partially read files referenced from other referenced files.
+- **Windows-style paths** — Always use forward slashes
+
+### The Iron Law
+
+```
+NO SKILL WITHOUT A FAILING TEST FIRST
+```
+
+This applies to NEW skills AND EDITS to existing skills. Run a baseline scenario WITHOUT the skill before writing it. Watch the agent fail. Document exact rationalizations. Then write the skill addressing those specific failures.
+
+**No exceptions:**
+- Not for "simple additions"
+- Not for "just adding a section"
+- Not for "documentation updates"
+
 ### Test Cases
 
 After writing the skill draft, come up with 2-3 realistic test prompts — the kind of thing a real user would actually say. Share them with the user: [you don't have to use this exact language] "Here are a few test cases I'd like to try. Do these look right, or do you want to add more?" Then run them.
@@ -160,6 +265,43 @@ Save test cases to `evals/evals.json`. Don't write assertions yet — just the p
 ```
 
 See `references/schemas.md` for the full schema (including the `assertions` field, which you'll add later).
+
+### Testing All Skill Types
+
+Different skill types need different test approaches:
+
+**Discipline-enforcing skills** (rules/requirements like TDD, verification-before-completion):
+- Test with pressure scenarios combining 3+ pressures: time, sunk cost, authority, exhaustion
+- Force explicit A/B/C choices, not open-ended questions
+- Identify rationalizations and add explicit counters
+- Success: Agent follows rule under maximum pressure
+
+**Technique skills** (how-to guides):
+- Test with application scenarios and edge cases
+- Test for missing information and gaps in instructions
+- Success: Agent successfully applies technique to new scenario
+
+**Pattern skills** (mental models):
+- Test recognition: Does agent know when pattern applies?
+- Test counter-examples: Does agent know when NOT to apply?
+- Success: Agent correctly identifies when/how to apply pattern
+
+**Reference skills** (documentation/APIs):
+- Test retrieval: Can agent find the right information?
+- Test application: Can agent use what they found correctly?
+- Gap testing: Are common use cases covered?
+- Success: Agent finds and correctly applies reference information
+
+### Bulletproofing Against Rationalization
+
+For skills that enforce discipline, agents will find loopholes under pressure. Close every loophole explicitly:
+
+1. **Explicit negation:** Don't just state the rule — forbid specific workarounds
+2. **Rationalization table:** Capture every excuse agents make during testing
+3. **Red flags list:** Make it easy for agents to self-check when rationalizing
+4. **Foundational principle:** Add "Violating the letter of the rules is violating the spirit of the rules" to cut off "spirit vs letter" arguments
+
+See `references/persuasion-principles.md` for research on how authority, commitment, and scarcity principles increase compliance.
 
 ## Running and evaluating test cases
 
@@ -289,6 +431,17 @@ kill $VIEWER_PID 2>/dev/null
 ```
 
 ---
+
+## STOP: Before Moving to Next Skill
+
+**After writing ANY skill, you MUST STOP and complete the testing and deployment process.**
+
+**Do NOT:**
+- Create multiple skills in batch without testing each
+- Move to next skill before current one is verified
+- Skip testing because "batching is more efficient"
+
+Deploying untested skills = deploying untested code.
 
 ## Improving the skill
 
