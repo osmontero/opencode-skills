@@ -248,8 +248,12 @@ It does NOT provide:
 
 Be creative! Combine concepts (bouncing + rotating, pulsing + sliding, etc.) and use PIL's full capabilities.
 
-## Dependencies
+## Prerequisites
+
+Before running any Python scripts, **activate the opencode virtual environment**:
 
 ```bash
-pip install pillow imageio numpy
+source ~/.local/opencode-venv/bin/activate
 ```
+
+Then use `python3 core/...` normally. All dependencies (Pillow, imageio, imageio-ffmpeg, numpy) are managed centrally by the opencode Python venv.

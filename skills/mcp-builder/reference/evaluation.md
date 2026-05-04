@@ -381,16 +381,13 @@ After creating your evaluation file, you can use the provided evaluation harness
 
 ## Setup
 
-1. **Install Dependencies**
+1. **Activate the opencode virtual environment**
 
    ```bash
-   pip install -r scripts/requirements.txt
+   source ~/.local/opencode-venv/bin/activate
    ```
 
-   Or install manually:
-   ```bash
-   pip install anthropic mcp
-   ```
+   Dependencies (anthropic, mcp) are managed centrally by the opencode Python venv — no pip install needed.
 
 2. **Set API Key**
 
@@ -550,14 +547,13 @@ Here's a complete example of creating and running an evaluation:
 </evaluation>
 ```
 
-2. **Install dependencies**:
+ 2. **Activate the opencode virtual environment**:
 
 ```bash
-pip install -r scripts/requirements.txt
-export ANTHROPIC_API_KEY=your_api_key
+source ~/.local/opencode-venv/bin/activate
 ```
 
-3. **Run evaluation**:
+ 3. **Run evaluation**:
 
 ```bash
 python scripts/evaluation.py \

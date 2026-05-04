@@ -3,6 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 CONFIG_DIR="$HOME/.config/opencode"
+OPENVEN="$HOME/.local/opencode-venv"
 
 # Ensure target directories exist
 mkdir -p "$CONFIG_DIR/skills" "$CONFIG_DIR/agents"
@@ -47,5 +48,20 @@ if [ -f "$REPO_CONFIG" ]; then
   echo "Installing opencode.json config..."
   cp "$REPO_CONFIG" "$GLOBAL_CONFIG"
 fi
+
+# Install Python dependencies via uv
+echo "Setting up Python environment..."
+if ! command -v uv &>/dev/null; then
+  echo "  Installing uv..."
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  export PATH="$HOME/.cargo/bin:$PATH"
+fi
+
+uv venv "$OPENVEN" --python 3.12 --allow-incomplete-chapters 2>/dev/null || \
+  uv venv "$OPENVEN" --python 3.12
+uv pip install --python "$OPENVEN/bin/python" -e "$SCRIPT_DIR"
+
+echo "  Python environment ready at $OPENVEN"
+echo "  Activate with: source $OPENVEN/bin/activate"
 
 echo "Done. $(ls -d "$CONFIG_DIR/skills/"*/ 2>/dev/null | wc -l) skills and $(ls "$CONFIG_DIR/agents/" | wc -l) agents installed."

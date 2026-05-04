@@ -9,16 +9,28 @@ description: >
 
 Process PDF files using command-line tools and Python libraries.
 
+## Prerequisites
+
+Before running any Python scripts, **activate the opencode virtual environment**:
+
+```bash
+source ~/.local/opencode-venv/bin/activate
+```
+
+Then use `python3 scripts/...` normally. To run a single script without activating:
+
+```bash
+~/.local/opencode-venv/bin/python3 scripts/extract_text.py input.pdf
+```
+
 ## Available Tools
 
 | Tool | Command | Use For |
 |------|---------|---------|
 | `pdftotext` | System (Poppler) | Quick text extraction |
 | `pdfinfo` | System (Poppler) | Metadata, page count |
-| `pypdf` | Python 3.12 | Merge, split, rotate, metadata |
-| `pdfplumber` | Python 3.12 | Table extraction, detailed text |
-
-**IMPORTANT:** Use `python3.12` or set `PYENV_VERSION=3.12.12` when running Python PDF scripts. Python 3.13t has build issues with the cryptography dependency.
+| `pypdf` | Python (venv) | Merge, split, rotate, metadata |
+| `pdfplumber` | Python (venv) | Table extraction, detailed text |
 
 ## Quick Operations
 
@@ -133,25 +145,25 @@ with open("trimmed.pdf", "wb") as f:
 ### Extract all text with page numbers
 
 ```bash
-PYENV_VERSION=3.12.12 python3 scripts/extract_text.py input.pdf
+python3 scripts/extract_text.py input.pdf
 ```
 
 ### Extract tables to CSV
 
 ```bash
-PYENV_VERSION=3.12.12 python3 scripts/extract_tables.py input.pdf
+python3 scripts/extract_tables.py input.pdf
 ```
 
 ### Check if PDF has fillable forms
 
 ```bash
-PYENV_VERSION=3.12.12 python3 scripts/check_forms.py input.pdf
+python3 scripts/check_forms.py input.pdf
 ```
 
 ### Fill a fillable PDF form
 
 ```bash
-PYENV_VERSION=3.12.12 python3 scripts/fill_form.py input.pdf fields.json output.pdf
+python3 scripts/fill_form.py input.pdf fields.json output.pdf
 ```
 
 Where `fields.json` is:
@@ -167,13 +179,13 @@ Where `fields.json` is:
 ### Convert PDF pages to images
 
 ```bash
-PYENV_VERSION=3.12.12 python3 scripts/to_images.py input.pdf --dpi 200
+python3 scripts/to_images.py input.pdf --dpi 200
 ```
 
 ### Get PDF metadata
 
 ```bash
-PYENV_VERSION=3.12.12 python3 scripts/metadata.py input.pdf
+python3 scripts/metadata.py input.pdf
 ```
 
 ## Working with Scanned PDFs
@@ -185,22 +197,22 @@ For scanned PDFs, text extraction will return empty results. Use the LLM vision-
 Uses `threatwinds/qwen-3.6` via the ThreatWinds AI API to extract text, tables, and structured data from scanned document images.
 
 **Prerequisites:**
-- `THREATWINDS_API_KEY` environment variable must be set. If the script cannot find it, it will exit with an error and instructions on how to set it.
-- Python 3.12 with `pypdfium2` installed
+- `THREATWINDS_API_KEY` environment variable must be set
+- opencode Python venv must be active (see Prerequisites section above)
 
 ```bash
 # Basic extraction (all pages)
-PYENV_VERSION=3.12.12 python3 scripts/ocr_vision.py scanned.pdf
+python3 scripts/ocr_vision.py scanned.pdf
 
 # Custom prompt for structured data
-PYENV_VERSION=3.12.12 python3 scripts/ocr_vision.py invoice.pdf \
+python3 scripts/ocr_vision.py invoice.pdf \
   --prompt "Extract the invoice number, date, line items, quantities, prices, and total. Output as JSON."
 
 # Specific pages only
-PYENV_VERSION=3.12.12 python3 scripts/ocr_vision.py document.pdf --pages 1-3
+python3 scripts/ocr_vision.py document.pdf --pages 1-3
 
 # JSON output to file
-PYENV_VERSION=3.12.12 python3 scripts/ocr_vision.py form.pdf --json -o extracted.json
+python3 scripts/ocr_vision.py form.pdf --json -o extracted.json
 ```
 
 **How it works:**

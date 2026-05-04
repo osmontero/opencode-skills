@@ -9,6 +9,20 @@ license: Complete terms in LICENSE.txt
 
 To test local web applications, write native Python Playwright scripts.
 
+## Prerequisites
+
+Before running any Python scripts, **activate the opencode virtual environment**:
+
+```bash
+source ~/.local/opencode-venv/bin/activate
+```
+
+Then use `python3 scripts/...` normally. If Playwright browser binaries aren't installed yet:
+
+```bash
+playwright install chromium
+```
+
 **Helper Scripts Available**:
 - `scripts/with_server.py` - Manages server lifecycle (supports multiple servers)
 

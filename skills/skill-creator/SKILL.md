@@ -305,6 +305,12 @@ See `references/persuasion-principles.md` for research on how authority, commitm
 
 ## Running and evaluating test cases
 
+**Before running any Python scripts, activate the opencode virtual environment:**
+
+```bash
+source ~/.local/opencode-venv/bin/activate
+```
+
 This section is one continuous sequence — don't stop partway through. Do NOT use `/skill-test` or any other testing skill.
 
 Put results in `<skill-name>-workspace/` as a sibling to the skill directory. Within the workspace, organize results by iteration (`iteration-1/`, `iteration-2/`, etc.) and within that, each test case gets a directory (`eval-0/`, `eval-1/`, etc.). Don't create all of this upfront — just create directories as you go.
