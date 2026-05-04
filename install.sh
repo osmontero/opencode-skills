@@ -19,6 +19,7 @@ for d in "$CONFIG_DIR/skills"/*/; do
 done
 for d in "$SCRIPT_DIR/skills"/*/; do
   name="$(basename "$d")"
+  rm -rf "$CONFIG_DIR/skills/$name"
   cp -r "$d" "$CONFIG_DIR/skills/$name"
 done
 
@@ -57,9 +58,15 @@ if ! command -v uv &>/dev/null; then
   export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
-uv venv "$OPENVEN" --python 3.12 --allow-incomplete-chapters 2>/dev/null || \
-  uv venv "$OPENVEN" --python 3.12
-uv pip install --python "$OPENVEN/bin/python" -e "$SCRIPT_DIR"
+if [ -d "$OPENVEN" ]; then
+  echo "  Updating existing venv..."
+  uv pip install --python "$OPENVEN/bin/python" -e "$SCRIPT_DIR"
+else
+  echo "  Creating virtual environment..."
+  uv venv "$OPENVEN" --python 3.12 --allow-incomplete-chapters 2>/dev/null || \
+    uv venv "$OPENVEN" --python 3.12
+  uv pip install --python "$OPENVEN/bin/python" -e "$SCRIPT_DIR"
+fi
 
 echo "  Python environment ready at $OPENVEN"
 echo "  Activate with: source $OPENVEN/bin/activate"
