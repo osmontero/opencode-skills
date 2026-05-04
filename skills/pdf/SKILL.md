@@ -178,7 +178,37 @@ PYENV_VERSION=3.12.12 python3 scripts/metadata.py input.pdf
 
 ## Working with Scanned PDFs
 
-For scanned PDFs, text extraction will return empty results. Use `to_images.py` to convert pages to images, then use image analysis to read content.
+For scanned PDFs, text extraction will return empty results. Use the LLM vision-based OCR script to extract data from image-based pages.
+
+### OCR with LLM Vision
+
+Uses `threatwinds/qwen-3.6` via the ThreatWinds AI API to extract text, tables, and structured data from scanned document images.
+
+**Prerequisites:**
+- `THREATWINDS_API_KEY` environment variable set
+- Python 3.12 with `pypdfium2` installed
+
+```bash
+# Basic extraction (all pages)
+PYENV_VERSION=3.12.12 python3 scripts/ocr_vision.py scanned.pdf
+
+# Custom prompt for structured data
+PYENV_VERSION=3.12.12 python3 scripts/ocr_vision.py invoice.pdf \
+  --prompt "Extract the invoice number, date, line items, quantities, prices, and total. Output as JSON."
+
+# Specific pages only
+PYENV_VERSION=3.12.12 python3 scripts/ocr_vision.py document.pdf --pages 1-3
+
+# JSON output to file
+PYENV_VERSION=3.12.12 python3 scripts/ocr_vision.py form.pdf --json -o extracted.json
+```
+
+**How it works:**
+1. Converts each PDF page to a PNG image at 200 DPI
+2. Sends the image as base64 to the ThreatWinds `/chat/completions` endpoint with vision support
+3. Returns extracted text or structured data per page
+
+**Detection workflow:** When given a PDF, first try `pdftotext`. If the output is empty or near-empty, the PDF is scanned — fall back to `ocr_vision.py`.
 
 ## Large Files
 
