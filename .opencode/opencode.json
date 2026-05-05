@@ -71,6 +71,170 @@
             "presencePenalty": 0.0,
             "repetitionPenalty": 1.0
           }
+        },
+        "silas-1.5": {
+          "name": "Silas 1.5",
+          "limit": {
+            "context": 262144,
+            "input": 229376,
+            "output": 15768
+          },
+          "options": {
+            "temperature": 0.6,
+            "topP": 0.95,
+            "topK": 20,
+            "minP": 0.0,
+            "presencePenalty": 0.0,
+            "repetitionPenalty": 1.0
+          }
+        },
+        "silas-1.5-pro": {
+          "name": "Silas 1.5 Pro",
+          "limit": {
+            "context": 262144,
+            "input": 229376,
+            "output": 15768
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 0.95,
+            "topK": 20,
+            "minP": 0.0,
+            "presencePenalty": 0.0,
+            "repetitionPenalty": 1.0
+          }
+        },
+        "silas-1.6": {
+          "name": "Silas 1.6",
+          "limit": {
+            "context": 262144,
+            "input": 229376,
+            "output": 15768
+          },
+          "options": {
+            "temperature": 0.6,
+            "topP": 0.95,
+            "topK": 20,
+            "minP": 0.0,
+            "presencePenalty": 0.0,
+            "repetitionPenalty": 1.0
+          }
+        },
+        "silas-1.6-pro": {
+          "name": "Silas 1.6 Pro",
+          "limit": {
+            "context": 262144,
+            "input": 229376,
+            "output": 15768
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 0.95,
+            "topK": 20,
+            "minP": 0.0,
+            "presencePenalty": 0.0,
+            "repetitionPenalty": 1.0
+          }
+        },
+        "gpt-5": {
+          "name": "GPT-5.4",
+          "limit": {
+            "context": 1178000,
+            "input": 1050000,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 1,
+            "presencePenalty": 0.0,
+            "frequencyPenalty": 0.0
+          }
+        },
+        "gpt-5-mini": {
+          "name": "GPT-5 Mini",
+          "limit": {
+            "context": 528000,
+            "input": 400000,
+            "output": 64000
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 1
+          }
+        },
+        "claude-opus-4": {
+          "name": "Claude Opus 4.6",
+          "limit": {
+            "context": 1128000,
+            "input": 1000000,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1
+          }
+        },
+        "claude-sonnet-4": {
+          "name": "Claude Sonnet 4.6",
+          "limit": {
+            "context": 1064000,
+            "input": 1000000,
+            "output": 64000
+          },
+          "options": {
+            "temperature": 1
+          }
+        },
+        "gemini-3-pro": {
+          "name": "Gemini 3.1 Pro",
+          "limit": {
+            "context": 1114112,
+            "input": 1048576,
+            "output": 65536
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 0.95,
+            "topK": 64
+          }
+        },
+        "gemini-3-flash-lite": {
+          "name": "Gemini 3.1 Flash Lite",
+          "limit": {
+            "context": 1114112,
+            "input": 1048576,
+            "output": 65536
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 0.95,
+            "topK": 64
+          }
+        },
+        "gemini-3-flash": {
+          "name": "Gemini 3 Flash",
+          "limit": {
+            "context": 1114112,
+            "input": 1048576,
+            "output": 65536
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 0.95,
+            "topK": 64
+          }
+        },
+        "gemma-4-31b-it": {
+          "name": "Gemma 4 31B Instruct",
+          "limit": {
+            "context": 294912,
+            "input": 262144,
+            "output": 32768
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 0.95,
+            "topK": 64
+          }
         }
       }
     },
