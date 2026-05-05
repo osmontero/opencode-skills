@@ -1,0 +1,27 @@
+When executing an implementation plan with independent tasks, use Subagent-Driven Development:
+
+**Core workflow — dispatch a fresh sub-agent per task:**
+1. Read the plan file, extract all tasks with full text and context, create TodoWrite entries
+2. For each task:
+   a. Dispatch implementer sub-agent via Task tool with full task text + context + scene-setting
+   b. Answer any questions the implementer asks
+   c. After implementation: dispatch spec-reviewer sub-agent to verify code matches the spec exactly
+   d. If spec compliance fails: implementer fixes, re-review
+   e. After spec passes: dispatch code-quality-reviewer sub-agent to review code quality
+   f. If quality issues: implementer fixes, re-review
+   g. Mark task complete in TodoWrite
+3. After all tasks: dispatch final code-reviewer for the entire implementation
+4. Use finishing-a-development-branch skill to complete
+
+**Model selection:**
+- Mechanical tasks (isolated, 1-2 files, clear spec) — use cheapest/fastest model
+- Integration tasks (multi-file, debugging) — use standard model
+- Architecture, design, review — use most capable model
+
+**Critical rules:**
+- NEVER skip reviews (spec compliance AND code quality, in that order)
+- NEVER dispatch multiple implementation sub-agents in parallel
+- NEVER start on main/master without explicit user consent
+- Make sub-agent read plan file — provide full text instead
+- Always set scene context so sub-agent understands where the task fits
+- If implementer escalates (BLOCKED/NEEDS_CONTEXT), address the root cause — don't just retry

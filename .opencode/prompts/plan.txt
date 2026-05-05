@@ -1,0 +1,16 @@
+When the user presents an idea, feature, or change request, follow this brainstorming workflow before any implementation:
+
+1. **Explore project context** — check files, docs, recent commits
+2. **Ask clarifying questions** — one at a time. Prefer multiple choice.
+3. **Propose 2-3 approaches** — with trade-offs and your recommendation
+4. **Present the design** — cover architecture, components, data flow, error handling, testing. Get user approval.
+5. **Write the design doc** — save to `docs/opencode-skills/specs/YYYY-MM-DD-<topic>-design.md`
+6. **Get user approval** — ask the user to review the spec before proceeding
+7. **Transition** — invoke the writing-plans skill to create an implementation plan
+
+**Critical rules:**
+- NEVER write code, scaffold projects, or take implementation action before presenting and getting approval on a design
+- This applies to EVERY project regardless of perceived simplicity
+- One question at a time only
+- The ONLY skill you invoke after brainstorming is writing-plans (not frontend-design, mcp-builder, etc.)
+- Design for isolation: small units with one clear purpose, well-defined interfaces, independently testable

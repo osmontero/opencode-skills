@@ -176,5 +176,13 @@
       "command": ["jdtls"],
       "extensions": [".java"]
     }
+  },
+  "agent": {
+    "plan": {
+      "prompt": "{file:./prompts/plan.txt}"
+    },
+    "build": {
+      "prompt": "{file:./prompts/build.txt}"
+    }
   }
 }
