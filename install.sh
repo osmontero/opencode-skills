@@ -50,6 +50,12 @@ if [ -f "$REPO_CONFIG" ]; then
   cp "$REPO_CONFIG" "$GLOBAL_CONFIG"
 fi
 
+# Install prompt files referenced by opencode.json
+if [ -d "$SCRIPT_DIR/.opencode/prompts" ]; then
+  echo "Installing prompt files..."
+  cp -r "$SCRIPT_DIR/.opencode/prompts" "$CONFIG_DIR/prompts"
+fi
+
 # Install Python dependencies via uv
 echo "Setting up Python environment..."
 if ! command -v uv &>/dev/null; then
