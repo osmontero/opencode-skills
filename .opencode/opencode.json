@@ -183,58 +183,6 @@
           "options": {
             "temperature": 1
           }
-        },
-        "gemini-3-pro": {
-          "name": "Gemini 3.1 Pro",
-          "limit": {
-            "context": 1114112,
-            "input": 1048576,
-            "output": 65536
-          },
-          "options": {
-            "temperature": 1,
-            "topP": 0.95,
-            "topK": 64
-          }
-        },
-        "gemini-3-flash-lite": {
-          "name": "Gemini 3.1 Flash Lite",
-          "limit": {
-            "context": 1114112,
-            "input": 1048576,
-            "output": 65536
-          },
-          "options": {
-            "temperature": 1,
-            "topP": 0.95,
-            "topK": 64
-          }
-        },
-        "gemini-3-flash": {
-          "name": "Gemini 3 Flash",
-          "limit": {
-            "context": 1114112,
-            "input": 1048576,
-            "output": 65536
-          },
-          "options": {
-            "temperature": 1,
-            "topP": 0.95,
-            "topK": 64
-          }
-        },
-        "gemma-4-31b-it": {
-          "name": "Gemma 4 31B Instruct",
-          "limit": {
-            "context": 294912,
-            "input": 262144,
-            "output": 32768
-          },
-          "options": {
-            "temperature": 1,
-            "topP": 0.95,
-            "topK": 64
-          }
         }
       }
     },
