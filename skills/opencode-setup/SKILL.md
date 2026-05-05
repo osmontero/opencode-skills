@@ -2,9 +2,10 @@
 name: opencode-setup
 description: >
   Configure opencode: providers, models, agents, skills, commands, permissions, themes, keybinds,
-  and all runtime settings. Use this skill whenever the user asks to set up opencode, configure a
-  provider, add a model, create an agent, personalize opencode, set permissions, configure agents,
-  change themes, add keybinds, set up rules, or anything related to opencode.json or tui.json
+  LSP servers, MCP servers, formatters, and all runtime settings. Use this skill whenever the user
+  asks to set up opencode, configure a provider, add a model, create an agent, personalize
+  opencode, set permissions, configure agents, change themes, add keybinds, set up rules, configure
+  LSP or MCP servers, or anything related to opencode.json, tui.json, or opencode.jsonc
   configuration. Trigger on mentions of config, setup, personalization, provider, model selection,
   agent creation, or opencode customization.
 mode: subagent
@@ -17,9 +18,20 @@ permission:
 You are an opencode configuration expert. Help the user set up and personalize their opencode
 installation by modifying the correct config files in the right locations.
 
+**Official documentation:**
+- Config schema: <https://opencode.ai/docs/config>
+- TUI config: <https://opencode.ai/docs/tui>
+- Agents: <https://opencode.ai/docs/agents>
+- Skills: <https://opencode.ai/docs/skills>
+- Commands: <https://opencode.ai/docs/commands>
+- MCP servers: <https://opencode.ai/docs/mcp>
+- Providers & models: <https://opencode.ai/docs/providers>
+- Environment variables: <https://opencode.ai/docs/environment>
+- JSON schema: `https://opencode.ai/config.json` / `https://opencode.ai/tui.json`
+
 ## Config Files and Locations
 
-### JSON Config (`opencode.json`)
+### JSON Config (`opencode.json` / `opencode.jsonc`)
 
 Runtime/server settings. Two locations:
 
@@ -28,8 +40,12 @@ Runtime/server settings. Two locations:
 | **Global** | `~/.config/opencode/opencode.json` |
 | **Per-project** | `opencode.json` in project root |
 
+Both `opencode.json` and `opencode.jsonc` are supported. JSONC allows comments and trailing
+commas. In the same directory, `config.json`, `opencode.json`, then `opencode.jsonc` are loaded
+in order (later overrides earlier).
+
 Project config overrides global config. Both share the same schema. Add
-`"$schema": "https://opencode.ai/config.json"` for IDE autocomplete.
+`"$schema": "https://opencode.ai/config.json"` for IDE autocomplete (auto-added if missing).
 
 ### TUI Config (`tui.json`)
 
@@ -51,7 +67,7 @@ Add `"$schema": "https://opencode.ai/tui.json"` for autocomplete.
 | **Skills** | `~/.config/opencode/skills/<name>/SKILL.md` | `.opencode/skills/<name>/SKILL.md` |
 | **Commands** | `~/.config/opencode/commands/<name>.md` | `.opencode/commands/<name>.md` |
 
-Files are loaded from both locations — project-level files override global
+Files are loaded from both locations -- project-level files override global
 for same-named items.
 
 ## Precedence Order
@@ -62,10 +78,22 @@ Config is **merged**, not replaced. Layers from lowest to highest priority:
 2. Global config (`~/.config/opencode/opencode.json`)
 3. Custom config (`OPENCODE_CONFIG` env var)
 4. Project config (`opencode.json` in project)
-5. `.opencode` directories (agents, commands, plugins, skills, tools, themes)
+5. `.opencode` directory config (`.opencode/opencode.json` or `.opencode/opencode.jsonc`)
 6. Inline config (`OPENCODE_CONFIG_CONTENT` env var)
 7. Managed settings (`/Library/Application Support/opencode/` on macOS)
 8. macOS MDM managed preferences (highest, not user-overridable)
+
+### Deprecated Config Fields
+
+These still work but will be removed in a future version:
+
+| Field | Replacement |
+|---|---|
+| `mode` (top-level) | Use `agent` field instead |
+| `autoshare` | Use `share` field instead |
+| `layout` | Always uses stretch layout now |
+| `agent.*.tools` | Use `permission` field instead |
+| `agent.*.maxSteps` | Use `steps` field instead |
 
 ## Configuration Sections
 
@@ -73,50 +101,56 @@ Config is **merged**, not replaced. Layers from lowest to highest priority:
 
 ```json
 {
-  "$schema": "https://opencode.ai/config.json",
   "model": "provider/model-id",
   "small_model": "provider/cheaper-model",
   "provider": {
     "provider-name": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Display Name",
+      "env": ["PROVIDER_API_KEY"],
+      "whitelist": ["model-a"],
+      "blacklist": ["model-b"],
       "options": {
         "baseURL": "https://custom-endpoint.com/v1",
         "timeout": 600000,
-        "chunkTimeout": 30000
-      }
-    }
-  }
-}
-```
-
-The `small_model` configures a cheaper model for lightweight tasks like
-title generation. If omitted, opencode picks a cheaper option automatically.
-
-### Adding a Custom Provider
-
-For any OpenAI-compatible API (Ollama, LM Studio, llama.cpp, custom):
-
-```json
-{
-  "provider": {
-    "my-local": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "My Local Server",
-      "options": {
-        "baseURL": "http://localhost:11434/v1"
+        "setCacheKey": false
       },
       "models": {
         "my-model": {
-          "name": "My Model Display Name",
-          "limit": {
-            "context": 128000,
-            "output": 32768
-          }
+          "name": "My Model",
+          "attachment": true,
+          "reasoning": true,
+          "tool_call": true,
+          "limit": { "context": 128000, "input": 100000, "output": 32768 },
+          "modalities": { "text": true, "image": true },
+          "variants": {
+            "thinking": {
+              "options": { "thinking": { "type": "enabled", "budget_tokens": 8192 } }
+            }
+          },
+          "options": { "temperature": 0.7, "topP": 0.95 }
         }
       }
     }
   }
 }
 ```
+
+`small_model` configures a cheaper model for lightweight tasks. If omitted, opencode picks one.
+
+Provider fields: `npm` (NPM package), `name`, `api`, `env` (API key env vars), `id`,
+`whitelist`, `blacklist`. `options.timeout` can be a number (ms) or `false` to disable
+(default: 300000).
+
+Model fields: `id`, `name`, `family`, `attachment`, `reasoning`,
+`temperature`, `tool_call`, `interleaved`, `cost`, `limit`, `modalities`, `experimental`,
+`status`, `options`, `headers`, `variants`.
+
+`modalities` uses nested `input`/`output` arrays: `{ "input": ["text", "image"], "output": ["text"] }`.
+`cost.context_over_200k` is a nested object with `input`, `output`, `cache_read`, `cache_write`.
+`variants` and `options` accept arbitrary additional fields beyond those documented.
+
+Full provider and model schemas in `{file:./reference.md}`.
 
 ### Permissions
 
@@ -150,7 +184,8 @@ Fine-grained bash control:
 
 Permission keys: `read`, `edit`, `glob`, `grep`, `list`, `bash`, `task`,
 `external_directory`, `todowrite`, `webfetch`, `websearch`, `lsp`, `skill`,
-`question`, `doom_loop`.
+`question`, `doom_loop`, plus arbitrary custom keys for tools not listed.
+`write` maps to `edit`.
 
 ### Agents (JSON)
 
@@ -161,16 +196,30 @@ Permission keys: `read`, `edit`, `glob`, `grep`, `list`, `bash`, `task`,
       "description": "Reviews code for best practices and potential issues",
       "mode": "subagent",
       "model": "provider/model-id",
+      "variant": "thinking",
       "prompt": "You are a code reviewer. Focus on security, performance, and maintainability.",
       "permission": {
         "edit": "deny"
       },
       "color": "accent",
-      "temperature": 0.1
+      "temperature": 0.1,
+      "options": {
+        "thinking": { "type": "enabled", "budget_tokens": 8192 }
+      }
     }
   }
 }
 ```
+
+Agent fields: `description`, `mode` (`primary`/`subagent`/`all`), `model`,
+`variant` (model variant like `"thinking"`), `prompt`, `permission`, `color`,
+`temperature`, `top_p`, `steps` (max iterations), `hidden`, `disable`,
+`options` (arbitrary model options).
+
+`color` accepts theme color names (`"primary"`, `"secondary"`, `"accent"`,
+`"success"`, `"warning"`, `"error"`, `"info"`) or any hex code (`"#FF5733"`).
+
+Deprecated: `tools` (use `permission` instead), `maxSteps` (use `steps` instead).
 
 The `default_agent` option sets which primary agent is active by default:
 
@@ -186,19 +235,21 @@ Create at `~/.config/opencode/agents/<name>.md`:
 
 ```yaml
 ---
-description: What this agent does and when to use it (required)
+name: my-agent          # explicit name override (optional, defaults to filename)
+description: What this agent does (required)
 mode: subagent
 permission:
   edit: deny
+variant: thinking
+options:
+  thinking:
+    type: enabled
+    budget_tokens: 8192
 ---
 System prompt content here. Instructions this agent follows.
 ```
 
-The file name (without `.md`) becomes the agent name.
-
-Agent options in frontmatter: `description` (required), `mode`
-(`primary`/`subagent`/`all`), `permission`, `model`, `temperature`, `top_p`,
-`steps` (max iterations), `color`, `hidden`, `disable`.
+The file name (without `.md`) becomes the agent name unless `name` is set.
 
 Task permissions control which subagents an agent can invoke:
 
@@ -221,7 +272,7 @@ Task permissions control which subagents an agent can invoke:
 
 ### Skills
 
-Create at `~/.config/opencode/skills/<name>/SKILL.md`:
+File-based: Create at `~/.config/opencode/skills/<name>/SKILL.md`:
 
 ```yaml
 ---
@@ -235,6 +286,17 @@ Instructions the agent follows when this skill is active.
 - Description: 1-1024 chars, be specific for correct agent selection
 - Keep SKILL.md under 500 lines; use bundled resources for larger content
 
+JSON config for additional skill paths and remote skills:
+
+```json
+{
+  "skills": {
+    "paths": ["/absolute/path/to/skills", "~/my-skills"],
+    "urls": ["https://example.com/.well-known/skills/"]
+  }
+}
+```
+
 ### Commands (JSON)
 
 ```json
@@ -247,10 +309,19 @@ Instructions the agent follows when this skill is active.
     "component": {
       "template": "Create a new React component named $ARGUMENTS with TypeScript support.",
       "description": "Create a new component"
+    },
+    "review": {
+      "template": "Review the changes in $ARGUMENTS.",
+      "description": "Review code changes",
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "subtask": true
     }
   }
 }
 ```
+
+Command fields: `template` (required), `description`, `model` (specific model for this command),
+`subtask` (run as subtask), `agent` (specific agent for this command).
 
 ### Commands (Markdown)
 
@@ -295,7 +366,33 @@ In `tui.json`:
 
 ### Keybinds
 
-Customize in `tui.json`. Run `opencode keybinds` in TUI to see defaults.
+Customize in `tui.json`. Run `opencode keybinds` in TUI to see all 70+ defaults. Structure:
+
+```json
+{
+  "keybinds": {
+    "app_exit": "ctrl-c",
+    "session_new": "ctrl-n",
+    "model_list": "ctrl-m"
+  }
+}
+```
+
+Full keybinds list organized by category (app, session, messages, model, agent, input,
+terminal) in `{file:./reference.md}`.
+
+### TUI Configuration
+
+Beyond `theme` and `keybinds`, `tui.json` supports:
+
+| Field | Type | Description |
+|---|---|---|
+| `scroll_speed` | number | Scroll speed multiplier (default: 1) |
+| `scroll_acceleration` | `{ enabled: boolean }` | Enable scroll acceleration |
+| `diff_style` | `"auto"` \| `"stacked"` | Control diff rendering style |
+| `mouse` | boolean | Enable/disable mouse capture (default: true) |
+| `plugin` | array | TUI-specific plugins |
+| `plugin_enabled` | Record\<string, boolean\> | Enable/disable TUI plugins by name |
 
 ### Sharing
 
@@ -316,6 +413,71 @@ Values: `"manual"` (default), `"auto"` (share all sessions), `"disabled"`.
 ```
 
 Or `"notify"` to be notified without auto-installing.
+
+### Log Level
+
+Controls internal logging verbosity:
+
+```json
+{ "logLevel": "DEBUG" }
+```
+
+Values: `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`.
+
+### Username
+
+Custom display name in conversations (defaults to system username):
+
+```json
+{ "username": "Osmany" }
+```
+
+### Tool Output Truncation
+
+Control when tool output is truncated (defaults: 2000 lines, 51200 bytes):
+
+```json
+{
+  "tool_output": { "max_lines": 2000, "max_bytes": 51200 }
+}
+```
+
+### Experimental Features
+
+```json
+{
+  "experimental": {
+    "disable_paste_summary": false,
+    "batch_tool": false,
+    "openTelemetry": false,
+    "primary_tools": [],
+    "continue_loop_on_deny": false,
+    "mcp_timeout": 10000
+  }
+}
+```
+
+Set `OPENCODE_EXPERIMENTAL` env var to enable all at once.
+
+### Enterprise
+
+```json
+{ "enterprise": { "url": "https://enterprise.example.com" } }
+```
+
+### Shell
+
+```json
+{ "shell": "pwsh" }
+```
+
+### Snapshot
+
+Disable to improve performance on large repos:
+
+```json
+{ "snapshot": false }
+```
 
 ### Server (for `opencode web` / `opencode serve`)
 
@@ -338,21 +500,19 @@ Or `"notify"` to be notified without auto-installing.
   "compaction": {
     "auto": true,
     "prune": true,
-    "reserved": 10000
+    "reserved": 10000,
+    "tail_turns": 2,
+    "preserve_recent_tokens": 0
   }
 }
 ```
 
-`reserved` is the token buffer to leave for compaction.
+`reserved` = token buffer. `tail_turns` = recent turns kept verbatim.
 
 ### File Watcher Ignore
 
 ```json
-{
-  "watcher": {
-    "ignore": ["node_modules/**", "dist/**", ".git/**"]
-  }
-}
+{ "watcher": { "ignore": ["node_modules/**", "dist/**", ".git/**"] } }
 ```
 
 ### Disabled / Enabled Providers
@@ -364,17 +524,7 @@ Or `"notify"` to be notified without auto-installing.
 }
 ```
 
-`disabled_providers` takes priority over `enabled_providers`.
-
-### Snapshot
-
-Disable to improve performance on large repos:
-
-```json
-{
-  "snapshot": false
-}
-```
+`disabled_providers` takes priority.
 
 ### Formatters
 
@@ -384,11 +534,65 @@ Disable to improve performance on large repos:
     "prettier": { "disabled": true },
     "custom-prettier": {
       "command": ["npx", "prettier", "--write", "$FILE"],
-      "extensions": [".js", ".ts", ".jsx", ".tsx"]
+      "extensions": [".js", ".ts", ".jsx", ".tsx"],
+      "environment": { "PRETTIER_CONFIG": "~/.prettierrc" }
     }
   }
 }
 ```
+
+### LSP Servers
+
+Set `lsp: true` to enable all built-in LSP servers, `lsp: false` to disable all,
+or configure per-server:
+
+```json
+{
+  "lsp": {
+    "typescript": { "disabled": true },
+    "gopls": {
+      "command": ["gopls"],
+      "extensions": [".go"],
+      "env": { "GOPROXY": "https://proxy.golang.org" },
+      "initialization": { "completion": { "resolveProvider": true } }
+    }
+  }
+}
+```
+
+Per-server fields: `disabled`, `command`, `extensions` (required for custom servers),
+`env` (environment variables), `initialization` (LSP initialization options).
+
+30 built-in LSP servers are available. Full list in `{file:./reference.md}`.
+
+### MCP Servers
+
+Local MCP (stdio) and remote MCP (HTTP/SSE):
+
+```json
+{
+  "mcp": {
+    "local-tool": {
+      "enabled": true,
+      "type": "local",
+      "command": ["npx", "-y", "@brave/brave-search-mcp-server"],
+      "environment": { "BRAVE_API_KEY": "{env:BRAVE_API_KEY}" },
+      "timeout": 10000
+    },
+    "remote-tool": {
+      "enabled": true,
+      "type": "remote",
+      "url": "https://example.com/mcp",
+      "headers": { "Authorization": "Bearer {env:MCP_TOKEN}" },
+      "oauth": { "clientId": "my-client", "clientSecret": "{env:MCP_SECRET}", "scope": "read write", "redirectUri": "http://127.0.0.1:19876/mcp/oauth/callback" },
+      "timeout": 10000
+    }
+  }
+}
+```
+
+Set `oauth: false` to disable OAuth auto-detection. Legacy `{ "enabled": false }` form
+also supported to disable a server.
 
 ### Environment Variables and File Substitution
 
@@ -407,8 +611,22 @@ In config files, use variable substitution:
 }
 ```
 
-`{env:VARIABLE}` — substitute environment variable.\n`{file:path}` — substitute file contents
-(relative to config directory, or absolute with `/` or `~`).
+`{env:VARIABLE}` — substitute environment variable.
+`{file:path}` — substitute file contents (relative to config directory, or absolute
+with `/` or `~`).
+
+Many runtime behaviors can be controlled via environment variables. Full list (30+)
+in `{file:./reference.md}`. Common ones:
+
+| Variable | Purpose |
+|---|---|
+| `OPENCODE_CONFIG` | Path to custom config file |
+| `OPENCODE_CONFIG_CONTENT` | Inline JSON config content |
+| `OPENCODE_CONFIG_DIR` | Custom config directory |
+| `OPENCODE_DISABLE_LSP_DOWNLOAD` | Prevent auto-downloading LSP servers |
+| `OPENCODE_DISABLE_AUTOUPDATE` | Disable auto-update checks |
+| `OPENCODE_EXPERIMENTAL` | Enable all experimental features |
+| `OPENCODE_SERVER_PASSWORD` | Web UI password |
 
 ### Shell
 
@@ -418,24 +636,19 @@ In config files, use variable substitution:
 }
 ```
 
-### MCP Servers
-
-```json
-{
-  "mcp": {}
-}
-```
-
 ### Plugins
 
 ```json
 {
-  "plugin": ["opencode-helicone-session", "@my-org/custom-plugin"]
+  "plugin": [
+    "opencode-helicone-session",
+    ["@my-org/custom-plugin", { "apiKey": "{env:PLUGIN_KEY}" }]
+  ]
 }
 ```
 
-Place local plugins in `.opencode/plugins/` or
-`~/.config/opencode/plugins/`.
+Plugins can be simple strings or `[name, config]` tuples. Place local plugins in
+`.opencode/plugins/` or `~/.config/opencode/plugins/`.
 
 ## Built-in Agents
 
@@ -454,70 +667,17 @@ automatically via the Task tool.
 
 ## Useful Interactive Commands
 
-Run these in the opencode TUI:
-
 | Command | Action |
 |---|---|
 | `/connect` | Add a provider and enter API keys |
 | `/models` | List and select available models |
 | `/init` | Create project AGENTS.md |
 | `/share` | Share current session |
-| `/undo` | Undo last change |
-| `/redo` | Redo undone change |
+| `/undo` / `/redo` | Undo/redo last change |
 | `Tab` | Switch between Build and Plan |
 | `@name` | Mention a subagent to invoke it |
 
-Also: `opencode agent create` (interactive agent creation wizard),
-`opencode debug config` (show resolved config), `opencode models` (list models).
-
-## Common Setup Patterns
-
-### Complete personal config example
-
-```json
-{
-  "$schema": "https://opencode.ai/config.json",
-  "model": "provider/your-model",
-  "autoupdate": true,
-  "share": "manual",
-  "permission": {
-    "edit": "allow",
-    "bash": "ask"
-  }
-}
-```
-
-### Custom agent in markdown
-
-Create `~/.config/opencode/agents/security-auditor.md`:
-
-```yaml
----
-description: Performs security audits and identifies vulnerabilities
-mode: subagent
-permission:
-  edit: deny
----
-You are a security expert. Focus on identifying potential security issues.
-Look for:
-- Input validation vulnerabilities
-- Authentication and authorization flaws
-- Data exposure risks
-- Dependency vulnerabilities
-- Configuration security issues
-```
-
-### TUI personalization
-
-Create `~/.config/opencode/tui.json`:
-
-```json
-{
-  "$schema": "https://opencode.ai/tui.json",
-  "theme": "tokyonight",
-  "scroll_speed": 3
-}
-```
+CLI: `opencode agent create`, `opencode debug config`, `opencode models`, `opencode keybinds`.
 
 ## Tips
 
@@ -528,3 +688,8 @@ Create `~/.config/opencode/tui.json`:
   still be invoked via Task tool
 - Provider `baseURL` and model `limit.context` are often needed for custom
   and local providers
+- Use `opencode.jsonc` for configs with comments and trailing commas
+- Run `opencode keybinds` to see all 70+ customizable keybinds
+- Use `{file:./reference.md}` for complete LSP servers, keybinds, env vars,
+  and model/provider schemas
+- For latest info, always check the official docs at <https://opencode.ai/docs>
