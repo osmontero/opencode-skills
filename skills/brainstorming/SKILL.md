@@ -113,7 +113,6 @@ digraph brainstorming {
 
 - Write the validated design (spec) to `docs/opencode-skills/specs/YYYY-MM-DD-<topic>-design.md`
   - (User preferences for spec location override this default)
-- Use elements-of-style:writing-clearly-and-concisely skill if available
 - Commit the design document to git
 
 **Spec Self-Review:**
