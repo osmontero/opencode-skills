@@ -7,8 +7,6 @@ This repository contains **opencode skills and global agents** — Markdown-base
 ```
 skills/          — 27 skill directories (each: SKILL.md + optional scripts/, references/, assets/)
 agents/          — 8 agent definition files (YAML-frontmatter Markdown, *.md)
-common/scripts/  — Shared Python utilities used by multiple skills
-  office/        — Office document helpers (schemas, validators, pack/unpack) — shared by pdf skill
 docs/            — Design specs and documentation
 .opencode/       — Local opencode config (opencode.json, prompts/, plans/)
 ```
@@ -21,10 +19,6 @@ Each skill is a `skills/<name>/SKILL.md` with YAML frontmatter (`name`, `descrip
 
 **Editing a skill means editing its SKILL.md and any bundled files.** There is no compilation or build step.
 
-### Common scripts are shared via relative paths
-
-`common/scripts/office/` contains Python utilities shared across skills. After installation, these live at `~/.config/opencode/common/` so `../../common/` resolves from any `skills/*/` directory. **When editing a skill that uses common scripts, verify the relative path still works from the installed location.**
-
 ### Python dependencies are managed by `uv`
 
 `pyproject.toml` lists dependencies (pdfplumber, pypdf, pillow, playwright, etc.). The virtual environment is installed at `~/.local/opencode-venv/` by `install.sh`. Before running any Python scripts:
@@ -35,7 +29,7 @@ source ~/.local/opencode-venv/bin/activate
 
 ### install.sh is the deployment mechanism
 
-`./install.sh` copies skills, agents, common scripts, and config to `~/.config/opencode/`. It also installs Python deps and replaces the global `opencode.json`. **After editing files in this repo, run `./install.sh` to apply changes to the active opencode configuration.**
+`./install.sh` copies skills, agents, and config to `~/.config/opencode/`. It also installs Python deps and replaces the global `opencode.json`. **After editing files in this repo, run `./install.sh` to apply changes to the active opencode configuration.**
 
 ### Agent files use YAML frontmatter
 

@@ -4,9 +4,9 @@ Adapted skills and agents for the opencode agent ecosystem.
 
 ## Contents
 
-**31 skills** covering development workflows, document generation, code review, testing, debugging, design, and more.
+**27 skills** covering development workflows, document generation, code review, testing, debugging, design, and more.
 
-**7 global agents** for implementation, review, and evaluation.
+**8 global agents** for implementation, review, and evaluation.
 
 ## Install
 
@@ -39,6 +39,7 @@ cp agents/* ~/.config/opencode/agents/
 | `grader` | Evaluates skill test expectations with pass/fail verdicts |
 | `comparator` | Blind A/B comparison of skill outputs |
 | `analyzer` | Post-hoc analysis + benchmark pattern detection |
+| `internet-researcher` | Web research, fact-checking, and source gathering |
 
 ## Skills
 
@@ -50,7 +51,6 @@ cp agents/* ~/.config/opencode/agents/
 | `canvas-design` | Design |
 | `dispatching-parallel-agents` | Workflow |
 | `doc-coauthoring` | Documents |
-| `docx` | Documents |
 | `executing-plans` | Workflow |
 | `finishing-a-development-branch` | Workflow |
 | `frontend-design` | Design |
@@ -58,7 +58,6 @@ cp agents/* ~/.config/opencode/agents/
 | `mcp-builder` | Development |
 | `opencode-setup` | Configuration |
 | `pdf` | Documents |
-| `pptx` | Documents |
 | `receiving-code-review` | Workflow |
 | `requesting-code-review` | Workflow |
 | `skill-creator` | Development |
@@ -73,9 +72,4 @@ cp agents/* ~/.config/opencode/agents/
 | `webapp-testing` | Development |
 | `web-artifacts-builder` | Development |
 | `writing-plans` | Workflow |
-| `writing-skills` | Development |
-| `xlsx` | Documents |
-
-## Common Scripts
-
-Office document scripts are shared across `docx/`, `pptx/`, and `xlsx/` via `common/scripts/office/` to avoid duplication (~100MB of repeated schemas).
+ 

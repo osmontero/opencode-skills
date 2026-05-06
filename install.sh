@@ -35,13 +35,6 @@ for f in "$CONFIG_DIR/agents/"*.md; do
 done
 cp "$SCRIPT_DIR/agents/"* "$CONFIG_DIR/agents/"
 
-# Install common scripts (shared office utilities)
-# Placed at $CONFIG_DIR/common/ so ../../common/ resolves from skills/*/
-if [ -d "$SCRIPT_DIR/common" ]; then
-  echo "Installing common scripts..."
-  cp -r "$SCRIPT_DIR/common" "$CONFIG_DIR/common"
-fi
-
 # Install opencode.json config (replaces global config)
 GLOBAL_CONFIG="$CONFIG_DIR/opencode.json"
 REPO_CONFIG="$SCRIPT_DIR/.opencode/opencode.json"
@@ -54,6 +47,12 @@ fi
 if [ -d "$SCRIPT_DIR/.opencode/prompts" ]; then
   echo "Installing prompt files..."
   cp -r "$SCRIPT_DIR/.opencode/prompts" "$CONFIG_DIR/prompts"
+fi
+
+# Remove legacy common folder from older installs
+if [ -d "$CONFIG_DIR/common" ]; then
+  echo "Removing legacy common folder from $CONFIG_DIR..."
+  rm -rf "$CONFIG_DIR/common"
 fi
 
 # Install Python dependencies via uv
@@ -77,4 +76,4 @@ fi
 echo "  Python environment ready at $OPENVEN"
 echo "  Activate with: source $OPENVEN/bin/activate"
 
-echo "Done. $(ls -d "$CONFIG_DIR/skills/"*/ 2>/dev/null | wc -l) skills and $(ls "$CONFIG_DIR/agents/" | wc -l) agents installed."
+echo "Done. $(ls -d "$CONFIG_DIR/skills/"*/ 2>/dev/null | wc -l) skills and $(ls "$CONFIG_DIR/agents/"*.md 2>/dev/null | wc -l) agents installed."
