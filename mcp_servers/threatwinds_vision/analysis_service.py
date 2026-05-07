@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Literal, Optional
 
-from mcp_servers.threatwinds_vision.models import (
+from models import (
     AnalysisError,
     AnalysisWarning,
     ImageAnalysisResult,
@@ -17,15 +17,15 @@ from mcp_servers.threatwinds_vision.models import (
     PdfAnalysisResult,
     SourceType,
 )
-from mcp_servers.threatwinds_vision.pdf_renderer import (
+from pdf_renderer import (
     render_pdf_to_images,
 )
-from mcp_servers.threatwinds_vision.source_loader import (
+from source_loader import (
     load_path_source,
     materialize_base64_source,
     download_url_source,
 )
-from mcp_servers.threatwinds_vision.vision_client import (
+from vision_client import (
     request_vision_analysis,
 )
 
