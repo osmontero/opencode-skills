@@ -1,5 +1,5 @@
 ---
-name: internal-comms
+name: writing-internal-comms
 description: Use when writing internal communications using company-preferred formats. Triggers include requests for status reports, leadership updates, 3P updates (Progress/Plans/Problems), company newsletters, FAQs, incident reports, project updates, or any internal business communication.
 license: Complete terms in LICENSE.txt
 ---

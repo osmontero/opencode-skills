@@ -1,5 +1,5 @@
 ---
-name: algorithmic-art
+name: creating-algorithmic-art
 description: Use when creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Triggers include requests for generative art, algorithmic art, flow fields, particle systems, or any art created through code. Always create original algorithmic art — never copy existing artists' work to avoid copyright violations.
 license: Complete terms in LICENSE.txt
 ---

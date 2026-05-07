@@ -1,13 +1,11 @@
 ---
-name: opencode-setup
+name: configuring-opencode
 description: >
-  Configure opencode: providers, models, agents, skills, commands, permissions, themes, keybinds,
-  LSP servers, MCP servers, formatters, and all runtime settings. Use this skill whenever the user
-  asks to set up opencode, configure a provider, add a model, create an agent, personalize
+  Use when configuring opencode: providers, models, agents, skills, commands, permissions, themes, keybinds,
+  LSP servers, MCP servers, formatters, and all runtime settings. Triggers include requests to set up opencode, configure a provider, add a model, create an agent, personalize
   opencode, set permissions, configure agents, change themes, add keybinds, set up rules, configure
   LSP or MCP servers, or anything related to opencode.json, tui.json, or opencode.jsonc
-  configuration. Trigger on mentions of config, setup, personalization, provider, model selection,
-  agent creation, or opencode customization.
+  configuration.
 mode: subagent
 permission:
   edit: deny

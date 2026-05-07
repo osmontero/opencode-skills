@@ -1,5 +1,5 @@
 ---
-name: mcp-builder
+name: building-mcp-servers
 description: Use when building MCP (Model Context Protocol) servers to enable LLMs to interact with external services through well-designed tools. Triggers include requests to create MCP servers, integrate external APIs or services, or build MCP tools in Python (FastMCP) or Node/TypeScript (MCP SDK).
 license: Complete terms in LICENSE.txt
 ---
