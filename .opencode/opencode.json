@@ -175,6 +175,17 @@
       "environment": {
         "BRAVE_API_KEY": "{env:BRAVE_API_KEY}"
       }
+    },
+    "threatwinds-vision": {
+      "type": "local",
+      "command": [
+        "/home/osmany/.local/opencode-venv/bin/python3",
+        "/home/osmany/Data/Projects/github.com/osmontero/opencode-skills/skills/mcp_builder/examples/threatwinds_vision_mcp/server.py"
+      ],
+      "environment": {
+        "THREATWINDS_API_KEY": "{env:THREATWINDS_API_KEY}",
+        "THREATWINDS_API_SECRET": "{env:THREATWINDS_API_SECRET}"
+      }
     }
   },
   "lsp": {

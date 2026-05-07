@@ -52,6 +52,14 @@ The following skills are MIT-licensed adaptations from [obra/superpowers](https:
 
 See individual `skills/<name>/LICENSE.txt` files for full license text and attribution notices.
 
+## Examples
+
+### ThreatWinds Vision MCP Server
+
+A [FastMCP](https://github.com/modelcontextprotocol/python-sdk) server that analyzes scanned PDFs and images through the [ThreatWinds AI API](https://threatwinds.com). Supports arbitrary extraction prompts and three input modes: local file paths, remote URLs, and base64 payloads.
+
+See [`skills/mcp_builder/examples/threatwinds_vision_mcp/README.md`](skills/mcp_builder/examples/threatwinds_vision_mcp/README.md) for setup and usage.
+
 ## Install
 
 ```bash
