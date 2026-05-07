@@ -10,10 +10,13 @@ FastMCP server that analyzes scanned PDFs and images through the [ThreatWinds AI
 
 ## Running the server
 
-Dependencies are managed via `pyproject.toml` and installed by `install.sh` into `~/.local/opencode-venv/`.
+Dependencies are managed via `pyproject.toml` and installed by `install.sh` into `~/.local/opencode-venv/`. The server is copied to `~/.config/opencode/mcp_servers/` by `install.sh`.
 
 ```bash
-# Run the server (uses opencode venv directly)
+# After install.sh:
+~/.local/opencode-venv/bin/python3 ~/.config/opencode/mcp_servers/threatwinds_vision/server.py
+
+# Or from the repo (without install.sh):
 ~/.local/opencode-venv/bin/python3 mcp_servers/threatwinds_vision/server.py
 ```
 
@@ -67,8 +70,8 @@ Add this to your `.opencode/opencode.json` under the `mcp` section:
   "threatwinds-vision": {
     "type": "local",
     "command": [
-      "/home/osmany/.local/opencode-venv/bin/python3",
-      "/home/osmany/Data/Projects/github.com/osmontero/opencode-skills/mcp_servers/threatwinds_vision/server.py"
+      "~/.local/opencode-venv/bin/python3",
+      "~/.config/opencode/mcp_servers/threatwinds_vision/server.py"
     ],
     "environment": {
       "THREATWINDS_API_KEY": "{env:THREATWINDS_API_KEY}",
@@ -77,6 +80,8 @@ Add this to your `.opencode/opencode.json` under the `mcp` section:
   }
 }
 ```
+
+Or just run `./install.sh` — it copies the server and config automatically.
 
 ## Architecture
 

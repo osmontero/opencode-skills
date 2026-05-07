@@ -35,6 +35,24 @@ for f in "$CONFIG_DIR/agents/"*.md; do
 done
 cp "$SCRIPT_DIR/agents/"* "$CONFIG_DIR/agents/"
 
+# Install MCP servers
+echo "Installing MCP servers to $CONFIG_DIR/mcp_servers/..."
+if [ -d "$SCRIPT_DIR/mcp_servers" ]; then
+  mkdir -p "$CONFIG_DIR/mcp_servers"
+  for d in "$CONFIG_DIR/mcp_servers"/*/; do
+    name="$(basename "$d")"
+    if [ ! -d "$SCRIPT_DIR/mcp_servers/$name" ]; then
+      echo "  Removing $name (no longer in repo)"
+      rm -rf "$d"
+    fi
+  done
+  for d in "$SCRIPT_DIR/mcp_servers"/*/; do
+    name="$(basename "$d")"
+    rm -rf "$CONFIG_DIR/mcp_servers/$name"
+    cp -r "$d" "$CONFIG_DIR/mcp_servers/$name"
+  done
+fi
+
 # Install opencode.json config (replaces global config)
 GLOBAL_CONFIG="$CONFIG_DIR/opencode.json"
 REPO_CONFIG="$SCRIPT_DIR/.opencode/opencode.json"
