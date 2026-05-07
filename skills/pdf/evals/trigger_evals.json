@@ -1,0 +1,21 @@
+[
+  {"query": "i need to pull all the text out of this invoice.pdf file so i can search through it", "should_trigger": true},
+  {"query": "can you extract the tables from quarterly_report.pdf and save them as csv files?", "should_trigger": true},
+  {"query": "this scanned receipt won't let me copy the text - how do i get the data out of it?", "should_trigger": true},
+  {"query": "merge these three pdf files (a.pdf, b.pdf, c.pdf) into one document", "should_trigger": true},
+  {"query": "the pdf form at /docs/application.pdf needs to be filled with my info from applicant.json", "should_trigger": true},
+  {"query": "convert each page of presentation.pdf to images at 300 dpi", "should_trigger": true},
+  {"query": "ocr this old document - it's all images and i need the text", "should_trigger": true},
+  {"query": "split contract.pdf into separate files for each page", "should_trigger": true},
+  {"query": "write a python function to calculate fibonacci numbers", "should_trigger": false},
+  {"query": "help me debug this react component that's not rendering properly", "should_trigger": false},
+  {"query": "create a sql query to find duplicate emails in the users table", "should_trigger": false},
+  {"query": "explain how git rebase works with an example", "should_trigger": false},
+  {"query": "format this json data prettily", "should_trigger": false},
+  {"query": "convert this excel spreadsheet to csv format", "should_trigger": false},
+  {"query": "write a bash script to backup my home directory", "should_trigger": false},
+  {"query": "what's the best way to center a div in css?", "should_trigger": false},
+  {"query": "help me understand async await in javascript", "should_trigger": false},
+  {"query": "create a docker container for my nodejs app", "should_trigger": false},
+  {"query": "review my resume and suggest improvements", "should_trigger": false}
+]
