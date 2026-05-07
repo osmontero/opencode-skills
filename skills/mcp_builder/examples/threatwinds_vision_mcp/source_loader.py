@@ -149,6 +149,11 @@ def download_url_source(url: str, expected_kind: str, timeout: int = DEFAULT_TIM
     if not content:
         raise ValueError("Downloaded content is empty")
 
+    if expected_kind == "pdf" and not (content_type or "").startswith("application/pdf"):
+        raise ValueError("URL did not resolve to PDF content")
+    if expected_kind == "image" and not (content_type or "").startswith("image/"):
+        raise ValueError("URL did not resolve to image content")
+
     suffix = ".pdf" if expected_kind == "pdf" else mimetypes.guess_extension(content_type or "") or ".bin"
     handle = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
     try:
@@ -157,13 +162,7 @@ def download_url_source(url: str, expected_kind: str, timeout: int = DEFAULT_TIM
     finally:
         handle.close()
 
-    path = Path(handle.name)
-    if expected_kind == "pdf" and not (content_type or "").startswith("application/pdf"):
-        raise ValueError("URL did not resolve to PDF content")
-    if expected_kind == "image" and not (content_type or "").startswith("image/"):
-        raise ValueError("URL did not resolve to image content")
-
-    return LoadedSource(source_type="url", local_path=path, mime_type=content_type)
+    return LoadedSource(source_type="url", local_path=Path(handle.name), mime_type=content_type)
 
 
 def materialize_base64_source(value: str, expected_kind: str) -> LoadedSource:

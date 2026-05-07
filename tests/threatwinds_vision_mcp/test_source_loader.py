@@ -39,6 +39,11 @@ class TestValidateUrl:
         with pytest.raises(ValueError, match="Only http and https"):
             validate_url("ftp://example.com/file.pdf")
 
+    def test_validate_url_rejects_missing_netloc(self) -> None:
+        """URL with scheme but no netloc should be rejected."""
+        with pytest.raises(ValueError, match="network location"):
+            validate_url("https://")
+
 
 class TestLoadedSource:
     """Tests for LoadedSource dataclass."""
@@ -144,6 +149,13 @@ class TestLoadPathSource:
         txt_file.write_text("hello")
         with pytest.raises(ValueError, match="Expected a PDF"):
             load_path_source(str(txt_file), expected_kind="pdf")
+
+    def test_load_path_source_image_wrong_kind(self, tmp_path: Path) -> None:
+        """Non-image file with expected_kind='image' should raise ValueError."""
+        txt_file = tmp_path / "sample.txt"
+        txt_file.write_text("hello")
+        with pytest.raises(ValueError, match="Expected an image"):
+            load_path_source(str(txt_file), expected_kind="image")
 
 
 class TestDownloadUrlSource:
@@ -275,3 +287,10 @@ class TestMaterializeBase64Source:
         payload = f"data:image/png;base64,{raw}"
         with pytest.raises(ValueError, match="not a PDF"):
             materialize_base64_source(payload, expected_kind="pdf")
+
+    def test_materialize_base64_source_image_mismatch(self) -> None:
+        """Image base64 with non-image MIME type and expected_kind='image' should raise ValueError."""
+        raw = base64.b64encode(b"not an image").decode("ascii")
+        payload = f"data:text/plain;base64,{raw}"
+        with pytest.raises(ValueError, match="not an image"):
+            materialize_base64_source(payload, expected_kind="image")
