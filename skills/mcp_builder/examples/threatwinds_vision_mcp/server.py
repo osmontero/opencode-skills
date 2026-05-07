@@ -11,7 +11,6 @@ sends it to the ThreatWinds vision API, and returns structured JSON results.
 from __future__ import annotations
 
 import json
-from typing import Any
 
 from mcp.server.fastmcp import FastMCP
 from mcp.types import ToolAnnotations
@@ -30,6 +29,7 @@ mcp = FastMCP("threatwinds_vision_mcp")
 
 @mcp.tool(
     name="analyze_pdf",
+    title="Analyze PDF Document",
     description=(
         "Analyze a PDF document using vision AI. "
         "Accepts a PDF via local path, URL, or base64-encoded data. "
@@ -70,33 +70,49 @@ def analyze_pdf(
         JSON string with per-page analysis results, combined content,
         and any warnings or errors.
     """
-    # Validate inputs using Pydantic model
-    AnalyzePdfInput(
-        prompt=prompt,
-        pdf_path=pdf_path,
-        pdf_url=pdf_url,
-        pdf_base64=pdf_base64,
-        pages=pages,
-        model=model,
-        dpi=dpi,
-        max_tokens=max_tokens,
-    )
+    try:
+        # Validate inputs using Pydantic model
+        AnalyzePdfInput(
+            prompt=prompt,
+            pdf_path=pdf_path,
+            pdf_url=pdf_url,
+            pdf_base64=pdf_base64,
+            pages=pages,
+            model=model,
+            dpi=dpi,
+            max_tokens=max_tokens,
+        )
 
-    result = analyze_pdf_source(
-        prompt=prompt,
-        model=model,
-        max_tokens=max_tokens,
-        dpi=dpi,
-        pages=pages,
-        pdf_path=pdf_path,
-        pdf_url=pdf_url,
-        pdf_base64=pdf_base64,
-    )
-    return json.dumps(result.model_dump(), indent=2)
+        result = analyze_pdf_source(
+            prompt=prompt,
+            model=model,
+            max_tokens=max_tokens,
+            dpi=dpi,
+            pages=pages,
+            pdf_path=pdf_path,
+            pdf_url=pdf_url,
+            pdf_base64=pdf_base64,
+        )
+        return json.dumps(result.model_dump(), indent=2)
+    except Exception as exc:
+        return json.dumps(
+            {
+                "input_type": "pdf",
+                "source_type": "path" if pdf_path else "url" if pdf_url else "base64",
+                "model": model,
+                "prompt": prompt,
+                "results": [],
+                "combined_content": "",
+                "warnings": [],
+                "errors": [{"code": "server_error", "message": str(exc)}],
+            },
+            indent=2,
+        )
 
 
 @mcp.tool(
     name="analyze_image",
+    title="Analyze Image",
     description=(
         "Analyze an image using vision AI. "
         "Accepts an image via local path, URL, or base64-encoded data. "
@@ -132,22 +148,42 @@ def analyze_image(
     Returns:
         JSON string with analysis content and metadata.
     """
-    # Validate inputs using Pydantic model
-    AnalyzeImageInput(
-        prompt=prompt,
-        image_path=image_path,
-        image_url=image_url,
-        image_base64=image_base64,
-        model=model,
-        max_tokens=max_tokens,
-    )
+    try:
+        # Validate inputs using Pydantic model
+        AnalyzeImageInput(
+            prompt=prompt,
+            image_path=image_path,
+            image_url=image_url,
+            image_base64=image_base64,
+            model=model,
+            max_tokens=max_tokens,
+        )
 
-    result = analyze_image_source(
-        prompt=prompt,
-        model=model,
-        max_tokens=max_tokens,
-        image_path=image_path,
-        image_url=image_url,
-        image_base64=image_base64,
-    )
-    return json.dumps(result.model_dump(), indent=2)
+        result = analyze_image_source(
+            prompt=prompt,
+            model=model,
+            max_tokens=max_tokens,
+            image_path=image_path,
+            image_url=image_url,
+            image_base64=image_base64,
+        )
+        return json.dumps(result.model_dump(), indent=2)
+    except Exception as exc:
+        return json.dumps(
+            {
+                "input_type": "image",
+                "source_type": (
+                    "path" if image_path else "url" if image_url else "base64"
+                ),
+                "model": model,
+                "prompt": prompt,
+                "content": "",
+                "warnings": [],
+                "errors": [{"code": "server_error", "message": str(exc)}],
+            },
+            indent=2,
+        )
+
+
+if __name__ == "__main__":
+    mcp.run()
