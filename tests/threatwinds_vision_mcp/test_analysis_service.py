@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import json
 import urllib.error
 from pathlib import Path
@@ -116,6 +117,12 @@ class TestBuildHeaders:
         assert "api-key" not in headers
         assert "api-secret" not in headers
 
+    def test_build_headers_with_empty_string_key_uses_bearer(self) -> None:
+        """Empty-string api_key should still produce a Bearer header."""
+        headers = build_headers(api_key="", api_secret=None)
+        assert headers["Authorization"] == "Bearer "
+        assert "api-key" not in headers
+
     def test_build_headers_always_sets_content_type(self) -> None:
         """Content-Type and accept headers should always be present."""
         headers_with = build_headers(api_key="k", api_secret="s")
@@ -157,7 +164,6 @@ class TestImageFileToDataUrl:
         img.write_bytes(content)
         result = image_file_to_data_url(img)
         # Verify the base64 portion decodes back to original content
-        import base64
         encoded_part = result.split(",", 1)[1]
         assert base64.b64decode(encoded_part) == content
 
@@ -273,10 +279,11 @@ class TestRequestVisionAnalysis:
                     request_vision_analysis(
                         image_path=img,
                         prompt="test",
-                        model="qwen-3.6",
-                        max_tokens=1024,
-                    )
+                    model="qwen-3.6",
+                    max_tokens=1024,
+                )
 
-    def test_api_base_constant(self) -> None:
-        """API_BASE should point to the ThreatWinds API."""
-        assert API_BASE == "https://apis.threatwinds.com/api/ai/v1"
+
+def test_api_base_constant() -> None:
+    """API_BASE should point to the ThreatWinds API."""
+    assert API_BASE == "https://apis.threatwinds.com/api/ai/v1"

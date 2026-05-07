@@ -7,6 +7,7 @@ import json
 import mimetypes
 import os
 from pathlib import Path
+from typing import Any
 import urllib.error
 import urllib.request
 
@@ -53,7 +54,7 @@ def build_headers(api_key: str, api_secret: str | None) -> dict[str, str]:
     return headers
 
 
-def build_chat_payload(model: str, prompt: str, data_url: str, max_tokens: int) -> dict[str, object]:
+def build_chat_payload(model: str, prompt: str, data_url: str, max_tokens: int) -> dict[str, Any]:
     """Build a chat completion payload for a vision analysis request.
 
     Args:
@@ -105,7 +106,7 @@ def request_vision_analysis(
         ValueError: If no API key is available.
         RuntimeError: If the API request fails or response is malformed.
     """
-    resolved_api_key = api_key or os.environ.get("THREATWINDS_API_KEY")
+    resolved_api_key = api_key if api_key is not None else os.environ.get("THREATWINDS_API_KEY")
     resolved_api_secret = api_secret if api_secret is not None else os.environ.get("THREATWINDS_API_SECRET")
 
     if not resolved_api_key:
