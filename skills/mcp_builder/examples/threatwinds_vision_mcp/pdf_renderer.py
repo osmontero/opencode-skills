@@ -51,9 +51,11 @@ def parse_pages(pages: str) -> set[int]:
     for part in pages.split(","):
         part = part.strip()
         if "-" in part:
-            # Range notation: split on first dash only, but handle leading negative
-            # A leading dash means negative number, not a range
-            if part.startswith("-"):
+            tokens = part.split("-", 1)
+            start_str = tokens[0].strip()
+            end_str = tokens[1].strip()
+            if not start_str:
+                # Leading dash means negative number, not a range
                 try:
                     page = int(part)
                 except ValueError:
@@ -62,10 +64,7 @@ def parse_pages(pages: str) -> set[int]:
                     raise ValueError("Page numbers must be positive")
                 result.add(page)
                 continue
-            tokens = part.split("-", 1)
-            start_str = tokens[0].strip()
-            end_str = tokens[1].strip()
-            if not start_str or not end_str:
+            if not end_str:
                 raise ValueError(f"Invalid page range: {part}")
             try:
                 start = int(start_str)
@@ -135,6 +134,9 @@ def render_pdf_to_images(
     if not pdf_path.exists():
         raise ValueError(f"PDF file does not exist: {pdf_path}")
 
+    if dpi < 72 or dpi > 600:
+        raise ValueError(f"DPI must be between 72 and 600, got {dpi}")
+
     try:
         doc = pypdfium2.PdfDocument(pdf_path)
     except Exception as exc:
@@ -160,7 +162,7 @@ def render_pdf_to_images(
             delete=False, suffix=".png", prefix=f"page_{page_num:04d}_"
         )
         try:
-            bitmap.save(handle.name)
+            bitmap.to_pil().save(handle.name)
             handle.flush()
         finally:
             handle.close()

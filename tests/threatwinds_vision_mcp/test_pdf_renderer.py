@@ -114,7 +114,7 @@ class TestRenderPdfToImages:
 
         mock_page = MagicMock()
         mock_bitmap = MagicMock()
-        mock_bitmap.save = MagicMock()
+        mock_bitmap.to_pil.return_value.save = MagicMock()
 
         mock_page.render.return_value = mock_bitmap
         mock_doc.__getitem__.return_value = mock_page
@@ -140,7 +140,7 @@ class TestRenderPdfToImages:
 
         mock_page = MagicMock()
         mock_bitmap = MagicMock()
-        mock_bitmap.save = MagicMock()
+        mock_bitmap.to_pil.return_value.save = MagicMock()
 
         mock_page.render.return_value = mock_bitmap
         mock_doc.__getitem__.return_value = mock_page
@@ -170,7 +170,7 @@ class TestRenderPdfToImages:
 
         mock_page = MagicMock()
         mock_bitmap = MagicMock()
-        mock_bitmap.save = MagicMock()
+        mock_bitmap.to_pil.return_value.save = MagicMock()
 
         mock_page.render.return_value = mock_bitmap
         mock_doc.__getitem__.return_value = mock_page
@@ -184,5 +184,40 @@ class TestRenderPdfToImages:
 
                 rendered = render_pdf_to_images(test_path, dpi=100)
 
-                # Verify save was called (image was written)
-                mock_bitmap.save.assert_called_once()
+                # Verify to_pil().save was called (image was written)
+                mock_bitmap.to_pil.assert_called_once()
+                mock_bitmap.to_pil.return_value.save.assert_called_once()
+
+    def test_render_pdf_to_images_dpi_validation(self) -> None:
+        """DPI outside 72-600 range should raise ValueError."""
+        test_path = Path("/tmp/test.pdf")
+        with patch.object(Path, "exists", return_value=True):
+            with pytest.raises(ValueError, match="DPI must be between 72 and 600"):
+                render_pdf_to_images(test_path, dpi=71)
+            with pytest.raises(ValueError, match="DPI must be between 72 and 600"):
+                render_pdf_to_images(test_path, dpi=601)
+
+    def test_render_pdf_to_images_out_of_range_pages(self) -> None:
+        """Pages beyond document length should be silently filtered out."""
+        mock_doc = MagicMock()
+        mock_doc.__len__ = MagicMock(return_value=2)
+
+        mock_page = MagicMock()
+        mock_bitmap = MagicMock()
+        mock_bitmap.to_pil.return_value.save = MagicMock()
+
+        mock_page.render.return_value = mock_bitmap
+        mock_doc.__getitem__.return_value = mock_page
+
+        test_path = Path("/tmp/test.pdf")
+        with patch(
+            "skills.mcp_builder.examples.threatwinds_vision_mcp.pdf_renderer.pypdfium2.PdfDocument"
+        ) as mock_pdf:
+            with patch.object(Path, "exists", return_value=True):
+                mock_pdf.return_value = mock_doc
+
+                # Request pages 1, 3, 5 but doc only has 2 pages
+                rendered = render_pdf_to_images(test_path, pages="1,3,5", dpi=200)
+
+                assert len(rendered) == 1
+                assert rendered[0].page_num == 1
