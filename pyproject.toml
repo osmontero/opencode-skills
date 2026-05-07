@@ -5,9 +5,10 @@ description = "Python dependencies for opencode skills"
 requires-python = ">=3.12"
 
 dependencies = [
-    # pdf skill
+    # PDF skill
     "pdfplumber>=0.11.0",
     "pypdf>=6.0.0",
+    # PDF skill + ThreatWinds MCP server
     "pypdfium2>=5.0.0",
     # slack-gif-creator skill
     "pillow>=10.0.0",
@@ -18,16 +19,12 @@ dependencies = [
     "playwright>=1.40.0",
     # mcp-builder skill
     "anthropic>=0.39.0",
+    # ThreatWinds Vision MCP server
     "mcp>=1.1.0",
     "pydantic>=2.13.4",
-    "pytest>=9.0.3",
 ]
 
 [tool.setuptools.packages]
 find = { include = [] }
 
 [tool.uv]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["."]

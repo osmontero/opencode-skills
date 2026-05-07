@@ -10,15 +10,11 @@ FastMCP server that analyzes scanned PDFs and images through the [ThreatWinds AI
 
 ## Running the server
 
+Dependencies are managed via `pyproject.toml` and installed by `install.sh` into `~/.local/opencode-venv/`.
+
 ```bash
-# Activate the opencode Python venv
-source ~/.local/opencode-venv/bin/activate
-
-# Install dependencies (if not already installed)
-pip install mcp pypdfium2
-
-# Run the server
-python mcp_servers/threatwinds_vision/server.py
+# Run the server (uses opencode venv directly)
+~/.local/opencode-venv/bin/python3 mcp_servers/threatwinds_vision/server.py
 ```
 
 ## Tools
