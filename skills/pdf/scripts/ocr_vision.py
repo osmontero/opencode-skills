@@ -16,18 +16,15 @@ import json
 import os
 import sys
 
-# Ensure the repo root is on sys.path so that the shared analysis modules
-# (mcp_servers.threatwinds_vision.*) are importable
-# regardless of the current working directory.
-#
+# Ensure the vision module is on sys.path
 # Layout: <repo>/skills/pdf/scripts/ocr_vision.py
-#          └── go up 3 levels → <repo>/
+#          └── go up 1 level → <repo>/skills/pdf/ (where vision/ module lives)
 _script_dir = os.path.dirname(os.path.abspath(__file__))
-_repo_root = os.path.dirname(os.path.dirname(os.path.dirname(_script_dir)))
-if _repo_root not in sys.path:
-    sys.path.insert(0, _repo_root)
+_pdf_skill_dir = os.path.dirname(_script_dir)
+if _pdf_skill_dir not in sys.path:
+    sys.path.insert(0, _pdf_skill_dir)
 
-from mcp_servers.threatwinds_vision.analysis_service import (
+from vision.analysis_service import (
     analyze_pdf_source,
 )
 
