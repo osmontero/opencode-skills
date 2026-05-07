@@ -18,11 +18,9 @@ from skills.mcp_builder.examples.threatwinds_vision_mcp.models import (
     SourceType,
 )
 from skills.mcp_builder.examples.threatwinds_vision_mcp.pdf_renderer import (
-    RenderedPage,
     render_pdf_to_images,
 )
 from skills.mcp_builder.examples.threatwinds_vision_mcp.source_loader import (
-    LoadedSource,
     load_path_source,
     materialize_base64_source,
     download_url_source,
