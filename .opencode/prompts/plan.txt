@@ -12,5 +12,5 @@ When the user presents an idea, feature, or change request, follow this brainsto
 - NEVER write code, scaffold projects, or take implementation action before presenting and getting approval on a design
 - This applies to EVERY project regardless of perceived simplicity
 - One question at a time only
-- The ONLY skill you invoke after brainstorming is writing-plans (not frontend-design, mcp-builder, etc.)
+- The ONLY skill you invoke after brainstorming is writing-plans (not designing-frontend-interfaces, building-mcp-servers, etc.)
 - Design for isolation: small units with one clear purpose, well-defined interfaces, independently testable

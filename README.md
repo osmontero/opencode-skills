@@ -20,17 +20,17 @@ Some skills and components incorporate work from other sources under different l
 
 The following skills are licensed under Apache 2.0 and adapted from Anthropic's Claude projects:
 
-- `algorithmic-art` — Generative art creation with p5.js
+- `creating-algorithmic-art` — Generative art creation with p5.js
 - `brand-guidelines` — Brand color and typography application
-- `canvas-design` — Visual design for static documents
-- `doc-coauthoring` — Structured documentation collaboration workflow
-- `internal-comms` — Internal communications templates and guidance
-- `mcp-builder` — Model Context Protocol server development
-- `skill-creator` — Skill development, testing, and benchmarking lifecycle
-- `slack-gif-creator` — Animated GIF creation for Slack
-- `theme-factory` — Thematic styling for artifacts and documents
-- `web-artifacts-builder` — Multi-component HTML artifact creation
-- `webapp-testing` — Playwright-based web application testing
+- `designing-canvas-art` — Visual design for static documents
+- `coauthoring-docs` — Structured documentation collaboration workflow
+- `writing-internal-comms` — Internal communications templates and guidance
+- `building-mcp-servers` — Model Context Protocol server development
+- `creating-skills` — Skill development, testing, and benchmarking lifecycle
+- `creating-slack-gifs` — Animated GIF creation for Slack
+- `applying-themes` — Thematic styling for artifacts and documents
+- `building-web-artifacts` — Multi-component HTML artifact creation
+- `testing-webapps` — Playwright-based web application testing
 
 #### MIT License (Jesse Vincent / obra/superpowers)
 
@@ -47,7 +47,7 @@ The following skills are MIT-licensed adaptations from [obra/superpowers](https:
 - `test-driven-development` — TDD implementation workflow
 - `using-git-worktrees` — Git worktree isolation for feature development
 - `using-superpowers` — Skill discovery and activation
-- `verification-before-completion` — Pre-commit verification and evidence gathering
+- `verifying-before-completion` — Pre-commit verification and evidence gathering
 - `writing-plans` — Implementation plan creation from specs
 
 See individual `skills/<name>/LICENSE.txt` files for full license text and attribution notices.
@@ -97,31 +97,31 @@ cp agents/* ~/.config/opencode/agents/
 
 | Skill                            | Category      |
 |----------------------------------|---------------|
-| `algorithmic-art`                | Design        |
+| `applying-themes`                | Design        |
 | `brainstorming`                  | Workflow      |
 | `brand-guidelines`               | Design        |
-| `canvas-design`                  | Design        |
+| `building-mcp-servers`           | Development   |
+| `building-web-artifacts`         | Development   |
+| `coauthoring-docs`               | Documents     |
+| `configuring-opencode`           | Configuration |
+| `creating-algorithmic-art`       | Design        |
+| `creating-skills`                | Development   |
+| `creating-slack-gifs`            | Design        |
+| `designing-canvas-art`           | Design        |
+| `designing-frontend-interfaces`  | Design        |
 | `dispatching-parallel-agents`    | Workflow      |
-| `doc-coauthoring`                | Documents     |
 | `executing-plans`                | Workflow      |
 | `finishing-a-development-branch` | Workflow      |
-| `frontend-design`                | Design        |
-| `internal-comms`                 | Documents     |
-| `mcp-builder`                    | Development   |
-| `opencode-setup`                 | Configuration |
-| `pdf`                            | Documents     |
+| `processing-pdf`                 | Documents     |
 | `receiving-code-review`          | Workflow      |
 | `requesting-code-review`         | Workflow      |
-| `skill-creator`                  | Development   |
-| `slack-gif-creator`              | Design        |
 | `subagent-driven-development`    | Workflow      |
 | `systematic-debugging`           | Development   |
 | `test-driven-development`        | Development   |
-| `theme-factory`                  | Design        |
+| `testing-webapps`                | Development   |
 | `using-git-worktrees`            | Workflow      |
 | `using-superpowers`              | Workflow      |
-| `verification-before-completion` | Workflow      |
-| `webapp-testing`                 | Development   |
-| `web-artifacts-builder`          | Development   |
+| `verifying-before-completion`    | Workflow      |
+| `writing-internal-comms`         | Documents     |
 | `writing-plans`                  | Workflow      |
  

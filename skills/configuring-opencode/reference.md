@@ -1,6 +1,6 @@
 # OpenCode Configuration Reference
 
-Bundled reference for the opencode-setup skill. Contains complete tables and schemas
+Bundled reference for the configuring-opencode skill. Contains complete tables and schemas
 that are too large for the main SKILL.md.
 
 ## Built-in LSP Servers

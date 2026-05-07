@@ -52,9 +52,9 @@ These are wired into `opencode.json` under `agent.plan.prompt` and `agent.build.
 
 The README documents third-party licenses and attributions. Keep it synchronized if you add/remove skills or change attribution sources.
 
-### skill-creator is the meta-skill
+### creating-skills is the meta-skill
 
-`skills/skill-creator/` contains the full skill development lifecycle: drafting, testing, eval viewer, benchmarking, and description optimization. Its scripts (`scripts/aggregate_benchmark.py`, `scripts/run_loop.py`, etc.) and eval viewer (`eval-viewer/`) are the primary tooling for this repo.
+`skills/creating-skills/` contains the full skill development lifecycle: drafting, testing, eval viewer, benchmarking, and description optimization. Its scripts (`scripts/aggregate_benchmark.py`, `scripts/run_loop.py`, etc.) and eval viewer (`eval-viewer/`) are the primary tooling for this repo.
 
 ## What NOT to do
 
