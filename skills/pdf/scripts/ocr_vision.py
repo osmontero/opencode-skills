@@ -83,6 +83,12 @@ def main():
         print("Set it via --api-key or the THREATWINDS_API_KEY environment variable.", file=sys.stderr)
         sys.exit(1)
 
+    # Forward CLI API credentials to the shared service via environment variables.
+    # The analysis service chain reads from THREATWINDS_API_KEY / THREATWINDS_API_SECRET.
+    os.environ["THREATWINDS_API_KEY"] = args.api_key
+    if args.api_secret:
+        os.environ["THREATWINDS_API_SECRET"] = args.api_secret
+
     # Delegate to the shared analysis service
     result = analyze_pdf_source(
         prompt=args.prompt,

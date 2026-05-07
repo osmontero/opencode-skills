@@ -6,6 +6,7 @@ to provide high-level analysis functions for images and PDFs.
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Literal, Optional
 
@@ -226,7 +227,11 @@ def analyze_pdf_source(
     results: list[PageResult] = []
     errors: list[AnalysisError] = []
 
-    for page in rendered:
+    for idx, page in enumerate(rendered, start=1):
+        print(
+            f"Processing page {idx}/{len(rendered)}...",
+            file=sys.stderr,
+        )
         try:
             content = request_vision_analysis(
                 image_path=page.image_path,
@@ -243,6 +248,13 @@ def analyze_pdf_source(
                     page=page.page_num,
                 )
             )
+
+    # Clean up temporary rendered image files (created with delete=False)
+    for page in rendered:
+        try:
+            page.image_path.unlink(missing_ok=True)
+        except OSError:
+            pass
 
     combined = combine_page_content([(r.page, r.content) for r in results])
 
