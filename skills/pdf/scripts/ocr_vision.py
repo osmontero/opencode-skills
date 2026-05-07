@@ -12,109 +12,31 @@ Usage:
     PYENV_VERSION=3.12.12 python3 scripts/ocr_vision.py input.pdf --pages 1-3
 """
 import argparse
-import base64
 import json
-import mimetypes
 import os
 import sys
-import urllib.error
-import urllib.request
 
-try:
-    from pypdfium2 import PdfDocument
-except ImportError:
-    print("Error: pypdfium2 not installed.", file=sys.stderr)
-    print("Run: PYENV_VERSION=3.12.12 pip3 install pypdfium2", file=sys.stderr)
-    sys.exit(1)
+# Ensure the repo root is on sys.path so that the shared analysis modules
+# (skills.mcp_builder.examples.threatwinds_vision_mcp.*) are importable
+# regardless of the current working directory.
+#
+# Layout: <repo>/skills/pdf/scripts/ocr_vision.py
+#          └── go up 3 levels → <repo>/
+_script_dir = os.path.dirname(os.path.abspath(__file__))
+_repo_root = os.path.dirname(os.path.dirname(os.path.dirname(_script_dir)))
+if _repo_root not in sys.path:
+    sys.path.insert(0, _repo_root)
 
+from skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service import (
+    analyze_pdf_source,
+)
 
-API_BASE = "https://apis.threatwinds.com/api/ai/v1"
 DEFAULT_MODEL = "qwen-3.6"
 DEFAULT_PROMPT = (
     "Extract all visible text from this document image. Preserve the layout and "
     "structure as much as possible. If there are tables, represent them as markdown "
     "tables. If there are form fields, list them with their labels and any filled values."
 )
-
-
-def encode_image(image_path):
-    """Encode an image file as base64 data URL."""
-    mime_type, _ = mimetypes.guess_type(image_path)
-    if not mime_type:
-        mime_type = "image/png"
-    with open(image_path, "rb") as f:
-        b64 = base64.b64encode(f.read()).decode("utf-8")
-    return f"data:{mime_type};base64,{b64}"
-
-
-def pdf_to_images(pdf_path, output_dir, dpi=150):
-    """Convert PDF pages to PNG images."""
-    os.makedirs(output_dir, exist_ok=True)
-    doc = PdfDocument(pdf_path)
-    scale = dpi / 72
-    images = []
-
-    for i, page in enumerate(doc):
-        bitmap = page.render(scale=scale)
-        path = os.path.join(output_dir, f"page_{i + 1:03d}.png")
-        bitmap.to_pil().save(path)
-        images.append(path)
-
-    try:
-        doc.close()
-    except Exception:
-        pass
-    return images
-
-
-def call_vision_api(image_path, prompt, model, api_key, api_secret, max_tokens=4096):
-    """Send an image to the ThreatWinds vision API and return the response."""
-    data_url = encode_image(image_path)
-
-    messages = [
-        {
-            "role": "user",
-            "content": [
-                {"type": "text", "text": prompt},
-                {"type": "image_url", "image_url": {"url": data_url, "detail": "high"}},
-            ],
-        }
-    ]
-
-    payload = {
-        "model": model,
-        "messages": messages,
-        "max_completion_tokens": max_tokens,
-    }
-
-    headers = {
-        "Content-Type": "application/json",
-        "accept": "application/json",
-    }
-    if api_key and api_secret:
-        headers["api-key"] = api_key
-        headers["api-secret"] = api_secret
-    elif api_key:
-        headers["Authorization"] = f"Bearer {api_key}"
-
-    req = urllib.request.Request(
-        f"{API_BASE}/chat/completions",
-        data=json.dumps(payload).encode("utf-8"),
-        headers=headers,
-        method="POST",
-    )
-
-    try:
-        with urllib.request.urlopen(req, timeout=120) as resp:
-            result = json.loads(resp.read().decode("utf-8"))
-            return result["choices"][0]["message"]["content"]
-    except urllib.error.HTTPError as e:
-        body = e.read().decode("utf-8", errors="replace")
-        print(f"API error {e.code}: {body}", file=sys.stderr)
-        return None
-    except Exception as e:
-        print(f"Error calling API: {e}", file=sys.stderr)
-        return None
 
 
 def main():
@@ -133,7 +55,11 @@ def main():
         default=os.environ.get("THREATWINDS_API_KEY"),
         help="ThreatWinds API key (or set THREATWINDS_API_KEY env var)",
     )
-    parser.add_argument("--api-secret", default=os.environ.get("THREATWINDS_API_SECRET"), help="ThreatWinds API secret")
+    parser.add_argument(
+        "--api-secret",
+        default=os.environ.get("THREATWINDS_API_SECRET"),
+        help="ThreatWinds API secret",
+    )
     parser.add_argument(
         "--pages",
         help="Page range to process (e.g., '1-3' or '1,3,5'). Default: all pages.",
@@ -157,53 +83,33 @@ def main():
         print("Set it via --api-key or the THREATWINDS_API_KEY environment variable.", file=sys.stderr)
         sys.exit(1)
 
-    # Parse page range
-    pages_to_process = None
-    if args.pages:
-        if "-" in args.pages:
-            start, end = args.pages.split("-", 1)
-            pages_to_process = set(range(int(start), int(end) + 1))
-        else:
-            pages_to_process = set(int(p) for p in args.pages.split(","))
+    # Delegate to the shared analysis service
+    result = analyze_pdf_source(
+        prompt=args.prompt,
+        model=args.model,
+        max_tokens=args.max_tokens,
+        dpi=args.dpi,
+        pages=args.pages,
+        pdf_path=args.pdf,
+    )
 
-    # Convert PDF to images
-    import tempfile
-    with tempfile.TemporaryDirectory() as tmpdir:
-        images = pdf_to_images(args.pdf, tmpdir, dpi=args.dpi)
+    # Print any warnings to stderr
+    for warning in result.warnings:
+        print(f"Warning [{warning.code}]: {warning.message}", file=sys.stderr)
 
-        if pages_to_process:
-            filtered = []
-            for i, img in enumerate(images):
-                if (i + 1) in pages_to_process:
-                    filtered.append(img)
-            images = filtered
+    # Print any errors to stderr
+    for error in result.errors:
+        page_info = f" (page {error.page})" if error.page else ""
+        print(f"Error [{error.code}]{page_info}: {error.message}", file=sys.stderr)
 
-        if not images:
-            print("No pages to process.", file=sys.stderr)
-            sys.exit(1)
-
-        results = []
-        total = len(images)
-
-        for i, img_path in enumerate(images):
-            page_num = i + 1
-            print(f"Processing page {page_num}/{total}...", file=sys.stderr)
-
-            text = call_vision_api(
-                img_path, args.prompt, args.model,
-                args.api_key, args.api_secret, args.max_tokens
-            )
-
-            if text is None:
-                text = f"(error processing page {page_num})"
-
-            if args.json:
-                results.append({"page": page_num, "content": text})
-            else:
-                results.append(f"=== Page {page_num} ===\n{text}\n")
-
-    # Output
-    output_text = json.dumps(results, indent=2) if args.json else "".join(results)
+    # Format output
+    if args.json:
+        results_list = [
+            {"page": r.page, "content": r.content} for r in result.results
+        ]
+        output_text = json.dumps(results_list, indent=2)
+    else:
+        output_text = result.combined_content
 
     if args.output:
         with open(args.output, "w") as f:
