@@ -15,11 +15,11 @@ import json
 from mcp.server.fastmcp import FastMCP
 from mcp.types import ToolAnnotations
 
-from analysis_service import (
+from .analysis_service import (
     analyze_image_source,
     analyze_pdf_source,
 )
-from models import (
+from .models import (
     AnalyzeImageInput,
     AnalyzePdfInput,
 )
