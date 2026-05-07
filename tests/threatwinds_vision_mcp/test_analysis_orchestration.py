@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Literal
 from unittest.mock import MagicMock, patch
 
 import pytest
 
 from skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service import (
+    _resolve_image_source,
+    _resolve_pdf_source,
     analyze_image_source,
     analyze_pdf_source,
     combine_page_content,
@@ -375,3 +376,109 @@ class TestAnalyzePdfSource:
                         model="qwen-3.6",
                         max_tokens=1024,
                     )
+
+
+class TestResolverMutualExclusion:
+    """Tests for resolver mutual-exclusion validation."""
+
+    def test_resolve_image_source_no_source_raises(self) -> None:
+        """Providing no image source should raise ValueError."""
+        with pytest.raises(ValueError, match="No image source provided"):
+            _resolve_image_source()
+
+    def test_resolve_image_source_multiple_sources_raises(self) -> None:
+        """Providing multiple image sources should raise ValueError."""
+        with pytest.raises(ValueError, match="Exactly one image source"):
+            _resolve_image_source(
+                image_path="/tmp/img.png",
+                image_url="https://example.com/img.png",
+            )
+
+    def test_resolve_image_source_all_three_sources_raises(self) -> None:
+        """Providing all three image sources should raise ValueError."""
+        with pytest.raises(ValueError, match="Exactly one image source"):
+            _resolve_image_source(
+                image_path="/tmp/img.png",
+                image_url="https://example.com/img.png",
+                image_base64="data:image/png;base64,abc",
+            )
+
+    def test_resolve_pdf_source_no_source_raises(self) -> None:
+        """Providing no PDF source should raise ValueError."""
+        with pytest.raises(ValueError, match="No PDF source provided"):
+            _resolve_pdf_source()
+
+    def test_resolve_pdf_source_multiple_sources_raises(self) -> None:
+        """Providing multiple PDF sources should raise ValueError."""
+        with pytest.raises(ValueError, match="Exactly one PDF source"):
+            _resolve_pdf_source(
+                pdf_path="/tmp/doc.pdf",
+                pdf_url="https://example.com/doc.pdf",
+            )
+
+    def test_resolve_pdf_source_all_three_sources_raises(self) -> None:
+        """Providing all three PDF sources should raise ValueError."""
+        with pytest.raises(ValueError, match="Exactly one PDF source"):
+            _resolve_pdf_source(
+                pdf_path="/tmp/doc.pdf",
+                pdf_url="https://example.com/doc.pdf",
+                pdf_base64="data:application/pdf;base64,abc",
+            )
+
+
+class TestPdfPartialFailureWarning:
+    """Tests for partial PDF analysis warnings."""
+
+    def test_analyze_pdf_source_partial_failure_has_warning(self) -> None:
+        """Partial page failure should produce a partial_pdf_analysis warning."""
+        with patch(
+            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_pdf_source"
+        ) as mock_resolve:
+            mock_resolve.return_value = (Path("/tmp/doc.pdf"), "path")
+            with patch(
+                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.render_pdf_to_images"
+            ) as mock_render:
+                mock_render.return_value = [
+                    MagicMock(page_num=1, image_path=Path("/tmp/p1.png")),
+                    MagicMock(page_num=2, image_path=Path("/tmp/p2.png")),
+                ]
+                with patch(
+                    "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.request_vision_analysis"
+                ) as mock_vision:
+                    mock_vision.side_effect = [
+                        "page1 ok",
+                        RuntimeError("page 2 failed"),
+                    ]
+                    result = analyze_pdf_source(
+                        pdf_path="/tmp/doc.pdf",
+                        prompt="test",
+                        model="qwen-3.6",
+                        max_tokens=1024,
+                    )
+                    assert len(result.warnings) == 1
+                    assert result.warnings[0].code == "partial_pdf_analysis"
+                    assert "1 of 2" in result.warnings[0].message
+
+    def test_analyze_pdf_source_no_failure_no_warning(self) -> None:
+        """Successful analysis of all pages should have no warnings."""
+        with patch(
+            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_pdf_source"
+        ) as mock_resolve:
+            mock_resolve.return_value = (Path("/tmp/doc.pdf"), "path")
+            with patch(
+                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.render_pdf_to_images"
+            ) as mock_render:
+                mock_render.return_value = [
+                    MagicMock(page_num=1, image_path=Path("/tmp/p1.png")),
+                ]
+                with patch(
+                    "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.request_vision_analysis"
+                ) as mock_vision:
+                    mock_vision.return_value = "page1 ok"
+                    result = analyze_pdf_source(
+                        pdf_path="/tmp/doc.pdf",
+                        prompt="test",
+                        model="qwen-3.6",
+                        max_tokens=1024,
+                    )
+                    assert len(result.warnings) == 0

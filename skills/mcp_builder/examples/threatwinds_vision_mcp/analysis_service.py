@@ -11,6 +11,7 @@ from typing import Literal, Optional
 
 from skills.mcp_builder.examples.threatwinds_vision_mcp.models import (
     AnalysisError,
+    AnalysisWarning,
     ImageAnalysisResult,
     PageResult,
     PdfAnalysisResult,
@@ -72,15 +73,28 @@ def _resolve_image_source(
         ValueError: If no source or multiple sources are provided.
     """
     if image_path is not None:
+        if image_url is not None or image_base64 is not None:
+            raise ValueError(
+                "Exactly one image source must be provided "
+                "(image_path, image_url, or image_base64)"
+            )
         loaded = load_path_source(image_path, expected_kind="image")
         return loaded.local_path, loaded.source_type
     if image_url is not None:
+        if image_base64 is not None:
+            raise ValueError(
+                "Exactly one image source must be provided "
+                "(image_path, image_url, or image_base64)"
+            )
         loaded = download_url_source(image_url, expected_kind="image")
         return loaded.local_path, loaded.source_type
     if image_base64 is not None:
         loaded = materialize_base64_source(image_base64, expected_kind="image")
         return loaded.local_path, loaded.source_type
-    raise ValueError("No image source provided")
+    raise ValueError(
+        "No image source provided: exactly one of image_path, "
+        "image_url, or image_base64 must be given"
+    )
 
 
 def _resolve_pdf_source(
@@ -105,15 +119,28 @@ def _resolve_pdf_source(
         ValueError: If no source or multiple sources are provided.
     """
     if pdf_path is not None:
+        if pdf_url is not None or pdf_base64 is not None:
+            raise ValueError(
+                "Exactly one PDF source must be provided "
+                "(pdf_path, pdf_url, or pdf_base64)"
+            )
         loaded = load_path_source(pdf_path, expected_kind="pdf")
         return loaded.local_path, loaded.source_type
     if pdf_url is not None:
+        if pdf_base64 is not None:
+            raise ValueError(
+                "Exactly one PDF source must be provided "
+                "(pdf_path, pdf_url, or pdf_base64)"
+            )
         loaded = download_url_source(pdf_url, expected_kind="pdf")
         return loaded.local_path, loaded.source_type
     if pdf_base64 is not None:
         loaded = materialize_base64_source(pdf_base64, expected_kind="pdf")
         return loaded.local_path, loaded.source_type
-    raise ValueError("No PDF source provided")
+    raise ValueError(
+        "No PDF source provided: exactly one of pdf_path, "
+        "pdf_url, or pdf_base64 must be given"
+    )
 
 
 def analyze_image_source(
@@ -221,6 +248,15 @@ def analyze_pdf_source(
 
     combined = combine_page_content([(r.page, r.content) for r in results])
 
+    warnings: list[AnalysisWarning] = []
+    if errors:
+        warnings.append(
+            AnalysisWarning(
+                code="partial_pdf_analysis",
+                message=f"{len(errors)} of {len(rendered)} page(s) failed to analyze",
+            )
+        )
+
     return PdfAnalysisResult(
         input_type="pdf",
         source_type=SourceType(source_type),
@@ -228,5 +264,6 @@ def analyze_pdf_source(
         prompt=prompt,
         results=results,
         combined_content=combined,
+        warnings=warnings,
         errors=errors,
     )
