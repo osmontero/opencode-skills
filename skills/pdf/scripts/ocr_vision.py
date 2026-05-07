@@ -90,6 +90,7 @@ def main():
         os.environ["THREATWINDS_API_SECRET"] = args.api_secret
 
     # Delegate to the shared analysis service
+    print("Analyzing PDF...", file=sys.stderr)
     result = analyze_pdf_source(
         prompt=args.prompt,
         model=args.model,
@@ -98,6 +99,7 @@ def main():
         pages=args.pages,
         pdf_path=args.pdf,
     )
+    print(f"Analysis complete ({len(result.results)} pages).", file=sys.stderr)
 
     # Print any warnings to stderr
     for warning in result.warnings:

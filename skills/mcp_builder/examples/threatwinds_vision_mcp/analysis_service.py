@@ -6,7 +6,6 @@ to provide high-level analysis functions for images and PDFs.
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 from typing import Literal, Optional
 
@@ -142,6 +141,20 @@ def _resolve_pdf_source(
     )
 
 
+def _cleanup_temp_file(path: Path, source_type: str) -> None:
+    """Clean up a temporary file if the source was not a local path.
+
+    Args:
+        path: The local file path to potentially clean up.
+        source_type: The source type ("path", "url", or "base64").
+    """
+    if source_type != "path":
+        try:
+            path.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+
 def analyze_image_source(
     *,
     prompt: str,
@@ -169,12 +182,15 @@ def analyze_image_source(
         image_url=image_url,
         image_base64=image_base64,
     )
-    content = request_vision_analysis(
-        image_path=local_path,
-        prompt=prompt,
-        model=model,
-        max_tokens=max_tokens,
-    )
+    try:
+        content = request_vision_analysis(
+            image_path=local_path,
+            prompt=prompt,
+            model=model,
+            max_tokens=max_tokens,
+        )
+    finally:
+        _cleanup_temp_file(local_path, source_type)
     return ImageAnalysisResult(
         input_type="image",
         source_type=SourceType(source_type),
@@ -227,34 +243,33 @@ def analyze_pdf_source(
     results: list[PageResult] = []
     errors: list[AnalysisError] = []
 
-    for idx, page in enumerate(rendered, start=1):
-        print(
-            f"Processing page {idx}/{len(rendered)}...",
-            file=sys.stderr,
-        )
-        try:
-            content = request_vision_analysis(
-                image_path=page.image_path,
-                prompt=prompt,
-                model=model,
-                max_tokens=max_tokens,
-            )
-            results.append(PageResult(page=page.page_num, content=content))
-        except Exception as exc:
-            errors.append(
-                AnalysisError(
-                    code="page_analysis_failed",
-                    message=str(exc),
-                    page=page.page_num,
+    try:
+        for idx, page in enumerate(rendered, start=1):
+            try:
+                content = request_vision_analysis(
+                    image_path=page.image_path,
+                    prompt=prompt,
+                    model=model,
+                    max_tokens=max_tokens,
                 )
-            )
-
-    # Clean up temporary rendered image files (created with delete=False)
-    for page in rendered:
-        try:
-            page.image_path.unlink(missing_ok=True)
-        except OSError:
-            pass
+                results.append(PageResult(page=page.page_num, content=content))
+            except Exception as exc:
+                errors.append(
+                    AnalysisError(
+                        code="page_analysis_failed",
+                        message=str(exc),
+                        page=page.page_num,
+                    )
+                )
+    finally:
+        # Clean up temporary rendered image files (created with delete=False)
+        for page in rendered:
+            try:
+                page.image_path.unlink(missing_ok=True)
+            except OSError:
+                pass
+        # Clean up the source temp file if it was downloaded or decoded
+        _cleanup_temp_file(local_path, source_type)
 
     combined = combine_page_content([(r.page, r.content) for r in results])
 
