@@ -39,6 +39,8 @@ Each `agents/<name>.md` has frontmatter with `description`, `mode: subagent`, an
 
 `.opencode/opencode.json` configures providers, models, MCP servers, LSP, and agent prompts. It references `prompts/plan.txt` and `prompts/build.txt` for the plan and build workflows. The `plans/` directory stores implementation plans. These files are gitignored (see `.opencode/.gitignore`) except `opencode.json`, `prompts/`, and `plans/`.
 
+**LSP servers:** TypeScript/JavaScript uses `npx -y typescript-language-server` (no global install needed). Other LSPs (gopls, rust-analyzer, dart, jdtls) require their respective tools installed globally.
+
 ### Plan and build prompts define the core workflow
 
 - `.opencode/prompts/plan.txt` — Brainstorming workflow: explore → clarify → design → spec → writing-plans skill
