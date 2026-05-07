@@ -1,6 +1,6 @@
 ---
 name: brand-guidelines
-description: Applies the organization's official brand colors and typography to any sort of artifact that may benefit from having the organization's look-and-feel. Use it when brand colors or style guidelines, visual formatting, or company design standards apply.
+description: Use when applying the organization's official brand colors and typography to artifacts. Triggers include requests for brand colors, style guidelines, visual formatting, company design standards, corporate identity, or any artifact needing the organization's look-and-feel.
 license: Complete terms in LICENSE.txt
 ---
 ------

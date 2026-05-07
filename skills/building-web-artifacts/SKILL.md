@@ -1,11 +1,11 @@
 ---
-name: web-artifacts-builder
-description: Suite of tools for creating elaborate, multi-component opencode HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.
+name: building-web-artifacts
+description: Use when building elaborate, multi-component HTML artifacts using modern frontend technologies (React, Tailwind CSS, shadcn/ui). Triggers include requests for complex web artifacts requiring state management, routing, or shadcn/ui components. Not for simple single-file HTML/JSX artifacts — use direct generation for those.
 license: Complete terms in LICENSE.txt
 ---
 ------
 
-# Web Artifacts Builder
+# Building Web Artifacts
 
 To build powerful frontend opencode artifacts, follow these steps:
 1. Initialize the frontend repo using `scripts/init-artifact.sh`
