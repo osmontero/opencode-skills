@@ -46,9 +46,9 @@ Each `agents/<name>.md` has frontmatter with `description`, `mode: subagent`, an
 
 These are wired into `opencode.json` under `agent.plan.prompt` and `agent.build.prompt`.
 
-### README is stale
+### README contains license attribution info
 
-The README lists 31 skills and 7 agents; there are actually 27 skills and 8 agents (internet-researcher was added). Update it if you add/remove items.
+The README documents third-party licenses and attributions. Keep it synchronized if you add/remove skills or change attribution sources.
 
 ### skill-creator is the meta-skill
 

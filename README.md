@@ -58,7 +58,7 @@ See individual `skills/<name>/LICENSE.txt` files for full license text and attri
 
 A [FastMCP](https://github.com/modelcontextprotocol/python-sdk) server that analyzes scanned PDFs and images through the [ThreatWinds AI API](https://threatwinds.com). Supports arbitrary extraction prompts and three input modes: local file paths, remote URLs, and base64 payloads.
 
-See [`skills/mcp_builder/examples/threatwinds_vision_mcp/README.md`](skills/mcp_builder/examples/threatwinds_vision_mcp/README.md) for setup and usage.
+See [`mcp_servers/threatwinds_vision/README.md`](mcp_servers/threatwinds_vision/README.md) for setup and usage.
 
 ## Install
 
