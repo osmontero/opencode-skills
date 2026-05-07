@@ -1,7 +1,9 @@
-"""Analysis orchestration service for ThreatWinds Vision MCP Server.
+"""Analysis orchestration service for vision-based document analysis.
 
 Ties together source loading, PDF rendering, and vision analysis
 to provide high-level analysis functions for images and PDFs.
+
+Used by the PDF skill's ocr_vision.py script for scanned document OCR.
 """
 
 from __future__ import annotations

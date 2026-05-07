@@ -1,11 +1,18 @@
-"""ThreatWinds Vision MCP Server — FastMCP entrypoint.
+"""LEGACY: ThreatWinds Vision MCP Server (no longer used).
 
-Exposes two MCP tools:
-- analyze_pdf: analyze a PDF document using vision AI
-- analyze_image: analyze an image using vision AI
+This file contains the old MCP server implementation.
+The functionality has been replaced by direct API calls via vision_client.py.
+This file is kept for reference only and is not imported by any active code.
 
-Each tool accepts the document/image via path, URL, or base64-encoded data,
-sends it to the ThreatWinds vision API, and returns structured JSON results.
+Original functionality:
+- Exposed two MCP tools: analyze_pdf and analyze_image
+- Accepted documents via path, URL, or base64-encoded data
+- Sent requests to ThreatWinds vision API and returned structured JSON results
+
+Current implementation:
+- Vision modules are now part of the PDF skill (skills/pdf/vision/)
+- ocr_vision.py script uses vision.analysis_service directly
+- No MCP server abstraction - direct API calls via vision_client.py
 """
 
 from __future__ import annotations
