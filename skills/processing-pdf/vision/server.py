@@ -10,7 +10,7 @@ Original functionality:
 - Sent requests to ThreatWinds vision API and returned structured JSON results
 
 Current implementation:
-- Vision modules are now part of the PDF skill (skills/pdf/vision/)
+- Vision modules are now part of the PDF skill (skills/processing-pdf/vision/)
 - ocr_vision.py script uses vision.analysis_service directly
 - No MCP server abstraction - direct API calls via vision_client.py
 """

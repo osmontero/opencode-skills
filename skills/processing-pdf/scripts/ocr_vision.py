@@ -17,8 +17,8 @@ import os
 import sys
 
 # Ensure the vision module is on sys.path
-# Layout: <repo>/skills/pdf/scripts/ocr_vision.py
-#          └── go up 1 level → <repo>/skills/pdf/ (where vision/ module lives)
+# Layout: <repo>/skills/processing-pdf/scripts/ocr_vision.py
+#          └── go up 1 level → <repo>/skills/processing-pdf/ (where vision/ module lives)
 _script_dir = os.path.dirname(os.path.abspath(__file__))
 _pdf_skill_dir = os.path.dirname(_script_dir)
 if _pdf_skill_dir not in sys.path:
