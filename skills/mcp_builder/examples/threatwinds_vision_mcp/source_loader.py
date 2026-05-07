@@ -13,7 +13,11 @@ import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, Optional
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
+
+# Default timeout for URL requests in seconds
+DEFAULT_TIMEOUT = 30
 
 
 @dataclass
@@ -111,7 +115,7 @@ def load_path_source(path_str: str, expected_kind: str) -> LoadedSource:
     return LoadedSource(source_type="path", local_path=path, mime_type=mime_type)
 
 
-def download_url_source(url: str, expected_kind: str, timeout: int = 30) -> LoadedSource:
+def download_url_source(url: str, expected_kind: str, timeout: int = DEFAULT_TIMEOUT) -> LoadedSource:
     """Download a source from a URL and save to a temporary file.
 
     Args:
@@ -124,11 +128,23 @@ def download_url_source(url: str, expected_kind: str, timeout: int = 30) -> Load
 
     Raises:
         ValueError: If URL is invalid, content is empty, or doesn't match expected kind.
+
+    Note:
+        The caller is responsible for deleting the temporary file after use.
+        The file is created with delete=False to ensure it persists after
+        the function returns and the context manager exits.
     """
     validate_url(url)
-    with urllib.request.urlopen(url, timeout=timeout) as response:
-        content_type = response.headers.get_content_type()
-        content = response.read()
+    try:
+        with urllib.request.urlopen(url, timeout=timeout) as response:
+            content_type = response.headers.get_content_type()
+            content = response.read()
+    except HTTPError as exc:
+        raise ValueError(f"HTTP error downloading URL: {url}") from exc
+    except URLError as exc:
+        raise ValueError(f"URL error downloading: {url}") from exc
+    except TimeoutError as exc:
+        raise ValueError(f"Timeout downloading URL: {url}") from exc
 
     if not content:
         raise ValueError("Downloaded content is empty")
@@ -142,7 +158,7 @@ def download_url_source(url: str, expected_kind: str, timeout: int = 30) -> Load
         handle.close()
 
     path = Path(handle.name)
-    if expected_kind == "pdf" and suffix != ".pdf":
+    if expected_kind == "pdf" and not (content_type or "").startswith("application/pdf"):
         raise ValueError("URL did not resolve to PDF content")
     if expected_kind == "image" and not (content_type or "").startswith("image/"):
         raise ValueError("URL did not resolve to image content")
@@ -162,6 +178,11 @@ def materialize_base64_source(value: str, expected_kind: str) -> LoadedSource:
 
     Raises:
         ValueError: If base64 is invalid or doesn't match expected kind.
+
+    Note:
+        The caller is responsible for deleting the temporary file after use.
+        The file is created with delete=False to ensure it persists after
+        the function returns and the context manager exits.
     """
     payload = parse_base64_payload(value)
     if expected_kind == "pdf" and payload.mime_type not in {None, "application/pdf"}:

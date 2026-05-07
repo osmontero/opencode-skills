@@ -2,11 +2,13 @@
 
 import base64
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
 from skills.mcp_builder.examples.threatwinds_vision_mcp.source_loader import (
     DecodedPayload,
+    DEFAULT_TIMEOUT,
     LoadedSource,
     download_url_source,
     load_path_source,
@@ -38,6 +40,45 @@ class TestValidateUrl:
             validate_url("ftp://example.com/file.pdf")
 
 
+class TestLoadedSource:
+    """Tests for LoadedSource dataclass."""
+
+    def test_loaded_source_fields(self, tmp_path: Path) -> None:
+        """Verify LoadedSource fields are set correctly."""
+        test_path = tmp_path / "test.pdf"
+        test_path.write_bytes(b"%PDF-1.4")
+        source = LoadedSource(
+            source_type="path",
+            local_path=test_path,
+            mime_type="application/pdf"
+        )
+        assert source.source_type == "path"
+        assert source.local_path == test_path
+        assert source.mime_type == "application/pdf"
+
+    def test_loaded_source_url_type(self, tmp_path: Path) -> None:
+        """Verify LoadedSource with URL source type."""
+        test_path = tmp_path / "downloaded.pdf"
+        test_path.write_bytes(b"%PDF-1.4")
+        source = LoadedSource(
+            source_type="url",
+            local_path=test_path,
+            mime_type="application/pdf"
+        )
+        assert source.source_type == "url"
+
+    def test_loaded_source_base64_type(self, tmp_path: Path) -> None:
+        """Verify LoadedSource with base64 source type."""
+        test_path = tmp_path / "decoded.png"
+        test_path.write_bytes(b"image data")
+        source = LoadedSource(
+            source_type="base64",
+            local_path=test_path,
+            mime_type="image/png"
+        )
+        assert source.source_type == "base64"
+
+
 class TestParseBase64Payload:
     """Tests for parse_base64_payload function."""
 
@@ -64,6 +105,16 @@ class TestParseBase64Payload:
         """Empty base64 should raise ValueError."""
         with pytest.raises(ValueError, match="empty content"):
             parse_base64_payload("")
+
+    def test_parse_base64_payload_data_url_no_mime_type(self) -> None:
+        """Data URL with no MIME type (data:;base64,<base64>) should work."""
+        raw = base64.b64encode(b"content").decode("ascii")
+        # Data URL with empty MIME type: data:;base64,<base64data>
+        # header = 'data:;base64', encoded = base64data
+        # mime_type = header[5:].split(";", 1)[0] = ';base64'.split(";", 1)[0] = '' -> None
+        payload = parse_base64_payload(f"data:;base64,{raw}")
+        assert payload.content == b"content"
+        assert payload.mime_type is None
 
 
 class TestLoadPathSource:
@@ -103,6 +154,95 @@ class TestDownloadUrlSource:
         """Should download URL and create temp file."""
         # This would require network access, skip for now
         pass
+
+    def test_download_url_source_http_error(self) -> None:
+        """HTTP errors should raise ValueError with URL context."""
+        from urllib.error import HTTPError
+        from http.client import HTTPMessage
+
+        with patch(
+            "skills.mcp_builder.examples.threatwinds_vision_mcp.source_loader.urllib.request.urlopen"
+        ) as mock_urlopen:
+            mock_urlopen.side_effect = HTTPError(
+                url="https://example.com/file.pdf",
+                code=404,
+                msg="Not Found",
+                hdrs=HTTPMessage(),
+                fp=None
+            )
+            with pytest.raises(ValueError, match="HTTP error downloading URL: https://example.com/file.pdf"):
+                download_url_source("https://example.com/file.pdf", expected_kind="pdf")
+
+    def test_download_url_source_network_error(self) -> None:
+        """Network errors should raise ValueError with URL context."""
+        from urllib.error import URLError
+
+        with patch(
+            "skills.mcp_builder.examples.threatwinds_vision_mcp.source_loader.urllib.request.urlopen"
+        ) as mock_urlopen:
+            mock_urlopen.side_effect = URLError("Network unreachable")
+            with pytest.raises(ValueError, match="URL error downloading: https://example.com/file.pdf"):
+                download_url_source("https://example.com/file.pdf", expected_kind="pdf")
+
+    def test_download_url_source_timeout(self) -> None:
+        """Timeout errors should raise ValueError with URL context."""
+        with patch(
+            "skills.mcp_builder.examples.threatwinds_vision_mcp.source_loader.urllib.request.urlopen"
+        ) as mock_urlopen:
+            mock_urlopen.side_effect = TimeoutError("Connection timed out")
+            with pytest.raises(ValueError, match="Timeout downloading URL: https://example.com/file.pdf"):
+                download_url_source("https://example.com/file.pdf", expected_kind="pdf")
+
+    def test_download_url_source_empty_response(self) -> None:
+        """Empty response should raise ValueError."""
+        from unittest.mock import MagicMock
+
+        mock_handle = MagicMock()
+        mock_handle.__enter__ = MagicMock(return_value=mock_handle)
+        mock_handle.__exit__ = MagicMock(return_value=False)
+        mock_handle.headers.get_content_type = MagicMock(return_value="application/pdf")
+        mock_handle.read = MagicMock(return_value=b"")
+
+        with patch(
+            "skills.mcp_builder.examples.threatwinds_vision_mcp.source_loader.urllib.request.urlopen"
+        ) as mock_urlopen:
+            mock_urlopen.return_value = mock_handle
+            with pytest.raises(ValueError, match="Downloaded content is empty"):
+                download_url_source("https://example.com/file.pdf", expected_kind="pdf")
+
+    def test_download_url_source_invalid_content_type_pdf(self) -> None:
+        """Wrong Content-Type for PDF should raise ValueError."""
+        from unittest.mock import MagicMock
+
+        mock_handle = MagicMock()
+        mock_handle.__enter__ = MagicMock(return_value=mock_handle)
+        mock_handle.__exit__ = MagicMock(return_value=False)
+        mock_handle.headers.get_content_type = MagicMock(return_value="text/html")
+        mock_handle.read = MagicMock(return_value=b"<html>not a pdf</html>")
+
+        with patch(
+            "skills.mcp_builder.examples.threatwinds_vision_mcp.source_loader.urllib.request.urlopen"
+        ) as mock_urlopen:
+            mock_urlopen.return_value = mock_handle
+            with pytest.raises(ValueError, match="URL did not resolve to PDF content"):
+                download_url_source("https://example.com/file.pdf", expected_kind="pdf")
+
+    def test_download_url_source_invalid_content_type_image(self) -> None:
+        """Wrong Content-Type for image should raise ValueError."""
+        from unittest.mock import MagicMock
+
+        mock_handle = MagicMock()
+        mock_handle.__enter__ = MagicMock(return_value=mock_handle)
+        mock_handle.__exit__ = MagicMock(return_value=False)
+        mock_handle.headers.get_content_type = MagicMock(return_value="application/pdf")
+        mock_handle.read = MagicMock(return_value=b"%PDF-1.4")
+
+        with patch(
+            "skills.mcp_builder.examples.threatwinds_vision_mcp.source_loader.urllib.request.urlopen"
+        ) as mock_urlopen:
+            mock_urlopen.return_value = mock_handle
+            with pytest.raises(ValueError, match="URL did not resolve to image content"):
+                download_url_source("https://example.com/image.png", expected_kind="image")
 
 
 class TestMaterializeBase64Source:
