@@ -17,7 +17,7 @@ import os
 import sys
 
 # Ensure the repo root is on sys.path so that the shared analysis modules
-# (skills.mcp_builder.examples.threatwinds_vision_mcp.*) are importable
+# (mcp_servers.threatwinds_vision.*) are importable
 # regardless of the current working directory.
 #
 # Layout: <repo>/skills/pdf/scripts/ocr_vision.py
@@ -27,7 +27,7 @@ _repo_root = os.path.dirname(os.path.dirname(os.path.dirname(_script_dir)))
 if _repo_root not in sys.path:
     sys.path.insert(0, _repo_root)
 
-from skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service import (
+from mcp_servers.threatwinds_vision.analysis_service import (
     analyze_pdf_source,
 )
 

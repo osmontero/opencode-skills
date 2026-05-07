@@ -18,7 +18,7 @@ source ~/.local/opencode-venv/bin/activate
 pip install mcp pypdfium2
 
 # Run the server
-python skills/mcp_builder/examples/threatwinds_vision_mcp/server.py
+python mcp_servers/threatwinds_vision/server.py
 ```
 
 ## Tools
@@ -72,7 +72,7 @@ Add this to your `.opencode/opencode.json` under the `mcp` section:
     "type": "local",
     "command": [
       "/home/osmany/.local/opencode-venv/bin/python3",
-      "/home/osmany/Data/Projects/github.com/osmontero/opencode-skills/skills/mcp_builder/examples/threatwinds_vision_mcp/server.py"
+      "/home/osmany/Data/Projects/github.com/osmontero/opencode-skills/mcp_servers/threatwinds_vision/server.py"
     ],
     "environment": {
       "THREATWINDS_API_KEY": "{env:THREATWINDS_API_KEY}",

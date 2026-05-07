@@ -15,11 +15,11 @@ import json
 from mcp.server.fastmcp import FastMCP
 from mcp.types import ToolAnnotations
 
-from skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service import (
+from mcp_servers.threatwinds_vision.analysis_service import (
     analyze_image_source,
     analyze_pdf_source,
 )
-from skills.mcp_builder.examples.threatwinds_vision_mcp.models import (
+from mcp_servers.threatwinds_vision.models import (
     AnalyzeImageInput,
     AnalyzePdfInput,
 )

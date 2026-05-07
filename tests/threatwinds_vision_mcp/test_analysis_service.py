@@ -12,7 +12,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from skills.mcp_builder.examples.threatwinds_vision_mcp.vision_client import (
+from mcp_servers.threatwinds_vision.vision_client import (
     API_BASE,
     build_chat_payload,
     build_headers,

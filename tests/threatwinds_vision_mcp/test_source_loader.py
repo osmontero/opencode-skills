@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import pytest
 
-from skills.mcp_builder.examples.threatwinds_vision_mcp.source_loader import (
+from mcp_servers.threatwinds_vision.source_loader import (
     DecodedPayload,
     DEFAULT_TIMEOUT,
     LoadedSource,
@@ -173,7 +173,7 @@ class TestDownloadUrlSource:
         from http.client import HTTPMessage
 
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.source_loader.urllib.request.urlopen"
+            "mcp_servers.threatwinds_vision.source_loader.urllib.request.urlopen"
         ) as mock_urlopen:
             mock_urlopen.side_effect = HTTPError(
                 url="https://example.com/file.pdf",
@@ -190,7 +190,7 @@ class TestDownloadUrlSource:
         from urllib.error import URLError
 
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.source_loader.urllib.request.urlopen"
+            "mcp_servers.threatwinds_vision.source_loader.urllib.request.urlopen"
         ) as mock_urlopen:
             mock_urlopen.side_effect = URLError("Network unreachable")
             with pytest.raises(ValueError, match="URL error downloading: https://example.com/file.pdf"):
@@ -199,7 +199,7 @@ class TestDownloadUrlSource:
     def test_download_url_source_timeout(self) -> None:
         """Timeout errors should raise ValueError with URL context."""
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.source_loader.urllib.request.urlopen"
+            "mcp_servers.threatwinds_vision.source_loader.urllib.request.urlopen"
         ) as mock_urlopen:
             mock_urlopen.side_effect = TimeoutError("Connection timed out")
             with pytest.raises(ValueError, match="Timeout downloading URL: https://example.com/file.pdf"):
@@ -216,7 +216,7 @@ class TestDownloadUrlSource:
         mock_handle.read = MagicMock(return_value=b"")
 
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.source_loader.urllib.request.urlopen"
+            "mcp_servers.threatwinds_vision.source_loader.urllib.request.urlopen"
         ) as mock_urlopen:
             mock_urlopen.return_value = mock_handle
             with pytest.raises(ValueError, match="Downloaded content is empty"):
@@ -233,7 +233,7 @@ class TestDownloadUrlSource:
         mock_handle.read = MagicMock(return_value=b"<html>not a pdf</html>")
 
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.source_loader.urllib.request.urlopen"
+            "mcp_servers.threatwinds_vision.source_loader.urllib.request.urlopen"
         ) as mock_urlopen:
             mock_urlopen.return_value = mock_handle
             with pytest.raises(ValueError, match="URL did not resolve to PDF content"):
@@ -250,7 +250,7 @@ class TestDownloadUrlSource:
         mock_handle.read = MagicMock(return_value=b"%PDF-1.4")
 
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.source_loader.urllib.request.urlopen"
+            "mcp_servers.threatwinds_vision.source_loader.urllib.request.urlopen"
         ) as mock_urlopen:
             mock_urlopen.return_value = mock_handle
             with pytest.raises(ValueError, match="URL did not resolve to image content"):

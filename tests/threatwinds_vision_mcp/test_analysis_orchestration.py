@@ -7,14 +7,14 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service import (
+from mcp_servers.threatwinds_vision.analysis_service import (
     _resolve_image_source,
     _resolve_pdf_source,
     analyze_image_source,
     analyze_pdf_source,
     combine_page_content,
 )
-from skills.mcp_builder.examples.threatwinds_vision_mcp.models import (
+from mcp_servers.threatwinds_vision.models import (
     ImageAnalysisResult,
     PdfAnalysisResult,
 )
@@ -76,11 +76,11 @@ class TestAnalyzeImageSource:
         """Successful analysis should return ImageAnalysisResult."""
         img_path = self._make_image_path(tmp_path)
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_image_source"
+            "mcp_servers.threatwinds_vision.analysis_service._resolve_image_source"
         ) as mock_resolve:
             mock_resolve.return_value = (img_path, "path")
             with patch(
-                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.request_vision_analysis"
+                "mcp_servers.threatwinds_vision.analysis_service.request_vision_analysis"
             ) as mock_vision:
                 mock_vision.return_value = "analysis text"
                 result = analyze_image_source(
@@ -101,11 +101,11 @@ class TestAnalyzeImageSource:
         """Vision client should receive correct parameters."""
         img_path = self._make_image_path(tmp_path)
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_image_source"
+            "mcp_servers.threatwinds_vision.analysis_service._resolve_image_source"
         ) as mock_resolve:
             mock_resolve.return_value = (img_path, "path")
             with patch(
-                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.request_vision_analysis"
+                "mcp_servers.threatwinds_vision.analysis_service.request_vision_analysis"
             ) as mock_vision:
                 mock_vision.return_value = "result"
                 analyze_image_source(
@@ -125,11 +125,11 @@ class TestAnalyzeImageSource:
         """Image source_type should reflect URL origin."""
         img_path = self._make_image_path(tmp_path)
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_image_source"
+            "mcp_servers.threatwinds_vision.analysis_service._resolve_image_source"
         ) as mock_resolve:
             mock_resolve.return_value = (img_path, "url")
             with patch(
-                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.request_vision_analysis"
+                "mcp_servers.threatwinds_vision.analysis_service.request_vision_analysis"
             ) as mock_vision:
                 mock_vision.return_value = "url result"
                 result = analyze_image_source(
@@ -144,11 +144,11 @@ class TestAnalyzeImageSource:
         """Image source_type should reflect base64 origin."""
         img_path = self._make_image_path(tmp_path)
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_image_source"
+            "mcp_servers.threatwinds_vision.analysis_service._resolve_image_source"
         ) as mock_resolve:
             mock_resolve.return_value = (img_path, "base64")
             with patch(
-                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.request_vision_analysis"
+                "mcp_servers.threatwinds_vision.analysis_service.request_vision_analysis"
             ) as mock_vision:
                 mock_vision.return_value = "b64 result"
                 result = analyze_image_source(
@@ -163,11 +163,11 @@ class TestAnalyzeImageSource:
         """Errors from vision client should propagate."""
         img_path = self._make_image_path(tmp_path)
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_image_source"
+            "mcp_servers.threatwinds_vision.analysis_service._resolve_image_source"
         ) as mock_resolve:
             mock_resolve.return_value = (img_path, "path")
             with patch(
-                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.request_vision_analysis"
+                "mcp_servers.threatwinds_vision.analysis_service.request_vision_analysis"
             ) as mock_vision:
                 mock_vision.side_effect = RuntimeError("API error")
                 with pytest.raises(RuntimeError, match="API error"):
@@ -185,18 +185,18 @@ class TestAnalyzePdfSource:
     def test_analyze_pdf_source_returns_result(self) -> None:
         """Successful analysis should return PdfAnalysisResult."""
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_pdf_source"
+            "mcp_servers.threatwinds_vision.analysis_service._resolve_pdf_source"
         ) as mock_resolve:
             mock_resolve.return_value = (Path("/tmp/doc.pdf"), "path")
             with patch(
-                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.render_pdf_to_images"
+                "mcp_servers.threatwinds_vision.analysis_service.render_pdf_to_images"
             ) as mock_render:
                 mock_render.return_value = [
                     MagicMock(page_num=1, image_path=Path("/tmp/p1.png")),
                     MagicMock(page_num=2, image_path=Path("/tmp/p2.png")),
                 ]
                 with patch(
-                    "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.request_vision_analysis"
+                    "mcp_servers.threatwinds_vision.analysis_service.request_vision_analysis"
                 ) as mock_vision:
                     mock_vision.side_effect = ["page1 analysis", "page2 analysis"]
                     result = analyze_pdf_source(
@@ -219,11 +219,11 @@ class TestAnalyzePdfSource:
     def test_analyze_pdf_source_passes_dpi_to_render(self) -> None:
         """DPI parameter should be passed to PDF renderer."""
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_pdf_source"
+            "mcp_servers.threatwinds_vision.analysis_service._resolve_pdf_source"
         ) as mock_resolve:
             mock_resolve.return_value = (Path("/tmp/doc.pdf"), "path")
             with patch(
-                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.render_pdf_to_images"
+                "mcp_servers.threatwinds_vision.analysis_service.render_pdf_to_images"
             ) as mock_render:
                 mock_render.return_value = []
                 analyze_pdf_source(
@@ -243,18 +243,18 @@ class TestAnalyzePdfSource:
     def test_analyze_pdf_source_partial_page_failure(self) -> None:
         """Failed pages should produce errors but not stop analysis."""
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_pdf_source"
+            "mcp_servers.threatwinds_vision.analysis_service._resolve_pdf_source"
         ) as mock_resolve:
             mock_resolve.return_value = (Path("/tmp/doc.pdf"), "url")
             with patch(
-                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.render_pdf_to_images"
+                "mcp_servers.threatwinds_vision.analysis_service.render_pdf_to_images"
             ) as mock_render:
                 mock_render.return_value = [
                     MagicMock(page_num=1, image_path=Path("/tmp/p1.png")),
                     MagicMock(page_num=2, image_path=Path("/tmp/p2.png")),
                 ]
                 with patch(
-                    "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.request_vision_analysis"
+                    "mcp_servers.threatwinds_vision.analysis_service.request_vision_analysis"
                 ) as mock_vision:
                     # Page 1 succeeds, page 2 fails
                     def vision_side_effect(image_path, prompt, model, max_tokens):
@@ -280,17 +280,17 @@ class TestAnalyzePdfSource:
     def test_analyze_pdf_source_all_pages_fail(self) -> None:
         """If all pages fail, results should be empty with errors."""
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_pdf_source"
+            "mcp_servers.threatwinds_vision.analysis_service._resolve_pdf_source"
         ) as mock_resolve:
             mock_resolve.return_value = (Path("/tmp/doc.pdf"), "base64")
             with patch(
-                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.render_pdf_to_images"
+                "mcp_servers.threatwinds_vision.analysis_service.render_pdf_to_images"
             ) as mock_render:
                 mock_render.return_value = [
                     MagicMock(page_num=1, image_path=Path("/tmp/p1.png")),
                 ]
                 with patch(
-                    "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.request_vision_analysis"
+                    "mcp_servers.threatwinds_vision.analysis_service.request_vision_analysis"
                 ) as mock_vision:
                     mock_vision.side_effect = RuntimeError("all failed")
                     result = analyze_pdf_source(
@@ -307,11 +307,11 @@ class TestAnalyzePdfSource:
     def test_analyze_pdf_source_from_url(self) -> None:
         """PDF source_type should reflect URL origin."""
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_pdf_source"
+            "mcp_servers.threatwinds_vision.analysis_service._resolve_pdf_source"
         ) as mock_resolve:
             mock_resolve.return_value = (Path("/tmp/doc.pdf"), "url")
             with patch(
-                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.render_pdf_to_images"
+                "mcp_servers.threatwinds_vision.analysis_service.render_pdf_to_images"
             ) as mock_render:
                 mock_render.return_value = []
                 result = analyze_pdf_source(
@@ -325,11 +325,11 @@ class TestAnalyzePdfSource:
     def test_analyze_pdf_source_from_base64(self) -> None:
         """PDF source_type should reflect base64 origin."""
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_pdf_source"
+            "mcp_servers.threatwinds_vision.analysis_service._resolve_pdf_source"
         ) as mock_resolve:
             mock_resolve.return_value = (Path("/tmp/doc.pdf"), "base64")
             with patch(
-                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.render_pdf_to_images"
+                "mcp_servers.threatwinds_vision.analysis_service.render_pdf_to_images"
             ) as mock_render:
                 mock_render.return_value = []
                 result = analyze_pdf_source(
@@ -343,11 +343,11 @@ class TestAnalyzePdfSource:
     def test_analyze_pdf_source_empty_pages(self) -> None:
         """PDF with no rendered pages should return empty results."""
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_pdf_source"
+            "mcp_servers.threatwinds_vision.analysis_service._resolve_pdf_source"
         ) as mock_resolve:
             mock_resolve.return_value = (Path("/tmp/doc.pdf"), "path")
             with patch(
-                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.render_pdf_to_images"
+                "mcp_servers.threatwinds_vision.analysis_service.render_pdf_to_images"
             ) as mock_render:
                 mock_render.return_value = []
                 result = analyze_pdf_source(
@@ -362,11 +362,11 @@ class TestAnalyzePdfSource:
     def test_analyze_pdf_source_propagates_render_error(self) -> None:
         """Errors from PDF rendering should propagate."""
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_pdf_source"
+            "mcp_servers.threatwinds_vision.analysis_service._resolve_pdf_source"
         ) as mock_resolve:
             mock_resolve.return_value = (Path("/tmp/doc.pdf"), "path")
             with patch(
-                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.render_pdf_to_images"
+                "mcp_servers.threatwinds_vision.analysis_service.render_pdf_to_images"
             ) as mock_render:
                 mock_render.side_effect = ValueError("Invalid PDF")
                 with pytest.raises(ValueError, match="Invalid PDF"):
@@ -432,18 +432,18 @@ class TestPdfPartialFailureWarning:
     def test_analyze_pdf_source_partial_failure_has_warning(self) -> None:
         """Partial page failure should produce a partial_pdf_analysis warning."""
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_pdf_source"
+            "mcp_servers.threatwinds_vision.analysis_service._resolve_pdf_source"
         ) as mock_resolve:
             mock_resolve.return_value = (Path("/tmp/doc.pdf"), "path")
             with patch(
-                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.render_pdf_to_images"
+                "mcp_servers.threatwinds_vision.analysis_service.render_pdf_to_images"
             ) as mock_render:
                 mock_render.return_value = [
                     MagicMock(page_num=1, image_path=Path("/tmp/p1.png")),
                     MagicMock(page_num=2, image_path=Path("/tmp/p2.png")),
                 ]
                 with patch(
-                    "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.request_vision_analysis"
+                    "mcp_servers.threatwinds_vision.analysis_service.request_vision_analysis"
                 ) as mock_vision:
                     mock_vision.side_effect = [
                         "page1 ok",
@@ -462,17 +462,17 @@ class TestPdfPartialFailureWarning:
     def test_analyze_pdf_source_no_failure_no_warning(self) -> None:
         """Successful analysis of all pages should have no warnings."""
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service._resolve_pdf_source"
+            "mcp_servers.threatwinds_vision.analysis_service._resolve_pdf_source"
         ) as mock_resolve:
             mock_resolve.return_value = (Path("/tmp/doc.pdf"), "path")
             with patch(
-                "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.render_pdf_to_images"
+                "mcp_servers.threatwinds_vision.analysis_service.render_pdf_to_images"
             ) as mock_render:
                 mock_render.return_value = [
                     MagicMock(page_num=1, image_path=Path("/tmp/p1.png")),
                 ]
                 with patch(
-                    "skills.mcp_builder.examples.threatwinds_vision_mcp.analysis_service.request_vision_analysis"
+                    "mcp_servers.threatwinds_vision.analysis_service.request_vision_analysis"
                 ) as mock_vision:
                     mock_vision.return_value = "page1 ok"
                     result = analyze_pdf_source(

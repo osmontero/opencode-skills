@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 import pytest
 
-from skills.mcp_builder.examples.threatwinds_vision_mcp.server import (
+from mcp_servers.threatwinds_vision.server import (
     analyze_image,
     analyze_pdf,
     mcp,
@@ -85,7 +85,7 @@ class TestAnalyzePdfTool:
         )()
 
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.server.analyze_pdf_source",
+            "mcp_servers.threatwinds_vision.server.analyze_pdf_source",
             return_value=mock_result,
         ):
             output = analyze_pdf(
@@ -112,7 +112,7 @@ class TestAnalyzePdfTool:
     def test_handles_service_error(self) -> None:
         """analyze_pdf should return an error JSON when the service raises."""
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.server.analyze_pdf_source",
+            "mcp_servers.threatwinds_vision.server.analyze_pdf_source",
             side_effect=RuntimeError("API timeout"),
         ):
             output = analyze_pdf(
@@ -150,7 +150,7 @@ class TestAnalyzeImageTool:
         )()
 
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.server.analyze_image_source",
+            "mcp_servers.threatwinds_vision.server.analyze_image_source",
             return_value=mock_result,
         ):
             output = analyze_image(
@@ -176,7 +176,7 @@ class TestAnalyzeImageTool:
     def test_handles_service_error(self) -> None:
         """analyze_image should return an error JSON when the service raises."""
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.server.analyze_image_source",
+            "mcp_servers.threatwinds_vision.server.analyze_image_source",
             side_effect=ConnectionError("network down"),
         ):
             output = analyze_image(

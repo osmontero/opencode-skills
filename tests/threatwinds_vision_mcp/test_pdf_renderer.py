@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from skills.mcp_builder.examples.threatwinds_vision_mcp.pdf_renderer import (
+from mcp_servers.threatwinds_vision.pdf_renderer import (
     filter_rendered_pages,
     parse_pages,
     RenderedPage,
@@ -121,7 +121,7 @@ class TestRenderPdfToImages:
 
         test_path = Path("/tmp/test.pdf")
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.pdf_renderer.pypdfium2.PdfDocument"
+            "mcp_servers.threatwinds_vision.pdf_renderer.pypdfium2.PdfDocument"
         ) as mock_pdf:
             with patch.object(Path, "exists", return_value=True):
                 mock_pdf.return_value = mock_doc
@@ -147,7 +147,7 @@ class TestRenderPdfToImages:
 
         test_path = Path("/tmp/test.pdf")
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.pdf_renderer.pypdfium2.PdfDocument"
+            "mcp_servers.threatwinds_vision.pdf_renderer.pypdfium2.PdfDocument"
         ) as mock_pdf:
             with patch.object(Path, "exists", return_value=True):
                 mock_pdf.return_value = mock_doc
@@ -177,7 +177,7 @@ class TestRenderPdfToImages:
 
         test_path = Path("/tmp/test.pdf")
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.pdf_renderer.pypdfium2.PdfDocument"
+            "mcp_servers.threatwinds_vision.pdf_renderer.pypdfium2.PdfDocument"
         ) as mock_pdf:
             with patch.object(Path, "exists", return_value=True):
                 mock_pdf.return_value = mock_doc
@@ -211,7 +211,7 @@ class TestRenderPdfToImages:
 
         test_path = Path("/tmp/test.pdf")
         with patch(
-            "skills.mcp_builder.examples.threatwinds_vision_mcp.pdf_renderer.pypdfium2.PdfDocument"
+            "mcp_servers.threatwinds_vision.pdf_renderer.pypdfium2.PdfDocument"
         ) as mock_pdf:
             with patch.object(Path, "exists", return_value=True):
                 mock_pdf.return_value = mock_doc

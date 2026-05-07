@@ -1,6 +1,6 @@
 from pydantic import ValidationError
 
-from skills.mcp_builder.examples.threatwinds_vision_mcp.models import (
+from mcp_servers.threatwinds_vision.models import (
     AnalyzePdfInput,
     AnalyzeImageInput,
 )
