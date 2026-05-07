@@ -4,7 +4,7 @@ Adapted skills and agents for the opencode agent ecosystem.
 
 ## Contents
 
-**27 skills** covering development workflows, document generation, code review, testing, debugging, design, and more.
+**26 skills** covering development workflows, document generation, code review, testing, debugging, design, and more.
 
 **8 global agents** for implementation, review, and evaluation.
 
@@ -21,7 +21,6 @@ Some skills and components incorporate work from other sources under different l
 The following skills are licensed under Apache 2.0 and adapted from Anthropic's Claude projects:
 
 - `creating-algorithmic-art` — Generative art creation with p5.js
-- `brand-guidelines` — Brand color and typography application
 - `designing-canvas-art` — Visual design for static documents
 - `coauthoring-docs` — Structured documentation collaboration workflow
 - `writing-internal-comms` — Internal communications templates and guidance
@@ -99,7 +98,6 @@ cp agents/* ~/.config/opencode/agents/
 |----------------------------------|---------------|
 | `applying-themes`                | Design        |
 | `brainstorming`                  | Workflow      |
-| `brand-guidelines`               | Design        |
 | `building-mcp-servers`           | Development   |
 | `building-web-artifacts`         | Development   |
 | `coauthoring-docs`               | Documents     |
