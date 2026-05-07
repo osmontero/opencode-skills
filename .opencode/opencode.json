@@ -178,6 +178,10 @@
     }
   },
   "lsp": {
+    "typescript": {
+      "command": ["npx", "-y", "typescript-language-server", "--stdio"],
+      "extensions": [".ts", ".js", ".tsx", ".jsx"]
+    },
     "gopls": {
       "command": ["gopls"],
       "extensions": [".go"]
