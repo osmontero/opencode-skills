@@ -1,0 +1,31 @@
+{
+  "eval_id": 0,
+  "configuration": "with_skill",
+  "run_number": 1,
+  "expectations": [
+    {
+      "text": "Extracts all error message text including traceback",
+      "passed": true,
+      "evidence": "Output contains full traceback with file paths, line numbers, and error details"
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 1,
+    "failed": 0,
+    "total": 1
+  },
+  "timing": {
+    "total_duration_seconds": 5.2
+  },
+  "execution_metrics": {
+    "total_tool_calls": 1,
+    "output_chars": 1500,
+    "errors_encountered": 0
+  },
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  }
+}

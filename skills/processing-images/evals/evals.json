@@ -1,0 +1,26 @@
+{
+  "skill_name": "processing-images",
+  "evals": [
+    {
+      "id": 0,
+      "name": "text-extraction",
+      "prompt": "I have a screenshot of an error message at ./test_images/error_screenshot.png. Can you extract all the text from it so I can copy it into a bug report?",
+      "expected_output": "Extracted text from the error message screenshot",
+      "files": ["test_images/error_screenshot.png"]
+    },
+    {
+      "id": 1,
+      "name": "chart-analysis",
+      "prompt": "Can you look at this chart and tell me what trends you see? ./test_images/sales_chart.png",
+      "expected_output": "Description of chart type, data points, and trends",
+      "files": ["test_images/sales_chart.png"]
+    },
+    {
+      "id": 2,
+      "name": "receipt-extraction",
+      "prompt": "I need to digitize this receipt. It's saved as ./test_images/receipt.png. Extract the merchant name, date, all line items with prices, and the total.",
+      "expected_output": "Structured data: merchant, date, line items, total",
+      "files": ["test_images/receipt.png"]
+    }
+  ]
+}

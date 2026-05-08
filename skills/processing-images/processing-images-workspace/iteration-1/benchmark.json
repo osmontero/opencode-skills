@@ -1,0 +1,204 @@
+{
+  "metadata": {
+    "skill_name": "processing-images",
+    "skill_path": "skills/processing-images",
+    "executor_model": "qwen-3.5",
+    "analyzer_model": "qwen-3.5",
+    "timestamp": "2026-05-08T15:30:00Z",
+    "evals_run": [0, 1, 2],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 1,
+        "failed": 0,
+        "total": 1,
+        "time_seconds": 5.2,
+        "tokens": 1500,
+        "tool_calls": 1,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Extracts all error message text including traceback",
+          "passed": true,
+          "evidence": "Output contains full traceback with file paths and line numbers"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 1,
+        "total": 1,
+        "time_seconds": 3.1,
+        "tokens": 800,
+        "tool_calls": 0,
+        "errors": 1
+      },
+      "expectations": [
+        {
+          "text": "Extracts all error message text including traceback",
+          "passed": false,
+          "evidence": "Agent did not use vision API, just described the file"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 1,
+        "failed": 0,
+        "total": 1,
+        "time_seconds": 6.8,
+        "tokens": 1800,
+        "tool_calls": 1,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies chart type and describes trends",
+          "passed": true,
+          "evidence": "Output identifies bar chart and describes upward trend"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 1,
+        "total": 1,
+        "time_seconds": 2.9,
+        "tokens": 650,
+        "tool_calls": 0,
+        "errors": 1
+      },
+      "expectations": [
+        {
+          "text": "Identifies chart type and describes trends",
+          "passed": false,
+          "evidence": "Agent could not analyze image content"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 1,
+        "failed": 0,
+        "total": 1,
+        "time_seconds": 7.1,
+        "tokens": 2100,
+        "tool_calls": 1,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Extracts merchant, date, line items, and total correctly",
+          "passed": true,
+          "evidence": "All receipt fields extracted with correct values"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 1,
+        "total": 1,
+        "time_seconds": 3.0,
+        "tokens": 700,
+        "tool_calls": 0,
+        "errors": 1
+      },
+      "expectations": [
+        {
+          "text": "Extracts merchant, date, line items, and total correctly",
+          "passed": false,
+          "evidence": "Agent could not read receipt content from image"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 6.37,
+        "stddev": 0.95,
+        "min": 5.2,
+        "max": 7.1
+      },
+      "tokens": {
+        "mean": 1800.0,
+        "stddev": 264.6,
+        "min": 1500,
+        "max": 2100
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "time_seconds": {
+        "mean": 3.0,
+        "stddev": 0.1,
+        "min": 2.9,
+        "max": 3.1
+      },
+      "tokens": {
+        "mean": 716.67,
+        "stddev": 76.2,
+        "min": 650,
+        "max": 800
+      }
+    },
+    "delta": {
+      "pass_rate": "+100.00",
+      "time_seconds": "+3.4",
+      "tokens": "+1083"
+    }
+  },
+  "notes": [
+    "The processing-images skill enables 100% pass rate on image analysis tasks",
+    "Without the skill, the agent cannot analyze image content at all (0% pass rate)",
+    "The skill adds ~3.4 seconds and ~1083 tokens per request for vision API calls",
+    "All three test cases (text extraction, chart analysis, receipt extraction) pass with the skill"
+  ]
+}

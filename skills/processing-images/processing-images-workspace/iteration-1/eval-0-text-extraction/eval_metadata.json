@@ -1,0 +1,6 @@
+{
+  "eval_id": 0,
+  "eval_name": "text-extraction",
+  "prompt": "I have a screenshot of an error message at ./test_images/error_screenshot.png. Can you extract all the text from it so I can copy it into a bug report?",
+  "assertions": []
+}

@@ -1,0 +1,10 @@
+=== Without Skill Output ===
+
+I cannot read this receipt image. The file receipt.png is a PNG image, and I don't have the ability to extract text or data from image files without using vision-based tools.
+
+To digitize this receipt, you would need to:
+1. Use OCR (Optical Character Recognition) software
+2. Use a vision API to extract the text
+3. Manually enter the receipt data
+
+Would you like guidance on any of these approaches?
