@@ -10,6 +10,11 @@
       "models": {
         "qwen-3.6": {
           "name": "Qwen 3.6",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 262144,
             "input": 229376,
@@ -26,6 +31,11 @@
         },
         "qwen-3.6-pro": {
           "name": "Qwen 3.6 Pro",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 262144,
             "input": 229376,
@@ -42,6 +52,11 @@
         },
         "qwen-3.5": {
           "name": "Qwen 3.5",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 262144,
             "input": 229376,
@@ -58,6 +73,11 @@
         },
         "qwen-3.5-pro": {
           "name": "Qwen 3.5 Pro",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 262144,
             "input": 229376,
@@ -74,6 +94,11 @@
         },
         "silas-1.6": {
           "name": "Silas 1.6",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 262144,
             "input": 229376,
@@ -90,6 +115,11 @@
         },
         "silas-1.6-pro": {
           "name": "Silas 1.6 Pro",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 262144,
             "input": 229376,
@@ -106,6 +136,11 @@
         },
         "gpt-5": {
           "name": "GPT-5.5",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 1178000,
             "input": 1050000,
@@ -120,6 +155,11 @@
         },
         "gpt-5-mini": {
           "name": "GPT-5.4 Mini",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 528000,
             "input": 400000,
@@ -132,6 +172,11 @@
         },
         "claude-opus-4": {
           "name": "Claude Opus 4.6",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 1128000,
             "input": 1000000,
@@ -143,6 +188,11 @@
         },
         "claude-sonnet-4": {
           "name": "Claude Sonnet 4.6",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
           "limit": {
             "context": 1064000,
             "input": 1000000,
