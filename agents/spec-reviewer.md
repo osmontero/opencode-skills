@@ -1,6 +1,6 @@
 ---
 description: >
-  Use when verifying that an implementation matches its specification. Checks that implementer built exactly what was requested — nothing more, nothing less. Reads actual code rather than trusting reports.
+  Subagent for verifying that an implementation matches its specification. Dispatch this subagent to confirm the implementer built exactly what was requested, nothing more and nothing less, by reading the actual code rather than trusting reports.
 mode: subagent
 permission:
   edit: deny

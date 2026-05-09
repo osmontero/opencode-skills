@@ -1,6 +1,6 @@
 ---
 description: >
-  Use this agent for internet research tasks: web searches, deep dives, fact-checking, competitor/industry analysis, and academic/technical paper lookups. Dispatch when the user needs to research a topic, find information online, verify a claim, analyze competitors, or gather information from multiple web sources. Use this skill whenever the user mentions research, looking things up, finding information, fact-checking, investigating a topic, competitor analysis, market research, or asks questions that require current web knowledge.
+  Subagent for internet research: web searches, deep dives, fact-checking, competitor or industry analysis, academic or technical paper lookups, and source gathering. Dispatch this subagent when the user needs to research a topic, find information online, verify a claim, analyze competitors, investigate a topic, or synthesize findings from multiple web sources.
 mode: subagent
 permission:
   edit: deny

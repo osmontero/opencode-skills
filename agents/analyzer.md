@@ -1,6 +1,6 @@
 ---
 description: >
-  Use after blind comparison to analyze why the winning skill performed better. Unblinds results, compares instruction following, identifies winner strengths and loser weaknesses, and generates actionable improvement suggestions. Also analyzes benchmark results across multiple runs.
+  Subagent for analyzing blind comparison results and benchmark patterns. Dispatch this subagent after a blind comparison to explain why the winning skill performed better, identify instruction-following differences, surface winner strengths and loser weaknesses, and analyze benchmark results across multiple runs.
 mode: subagent
 permission:
   edit: deny

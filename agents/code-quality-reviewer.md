@@ -1,6 +1,6 @@
 ---
 description: >
-  Use when reviewing code quality after spec compliance has been confirmed. Checks file responsibility, unit decomposition, plan alignment, and file size impact. Only dispatch after spec compliance review passes.
+  Subagent for reviewing code quality after spec compliance has been confirmed. Dispatch this subagent only after spec compliance review passes to check file responsibility, unit decomposition, plan alignment, and the impact of the change on file size and maintainability.
 mode: subagent
 permission:
   edit: deny

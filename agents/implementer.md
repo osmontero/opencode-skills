@@ -1,6 +1,6 @@
 ---
 description: >
-  Use when executing plan tasks that require implementation. Dispatches a focused agent to implement a specific task from a plan, write tests, self-review, and report status. The agent follows TDD, asks questions before starting, and escalates when blocked.
+  Subagent for implementing plan tasks. Dispatch this subagent to execute a specific task from a plan, write tests, self-review, and report status. This subagent follows TDD when required, asks questions before starting, and escalates when blocked.
 mode: subagent
 ---
 

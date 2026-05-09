@@ -1,6 +1,6 @@
 ---
 description: >
-  Use when grading skill test results. Evaluates each expectation against execution transcript and output files with pass/fail verdicts, extracts and verifies claims, and critiques the evals themselves for improvement suggestions.
+  Subagent for grading skill test results. Dispatch this subagent to evaluate each expectation against execution transcripts and output files, produce pass or fail verdicts with evidence, extract and verify claims, and critique the evals for improvement suggestions.
 mode: subagent
 permission:
   edit: deny

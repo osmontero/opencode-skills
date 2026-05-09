@@ -1,6 +1,6 @@
 ---
 description: >
-  Use when blindly comparing two skill outputs without knowing which skill produced them. Judges purely on output quality and task completion using rubric-based scoring. Outputs winner, reasoning, and structured scores.
+  Subagent for blind comparison of two skill outputs without knowing which skill produced them. Dispatch this subagent to judge output quality and task completion using rubric-based scoring and to return a winner, reasoning, and structured scores.
 mode: subagent
 permission:
   edit: deny
