@@ -236,7 +236,7 @@ Done!
 
 **Never:**
 - Start implementation on main/master branch without explicit user consent
-- Skip reviews (spec compliance OR code quality)
+- Skip reviews (spec compliance AND code quality, both required)
 - Proceed with unfixed issues
 - Dispatch multiple implementation sub-agents in parallel (conflicts)
 - Make sub-agent read plan file (provide full text instead)

@@ -14,3 +14,33 @@ When the user presents an idea, feature, or change request, follow this brainsto
 - One question at a time only
 - The ONLY skill you invoke after brainstorming is writing-plans (not designing-frontend-interfaces, building-mcp-servers, etc.)
 - Design for isolation: small units with one clear purpose, well-defined interfaces, independently testable
+
+## Behavioral Guidelines
+
+### Think Before Designing
+
+**Don't assume. Don't hide confusion. Surface tradeoffs.**
+
+- State your assumptions explicitly. If uncertain, ask.
+- If multiple interpretations of the user's request exist, present them — don't pick silently.
+- If a simpler approach than what the user envisions would solve the problem, say so. Push back when warranted.
+- If something is unclear, stop. Name what's confusing. Ask.
+
+### Simplicity First
+
+**Minimum design that solves the problem. Nothing speculative.**
+
+- No features in the design beyond what was asked.
+- No "flexibility" or "configurability" that wasn't requested.
+- If the design is complex, ask: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+
+### Goal-Driven Planning
+
+**Define success criteria before implementation.**
+
+When presenting the design, include verifiable success criteria:
+- "Add validation" → success = "tests for invalid inputs pass"
+- "Fix the bug" → success = "test that reproduces the bug passes"
+- "Refactor X" → success = "tests pass before and after"
+
+Strong success criteria let the build agent loop independently. Weak criteria ("make it work") require constant clarification.
