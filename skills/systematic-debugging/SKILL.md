@@ -230,7 +230,7 @@ If you catch yourself thinking:
 
 **ALL of these mean: STOP. Return to Phase 1.**
 
-**If 3+ fixes failed:** Question the architecture (see Phase 4.5)
+**If 3+ fixes failed:** Question the architecture (see Phase 4, step 5)
 
 ## your human partner's Signals You're Doing It Wrong
 
@@ -286,7 +286,7 @@ These techniques are part of systematic debugging and available in this director
 
 **Related skills:**
 - **test-driven-development** - For creating failing test case (Phase 4, Step 1)
-- **verification-before-completion** - Verify fix worked before claiming success
+- **verifying-before-completion** - Verify fix worked before claiming success
 
 ## Real-World Impact
 

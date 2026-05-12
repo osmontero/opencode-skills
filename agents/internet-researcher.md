@@ -66,9 +66,16 @@ A concise, structured summary with:
 - Sources cited inline with [Source #1] notation
 - Any open questions or areas needing more research
 
+### Chat summary (always)
+
+A concise, structured summary with:
+- Key findings as numbered points
+- Sources cited inline with [Source #1] notation
+- Any open questions or areas needing more research
+
 ### Saved report file (standard and deep dive modes)
 
-Save to `./research-<topic>-<YYYY-MM-DD>.md` in the user's working directory. Structure:
+If you have edit permission: save to `./research-<topic>-<YYYY-MM-DD>.md` in the user's working directory. If edit is denied: present the full report inline in chat using the structure below.
 
 ```markdown
 # [Topic Title]

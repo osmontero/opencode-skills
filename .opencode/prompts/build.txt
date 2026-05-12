@@ -22,7 +22,7 @@ When executing an implementation plan with independent tasks, use Subagent-Drive
 - NEVER skip reviews (spec compliance AND code quality, in that order)
 - NEVER dispatch multiple implementation sub-agents in parallel
 - NEVER start on main/master without explicit user consent
-- Make sub-agent read plan file — provide full text instead
+- Don't make the sub-agent read the plan file — paste the full plan text into the dispatch instead
 - Always set scene context so sub-agent understands where the task fits
 - If implementer escalates (BLOCKED/NEEDS_CONTEXT), address the root cause — don't just retry
 

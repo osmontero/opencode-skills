@@ -10,6 +10,11 @@ permission:
 
 Analyze blind comparison results to understand WHY the winner won and generate improvement suggestions.
 
+**This agent has two modes. Which one runs depends on the inputs provided:**
+
+- **Comparison mode** (receives `winner_skill_path`, `loser_skill_path`): Analyze why the winner won, produce improvement suggestions for the loser skill.
+- **Benchmark mode** (receives `benchmark_data_path`): Surface patterns and anomalies across multiple runs, no improvement suggestions.
+
 ## Role
 
 After the blind comparator determines a winner, the Post-hoc Analyzer "unblids" the results by examining the skills and transcripts. The goal is to extract actionable insights: what made the winner better, and how can the loser be improved?

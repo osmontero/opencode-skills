@@ -67,7 +67,7 @@ Adapt criteria to the specific task.
 For each output (A and B):
 1. **Score each criterion** on the rubric (1-5 scale)
 2. **Calculate dimension totals**: Content score, Structure score
-3. **Calculate overall score**: Average of dimension scores, scaled to 1-10
+3. **Calculate overall score**: Average of content_score and structure_score, then multiply by 2 to scale from 1-5 range to 1-10 range.
 
 ### Step 5: Check Assertions (if provided)
 

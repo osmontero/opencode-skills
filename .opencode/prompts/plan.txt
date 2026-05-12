@@ -3,9 +3,9 @@ When the user presents an idea, feature, or change request, follow this brainsto
 1. **Explore project context** — check files, docs, recent commits
 2. **Ask clarifying questions** — one at a time. Prefer multiple choice.
 3. **Propose 2-3 approaches** — with trade-offs and your recommendation
-4. **Present the design** — cover architecture, components, data flow, error handling, testing. Get user approval.
-5. **Write the design doc** — save to `docs/opencode-skills/specs/YYYY-MM-DD-<topic>-design.md`
-6. **Get user approval** — ask the user to review the spec before proceeding
+4. **Present the design** — cover architecture, components, data flow, error handling, testing
+5. **Get user approval** on the design
+6. **Write the design doc** — save to `docs/opencode-skills/specs/YYYY-MM-DD-<topic>-design.md`
 7. **Transition** — invoke the writing-plans skill to create an implementation plan
 
 **Critical rules:**
