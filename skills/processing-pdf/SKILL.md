@@ -1,12 +1,12 @@
 ---
 name: processing-pdf
 description: >
-  Use when the user needs to extract data from PDFs, work with scanned documents, or manipulate PDF files. Triggers include: "extract text from PDF", "convert PDF to text/CSV/images", "merge/split/rotate PDF", "fill PDF form", "PDF is blank/empty" (likely scanned), or any mention of .pdf files requiring data extraction or transformation. Also use for invoices, receipts, forms, contracts, reports, or any document where structured data (text, tables, form fields) needs to be extracted. For scanned PDFs, convert to images and let the LLM read them.
+  Use when the user needs to extract data from PDFs, work with scanned documents, or manipulate PDF files. Triggers include: "extract text from PDF", "convert PDF to text/CSV/images", "scan/OCR this document", "merge/split/rotate PDF", "fill PDF form", "PDF is blank/empty" (likely scanned), or any mention of .pdf files requiring data extraction or transformation. Also use for invoices, receipts, forms, contracts, reports, or any document where structured data (text, tables, form fields) needs to be extracted.
 ---
 
 # PDF Processing
 
-Process PDF files using command-line tools and Python libraries.
+Process PDF files using command-line tools and Python libraries. For scanned PDFs, convert pages to images and have the LLM read them using its built-in image understanding.
 
 ## Prerequisites
 
@@ -16,11 +16,7 @@ Before running any Python scripts, **activate the opencode virtual environment**
 source ~/.local/opencode-venv/bin/activate
 ```
 
-Then use `python3 scripts/...` normally. To run a single script without activating:
-
-```bash
-~/.local/opencode-venv/bin/python3 scripts/extract_text.py input.pdf
-```
+Then use `python3 scripts/...` normally.
 
 ## Available Tools
 
@@ -28,51 +24,98 @@ Then use `python3 scripts/...` normally. To run a single script without activati
 |------|---------|---------|
 | `pdftotext` | System (Poppler) | Quick text extraction |
 | `pdfinfo` | System (Poppler) | Metadata, page count |
-| `pypdf` | Python (venv) | Merge, split, rotate, metadata |
+| `pypdf` | Python (venv) | Merge, split, rotate |
 | `pdfplumber` | Python (venv) | Table extraction, detailed text |
+| `to_images.py` | Python script (venv) | Convert pages to PNG images |
 
-## Quick Operations
-
-### Decision Guide: Which Tool Should I Use?
+## Decision Guide
 
 ```
 Need to process a PDF?
 │
-├─ Extract text?
-│  ├─ Try: pdftotext input.pdf output.txt
-│  ├─ Got empty output? → PDF is scanned → Use: python3 scripts/to_images.py input.pdf --dpi 200 (then let the LLM read the images)
-│  └─ Need page control? → Use: python3 scripts/extract_text.py input.pdf -f 1 -l 5
+├─ Extract text from a normal PDF?
+│  ├─ Quick: pdftotext input.pdf output.txt
+│  └─ With page numbers: python3 scripts/extract_text.py input.pdf
 │
 ├─ Extract tables?
-│  └─ Use: python3 scripts/extract_tables.py input.pdf -o ./tables/
+│  └─ python3 scripts/extract_tables.py input.pdf -o ./tables/
 │
 ├─ Fill a form?
-│  ├─ First check fields: python3 scripts/check_forms.py input.pdf
-│  ├─ Create JSON with field values
+│  ├─ Check fields: python3 scripts/check_forms.py input.pdf
 │  └─ Fill: python3 scripts/fill_form.py input.pdf fields.json output.pdf
 │
-├─ Merge/Split/Rotate?
-│  └─ Use pypdf Python examples (see sections below)
+├─ Read a scanned PDF (OCR)?
+│  ├─ Convert: python3 scripts/to_images.py scanned.pdf -o ./pages/ --dpi 200
+│  └─ Read the images and extract what you need
 │
-├─ Convert to images?
-│  └─ Use: python3 scripts/to_images.py input.pdf --dpi 300
+├─ Merge/Split/Rotate?
+│  └─ See pypdf examples below
 │
 └─ Large file (>50MB)?
    ├─ Quick text: pdftotext (fastest)
-   └─ Specific pages: pdftotext -f N -l M for page ranges
+   └─ Page ranges: pdftotext -f N -l M input.pdf
 ```
 
-### Extract text from a PDF
+## Reading Scanned PDFs (OCR via LLM Image Understanding)
+
+When a PDF is scanned (no selectable text), convert its pages to images and let the LLM read them.
+
+### Step 1: Detect if PDF is scanned
 
 ```bash
-# Simple extraction (preserves layout)
+pdftotext document.pdf - | head -20
+```
+If output is empty or whitespace, the PDF is scanned.
+
+### Step 2: Convert pages to images
+
+```bash
+# All pages at 200 DPI (sufficient for most documents)
+python3 scripts/to_images.py document.pdf -o ./pdf-pages/ --dpi 200
+
+# Higher quality for handwritten or low-quality scans
+python3 scripts/to_images.py document.pdf -o ./pdf-pages/ --dpi 300
+```
+
+### Step 3: Read the images
+
+Reference the generated PNG files directly — the LLM can read them natively. Ask it to extract text, tables, fields, or answer questions about the document content.
+
+### Step 4: Clean up
+
+```bash
+rm -rf ./pdf-pages/
+```
+
+### Tips for scanned PDFs
+
+- **200 DPI** works for most documents
+- **300 DPI** for handwritten content or blurry scans
+- For large PDFs, convert pages in batches (use pypdf to split first, then convert)
+- Always clean up the generated image directory after reading
+
+## Text Extraction
+
+### Quick extraction (pdftotext)
+
+```bash
+# Simple extraction
 pdftotext input.pdf output.txt
 
 # Single page
 pdftotext -f 3 -l 3 input.pdf page3.txt
 
-# Layout preservation
+# With layout preservation
 pdftotext -layout input.pdf output.txt
+
+# Page range
+pdftotext -f 5 -l 10 input.pdf pages_5_10.txt
+```
+
+### With page numbers (script)
+
+```bash
+python3 scripts/extract_text.py input.pdf
 ```
 
 ### Get PDF info
@@ -81,19 +124,15 @@ pdftotext -layout input.pdf output.txt
 pdfinfo input.pdf
 ```
 
-### Extract text with Python (more control)
+## Table Extraction
 
-```python
-import pdfplumber
+### Script (recommended)
 
-with pdfplumber.open("input.pdf") as pdf:
-    for i, page in enumerate(pdf.pages):
-        text = page.extract_text()
-        print(f"--- Page {i+1} ---")
-        print(text)
+```bash
+python3 scripts/extract_tables.py input.pdf -o ./tables/
 ```
 
-### Extract tables
+### Python (inline)
 
 ```python
 import pdfplumber
@@ -108,6 +147,32 @@ with pdfplumber.open("input.pdf") as pdf:
                 for row in table:
                     writer.writerow([cell or "" for cell in row])
 ```
+
+## Form Handling
+
+### Check for fillable fields
+
+```bash
+python3 scripts/check_forms.py input.pdf
+```
+
+### Fill a form
+
+```bash
+python3 scripts/fill_form.py input.pdf fields.json output.pdf
+```
+
+Where `fields.json` contains:
+
+```json
+{
+  "field_name": "John Smith",
+  "email": "john@example.com",
+  "date": "2026-05-04"
+}
+```
+
+## PDF Manipulation (pypdf)
 
 ### Merge PDFs
 
@@ -124,7 +189,7 @@ with open("merged.pdf", "wb") as f:
     writer.write(f)
 ```
 
-### Split PDF into individual pages
+### Split into individual pages
 
 ```python
 from pypdf import PdfReader, PdfWriter
@@ -168,88 +233,17 @@ with open("trimmed.pdf", "wb") as f:
     writer.write(f)
 ```
 
-## Script-Based Operations
-
-### Extract all text with page numbers
-
-```bash
-python3 scripts/extract_text.py input.pdf
-```
-
-### Extract tables to CSV
-
-```bash
-python3 scripts/extract_tables.py input.pdf
-```
-
-### Check if PDF has fillable forms
-
-```bash
-python3 scripts/check_forms.py input.pdf
-```
-
-### Fill a fillable PDF form
-
-```bash
-python3 scripts/fill_form.py input.pdf fields.json output.pdf
-```
-
-Where `fields.json` is:
-
-```json
-{
-  "field_name": "John Smith",
-  "email": "john@example.com",
-  "date": "2026-05-04"
-}
-```
-
-### Convert PDF pages to images
-
-```bash
-python3 scripts/to_images.py input.pdf --dpi 200
-```
-
-### Get PDF metadata
+## Metadata
 
 ```bash
 python3 scripts/metadata.py input.pdf
 ```
 
-## Working with Scanned PDFs
+## Convert to Images
 
-For scanned PDFs (image-based, no selectable text), standard extraction will return empty results. Convert pages to images and let the LLM read them.
-
-### How to Detect a Scanned PDF
-
-Quick test:
 ```bash
-pdftotext document.pdf - | head -20
+python3 scripts/to_images.py input.pdf --dpi 200
 ```
-If output is empty or just whitespace, the PDF is scanned.
-
-Programmatic check in Python:
-```python
-import pdfplumber
-
-with pdfplumber.open("document.pdf") as pdf:
-    page = pdf.pages[0]
-    text = page.extract_text()
-    if not text or not text.strip():
-        print("PDF appears to be scanned (image-based)")
-```
-
-### Read a Scanned PDF with the LLM
-
-1. Convert pages to images:
-   ```bash
-   python3 scripts/to_images.py scanned.pdf -o ./scanned-pages/ --dpi 200
-   ```
-2. Reference or attach the images and ask the LLM to extract text, tables, or structured data.
-
-**Best practices:**
-- Use 200 DPI for most documents, 300+ for handwritten or low-quality scans
-- Clean up generated images after use: `rm -rf ./scanned-pages/`
 
 ## Large Files
 
@@ -263,12 +257,6 @@ For large PDFs (>50MB):
 If extracting text from a very large PDF, write the output incrementally (~1000 tokens per edit) rather than in a single pass.
 
 ## Common Patterns
-
-### Extract specific pages
-
-```bash
-pdftotext -f 5 -l 10 input.pdf pages_5_10.txt
-```
 
 ### Search for text in a PDF
 
@@ -284,82 +272,36 @@ pdftotext doc2.pdf - > /tmp/doc2.txt
 diff /tmp/doc1.txt /tmp/doc2.txt
 ```
 
-## Output Format Examples
-
-### Text extraction output
-```
-=== Page 1 of 5 ===
-Invoice #12345
-Date: 2024-01-15
-Customer: Acme Corp
-
-=== Page 2 of 5 ===
-Line Items:
-  Widget A    $100.00
-  Widget B    $250.00
-```
-
-### Table extraction output (CSV)
-```csv
-Product,Quantity,Price,Total
-Widget A,10,100.00,1000.00
-Widget B,5,250.00,1250.00
-```
-
-### Form field detection output
-```
-Found 3 fillable form field(s):
-
-  name:
-    Type:  /Tx
-    Value: (empty)
-
-  email:
-    Type:  /Tx
-    Value: (empty)
-
-  date:
-    Type:  /Tx
-    Value: (empty)
-
-To fill these fields, create a JSON file with field names as keys:
-{
-  "name": "",
-  "email": "",
-  "date": ""
-}
-```
-
-## Edge Cases and Error Handling
+## Edge Cases
 
 ### Encrypted PDFs
-If you encounter "Permission denied" or "encrypted" errors:
+
 ```python
-from pypdf import PdfReader, PdfWriter
+from pypdf import PdfReader
 
 reader = PdfReader("encrypted.pdf")
 if reader.is_encrypted:
     reader.decrypt("")  # Try empty password first
-    # Or: reader.decrypt("password") if you know it
 ```
 
 ### Corrupted or Invalid PDFs
-Always wrap PDF operations in try-except:
+
 ```python
 try:
     with pdfplumber.open("file.pdf") as pdf:
         # process...
 except Exception as e:
     print(f"Error processing PDF: {e}")
-    # Fallback: try pdftotext or inform user
 ```
 
 ### Very Large PDFs (>100MB)
+
 - Use `pdftotext` for speed
 - Process in page batches with pdfplumber
 - Avoid loading entire file into memory
 
 ### Mixed Content (Some pages scanned, some not)
-1. First try standard extraction
+
+1. First try standard extraction (`pdftotext`)
 2. Check which pages returned empty text
-3. Convert only those pages to images and let the LLM read them
+3. Convert only those pages to images and have the LLM read them
