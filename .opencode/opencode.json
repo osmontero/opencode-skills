@@ -247,6 +247,10 @@
     "java": {
       "command": ["jdtls"],
       "extensions": [".java"]
+    },
+    "python": {
+      "command": ["basedpyright-langserver", "--stdio"],
+      "extensions": [".py"]
     }
   },
   "agent": {
