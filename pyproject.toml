@@ -5,7 +5,9 @@ description = "Python dependencies for opencode skills"
 requires-python = ">=3.12"
 
 dependencies = [
-    # PDF skill (pypdfium2 for to_images.py)
+    # PDF skill
+    "pdfplumber>=0.11.0",
+    "pypdf>=6.0.0",
     "pypdfium2>=5.0.0",
     # slack-gif-creator skill
     "pillow>=10.0.0",
