@@ -1,6 +1,0 @@
-{
-  "eval_id": 1,
-  "eval_name": "chart-analysis",
-  "prompt": "Can you look at this chart and tell me what trends you see? ./test_images/sales_chart.png",
-  "assertions": []
-}

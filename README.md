@@ -4,7 +4,7 @@ Adapted skills and agents for the opencode agent ecosystem.
 
 ## Contents
 
-**26 skills** covering development workflows, document generation, code review, testing, debugging, design, and more.
+**25 skills** covering development workflows, document processing, code review, testing, debugging, design, and more.
 
 **8 global agents** for implementation, review, and evaluation.
 
@@ -50,14 +50,6 @@ The following skills are MIT-licensed adaptations from [obra/superpowers](https:
 - `writing-plans` — Implementation plan creation from specs
 
 See individual `skills/<name>/LICENSE.txt` files for full license text and attribution notices.
-
-## Examples
-
-### ThreatWinds Vision MCP Server
-
-A [FastMCP](https://github.com/modelcontextprotocol/python-sdk) server that analyzes scanned PDFs and images through the [ThreatWinds AI API](https://threatwinds.com). Supports arbitrary extraction prompts and three input modes: local file paths, remote URLs, and base64 payloads.
-
-See [`mcp_servers/threatwinds_vision/README.md`](mcp_servers/threatwinds_vision/README.md) for setup and usage.
 
 ## Install
 

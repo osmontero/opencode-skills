@@ -1,6 +1,0 @@
-{
-  "eval_id": 2,
-  "eval_name": "receipt-extraction",
-  "prompt": "I need to digitize this receipt. It's saved as ./test_images/receipt.png. Extract the merchant name, date, all line items with prices, and the total.",
-  "assertions": []
-}
