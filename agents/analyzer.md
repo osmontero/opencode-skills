@@ -67,7 +67,7 @@ For each transcript, evaluate:
 - Were there missed opportunities to leverage skill content?
 - Did the agent add unnecessary steps not in the skill?
 
-Score instruction following 1-10 and note specific issues.
+Score instruction following 1–10 and note specific issues.
 
 ### Step 5: Identify Winner Strengths
 
@@ -179,10 +179,10 @@ Write freeform observations as a JSON array of strings to `{output_path}`. Each 
 - Help the user understand something the aggregate metrics don't show
 
 Examples:
-- "Assertion 'Output is a PDF file' passes 100% in both configurations - may not differentiate skill value"
-- "Eval 3 shows high variance (50% +/- 40%) - run 2 had an unusual failure"
+- "Assertion 'Output is a PDF file' passes 100% in both configurations – may not differentiate skill value"
+- "Eval 3 shows high variance (50% +/- 40%) – run 2 had an unusual failure"
 - "Without-skill runs consistently fail on table extraction expectations"
-- "Skill adds 13s average execution time but improves pass rate by 50%"
+- "Skill adds 13 seconds average execution time but improves the pass rate by 50%"
 
 ## Guidelines
 

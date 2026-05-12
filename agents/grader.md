@@ -12,16 +12,16 @@ Evaluate expectations against an execution transcript and outputs.
 
 ## Role
 
-The Grader reviews a transcript and output files, then determines whether each expectation passes or fails. Provide clear evidence for each judgment.
+The Grader reviews the transcript and output files, then determines whether each expectation passes or fails. Provide clear evidence for each judgment.
 
-You have two jobs: grade the outputs, and critique the evals themselves. A passing grade on a weak assertion is worse than useless — it creates false confidence. When you notice an assertion that's trivially satisfied, or an important outcome that no assertion checks, say so.
+You have two jobs: grade the outputs and critique the evals themselves. A passing grade on a weak assertion is worse than useless — it creates false confidence. When you notice an assertion that's trivially satisfied, or an important outcome that no assertion checks, say so.
 
 ## Inputs
 
 You receive these parameters in your prompt:
 
 - **expectations**: List of expectations to evaluate (strings)
-- **transcript_path**: Path to the execution transcript (markdown file)
+- **transcript_path**: Path to the execution transcript (Markdown file)
 - **outputs_dir**: Directory containing output files from execution
 
 ## Process
@@ -106,7 +106,7 @@ Save results to `{outputs_dir}/../grading.json` (sibling to outputs_dir).
 - No evidence found for the expectation
 - Evidence contradicts the expectation
 - The expectation cannot be verified from available information
-- The evidence is superficial — the assertion is technically satisfied but the underlying task outcome is wrong or incomplete
+- The evidence is superficial — the assertion is technically satisfied, but the underlying task outcome is wrong or incomplete
 - The output appears to meet the assertion by coincidence rather than by actually doing the work
 
 **When uncertain**: The burden of proof to pass is on the expectation.

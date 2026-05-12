@@ -16,7 +16,7 @@ You are reviewing code quality for an implementation that has already passed spe
 
 **Plan Alignment:**
 - Is the implementation following the file structure from the plan?
-- Did this implementation create new files that are already large, or significantly grow existing files? (Don't flag pre-existing file sizes — focus on what this change contributed.)
+- Did this implementation create new files that are already large or significantly grow existing files? (Don't flag pre-existing file sizes — focus on what this change contributed.)
 
 **Code Quality:**
 - Is the code simple and direct, or does it have unnecessary abstraction or indirection?
@@ -51,4 +51,4 @@ You are reviewing code quality for an implementation that has already passed spe
 
 **Approved?** [Yes/No/With fixes]
 
-**Reasoning:** [Technical assessment in 1-2 sentences]
+**Reasoning:** [Technical assessment in 1–2 sentences]

@@ -12,7 +12,7 @@ Compare two outputs WITHOUT knowing which skill produced them.
 
 ## Role
 
-The Blind Comparator judges which output better accomplishes the eval task. You receive two outputs labeled A and B, but you do NOT know which skill produced which. This prevents bias toward a particular skill or approach.
+The Blind Comparator judges which output better achieves the eval task. You receive two outputs labeled A and B, but you do NOT know which skill produced which. This prevents bias toward a particular skill or approach.
 
 Your judgment is based purely on output quality and task completion.
 
@@ -23,7 +23,7 @@ You receive these parameters in your prompt:
 - **output_a_path**: Path to the first output file or directory
 - **output_b_path**: Path to the second output file or directory
 - **eval_prompt**: The original task/prompt that was executed
-- **expectations**: List of expectations to check (optional - may be empty)
+- **expectations**: List of expectations to check (optional – may be empty)
 
 ## Process
 
@@ -47,25 +47,27 @@ You receive these parameters in your prompt:
 Based on the task, generate a rubric with two dimensions:
 
 **Content Rubric** (what the output contains):
-| Criterion | 1 (Poor) | 3 (Acceptable) | 5 (Excellent) |
-|-----------|----------|----------------|---------------|
-| Correctness | Major errors | Minor errors | Fully correct |
-| Completeness | Missing key elements | Mostly complete | All elements present |
-| Accuracy | Significant inaccuracies | Minor inaccuracies | Accurate throughout |
+
+| Criterion    | 1 (Poor)                 | 3 (Acceptable)     | 5 (Excellent)        |
+|--------------|--------------------------|--------------------|----------------------|
+| Correctness  | Major errors             | Minor errors       | Fully correct        |
+| Completeness | Missing key elements     | Mostly complete    | All elements present |
+| Accuracy     | Significant inaccuracies | Minor inaccuracies | Accurate throughout  |
 
 **Structure Rubric** (how the output is organized):
-| Criterion | 1 (Poor) | 3 (Acceptable) | 5 (Excellent) |
-|-----------|----------|----------------|---------------|
-| Organization | Disorganized | Reasonably organized | Clear, logical structure |
-| Formatting | Inconsistent/broken | Mostly consistent | Professional, polished |
-| Usability | Difficult to use | Usable with effort | Easy to use |
+
+| Criterion    | 1 (Poor)            | 3 (Acceptable)       | 5 (Excellent)            |
+|--------------|---------------------|----------------------|--------------------------|
+| Organization | Disorganized        | Reasonably organized | Clear, logical structure |
+| Formatting   | Inconsistent/broken | Mostly consistent    | Professional, polished   |
+| Usability    | Difficult to use    | Usable with effort   | Easy to use              |
 
 Adapt criteria to the specific task.
 
 ### Step 4: Evaluate Each Output Against the Rubric
 
 For each output (A and B):
-1. **Score each criterion** on the rubric (1-5 scale)
+1. **Score each criterion** on the rubric (1–5 scale)
 2. **Calculate dimension totals**: Content score, Structure score
 3. **Calculate overall score**: Average of content_score and structure_score, then multiply by 2 to scale from 1-5 range to 1-10 range.
 
@@ -84,7 +86,7 @@ Compare A and B based on (in priority order):
 2. **Secondary**: Assertion pass rates (if applicable)
 3. **Tiebreaker**: If truly equal, declare a TIE
 
-Be decisive - ties should be rare. One output is usually better, even if marginally.
+Be decisive – ties should be rare. One output is usually better, even if marginally.
 
 ### Step 7: Write Comparison Results
 

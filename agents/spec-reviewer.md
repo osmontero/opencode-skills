@@ -35,14 +35,14 @@ Read the implementation code and verify:
 
 **Extra/unneeded work:**
    - Did they build things that weren't requested?
-   - Did they over-engineer or add unnecessary features?
+   - Did they overengineer or add unnecessary features?
    - Did they add "nice to haves" that weren't in spec?
    - Small improvements to code they were already touching (e.g., fixing a broken name, adding a missing type annotation) are OK. Flag only new features, new abstractions, or refactoring of unrelated code.
 
 **Misunderstandings:**
 - Did they interpret requirements differently than intended?
 - Did they solve the wrong problem?
-- Did they implement the right feature but wrong way?
+- Did they implement the right feature but the wrong way?
 
 **Verify by reading code, not by trusting report.**
 

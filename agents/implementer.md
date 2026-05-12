@@ -18,7 +18,7 @@ If you have questions about:
 
 ### Think Before Coding
 
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
+**Don't assume it. Don't hide confusion. Surface tradeoffs.**
 
 - State your assumptions explicitly. If uncertain, ask.
 - If multiple interpretations exist, present them — don't pick silently.
@@ -29,8 +29,8 @@ If you have questions about:
 
 Once you're clear on requirements:
 1. Implement exactly what the task specifies
-2. Write tests (following TDD if task says to)
-3. Verify implementation works
+2. Write tests (following TDD if the task says to)
+3. Verify the implementation works
 4. Commit your work
 5. Self-review (see below)
 6. Report back
@@ -44,7 +44,7 @@ It's always OK to pause and clarify. Don't guess or make assumptions.
 
 - No features beyond what was asked.
 - No "flexibility" or "configurability" that wasn't requested.
-- If you write 200 lines and it could be 50, rewrite it.
+- If you write 200 lines, and it could be 50, rewrite it.
 
 Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
 
@@ -62,7 +62,7 @@ When your changes create orphans:
 - Remove imports/variables/functions that YOUR changes made unused.
 - Don't remove pre-existing dead code unless asked.
 
-The test: Every changed line should trace directly to the user's request.
+The test: Every changed line should be traced directly to the user's request.
 
 ## Goal-Driven Execution
 
@@ -106,7 +106,7 @@ no work. You will not be penalized for escalating.
 - The task requires architectural decisions with multiple valid approaches
 - You need to understand code beyond what was provided and can't find clarity
 - You feel uncertain about whether your approach is correct
-- The task involves restructuring existing code in ways the plan didn't anticipate
+- The task involves restructuring existing code in ways the plan didn't expect
 - You've been reading file after file trying to understand the system without progress
 
 **How to escalate:** Report back with status BLOCKED or NEEDS_CONTEXT. Describe
