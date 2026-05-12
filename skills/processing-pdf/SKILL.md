@@ -20,21 +20,28 @@ Then use `python3 scripts/...` normally.
 
 ## Available Tools
 
-| Tool | Command | Use For |
-|------|---------|---------|
-| `pdftotext` | System (Poppler) | Quick text extraction |
-| `pdfinfo` | System (Poppler) | Metadata, page count |
-| `pypdf` | Python (venv) | Merge, split, rotate |
-| `pdfplumber` | Python (venv) | Table extraction, detailed text |
-| `to_images.py` | Python script (venv) | Convert pages to PNG images |
+| Tool                  | Command                          | Use For                                                           |
+|-----------------------|----------------------------------|-------------------------------------------------------------------|
+| `pdf-extractor` agent | Global agent (dispatch via Task) | Full PDF extraction (all pages, all data, structured folder tree) |
+| `pdftotext`           | System (Poppler)                 | Quick text extraction                                             |
+| `pdfinfo`             | System (Poppler)                 | Metadata, page count                                              |
+| `pypdf`               | Python (venv)                    | Merge, split, rotate                                              |
+| `pdfplumber`          | Python (venv)                    | Table extraction, detailed text                                   |
+| `to_images.py`        | Python script (venv)             | Convert pages to PNG images                                       |
 
 ## Decision Guide
 
 ```
 Need to process a PDF?
 │
-├─ Extract text from a normal PDF?
-│  ├─ Quick: pdftotext input.pdf output.txt
+├─ Extract everything from a PDF?
+│  └─ Dispatch the `pdf-extractor` agent.
+│     It converts all pages to images, reads each one, and stores
+│     per-page results in extracted_data/<pdf_name>/page_NNN/content.md
+│     along with images and a summary.
+│
+├─ Quick text from a normal PDF?
+│  ├─ Simple: pdftotext input.pdf output.txt
 │  └─ With page numbers: python3 scripts/extract_text.py input.pdf
 │
 ├─ Extract tables?
@@ -44,7 +51,7 @@ Need to process a PDF?
 │  ├─ Check fields: python3 scripts/check_forms.py input.pdf
 │  └─ Fill: python3 scripts/fill_form.py input.pdf fields.json output.pdf
 │
-├─ Read a scanned PDF (OCR)?
+├─ Read a scanned PDF (quick)?
 │  ├─ Convert: python3 scripts/to_images.py scanned.pdf -o ./pages/ --dpi 200
 │  └─ Read the images and extract what you need
 │
@@ -56,7 +63,31 @@ Need to process a PDF?
    └─ Page ranges: pdftotext -f N -l M input.pdf
 ```
 
-## Reading Scanned PDFs (OCR via LLM Image Understanding)
+## Full PDF Extraction
+
+For complete extraction of all data from a PDF (text, tables, forms, structure), dispatch the `pdf-extractor` agent. It:
+
+1. Converts all pages to PNG images
+2. Reads each image using LLM vision
+3. Extracts text, tables, key facts, form fields, and notes
+4. Per-page output in `extracted_data/<pdf_name>/page_NNN/`:
+   - `page_NNN.png` — the page image
+   - `content.md` — all text and extracted facts as markdown
+   - Other LLM-legible files as needed
+5. Creates `summary.md` with document-level overview
+
+### When to use the extractor agent
+
+- Multi-page documents where you need all the data
+- Scanned PDFs or mixed scanned/digital PDFs
+- Documents with complex layouts (tables, columns, forms)
+- When you need a structured, browsable folder tree of results
+
+### Quick extraction (no agent)
+
+For a single page or a quick glance, use the manual steps below.
+
+## Reading Scanned PDFs (Quick, No Agent)
 
 When a PDF is scanned (no selectable text), convert its pages to images and let the LLM read them.
 
