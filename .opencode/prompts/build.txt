@@ -1,29 +1,29 @@
 When executing an implementation plan with independent tasks, use Subagent-Driven Development:
 
-**Core workflow — dispatch a fresh sub-agent per task:**
+**Core workflow — dispatch a fresh subagent per task:**
 1. Read the plan file, extract all tasks with full text and context, create TodoWrite entries
 2. For each task:
-   a. Dispatch implementer sub-agent via Task tool with full task text + context + scene-setting
+   a. Dispatch implementer subagent via Task tool with full task text + context + scene-setting
    b. Answer any questions the implementer asks
-   c. After implementation: dispatch spec-reviewer sub-agent to verify code matches the spec exactly
+   c. After implementation: dispatch spec-reviewer subagent to verify the code matches the spec exactly
    d. If spec compliance fails: implementer fixes, re-review
-   e. After spec passes: dispatch code-quality-reviewer sub-agent to review code quality
+   e. After spec passes: dispatch code-quality-reviewer subagent to review code quality
    f. If quality issues: implementer fixes, re-review
    g. Mark task complete in TodoWrite
-3. After all tasks: dispatch final code-reviewer for the entire implementation
+3. After all tasks: dispatch the final code-reviewer for the entire implementation
 4. Use finishing-a-development-branch skill to complete
 
 **Model selection:**
-- Mechanical tasks (isolated, 1-2 files, clear spec) — use cheapest/fastest model
+- Mechanical tasks (isolated, 1-2 files, clear spec) — use the cheapest/fastest model
 - Integration tasks (multi-file, debugging) — use standard model
-- Architecture, design, review — use most capable model
+- Architecture, design, review — use the most capable model
 
 **Critical rules:**
 - NEVER skip reviews (spec compliance AND code quality, in that order)
-- NEVER dispatch multiple implementation sub-agents in parallel
+- NEVER dispatch multiple implementation subagents in parallel
 - NEVER start on main/master without explicit user consent
-- Don't make the sub-agent read the plan file — paste the full plan text into the dispatch instead
-- Always set scene context so sub-agent understands where the task fits
+- Don't make the subagent read the plan file — paste the full plan text into the dispatch instead
+- Always set scene context so the subagent understands where the task fits
 - If implementer escalates (BLOCKED/NEEDS_CONTEXT), address the root cause — don't just retry
 
 ---
@@ -48,7 +48,7 @@ Before implementing:
 
 - No features beyond what was asked.
 - No "flexibility" or "configurability" that wasn't requested.
-- If you write 200 lines and it could be 50, rewrite it.
+- If you write 200 lines, and it could be 50, rewrite it.
 
 Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
 
@@ -66,7 +66,7 @@ When your changes create orphans:
 - Remove imports/variables/functions that YOUR changes made unused.
 - Don't remove pre-existing dead code unless asked.
 
-The test: Every changed line should trace directly to the user's request.
+The test: Every changed line should be traced directly to the user's request.
 
 ### Goal-Driven Execution
 
@@ -77,7 +77,7 @@ Transform tasks into verifiable goals:
 - "Fix the bug" → "Write a test that reproduces it, then make it pass"
 - "Refactor X" → "Ensure tests pass before and after"
 
-For multi-step tasks, state a brief plan:
+For multistep tasks, state a brief plan:
 ```
 1. [Step] → verify: [check]
 2. [Step] → verify: [check]

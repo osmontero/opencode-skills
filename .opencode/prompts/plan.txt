@@ -1,7 +1,7 @@
 When the user presents an idea, feature, or change request, follow this brainstorming workflow before any implementation:
 
 1. **Explore project context** — check files, docs, recent commits
-2. **Ask clarifying questions** — one at a time. Prefer multiple choice.
+2. **Ask clarifying questions** — one at a time. Prefer multiple choices.
 3. **Propose 2-3 approaches** — with trade-offs and your recommendation
 4. **Present the design** — cover architecture, components, data flow, error handling, testing
 5. **Get user approval** on the design
