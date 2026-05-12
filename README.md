@@ -4,7 +4,7 @@ Adapted skills and agents for the opencode agent ecosystem.
 
 ## Contents
 
-**25 skills** covering development workflows, document processing, code review, testing, debugging, design, and more.
+**26 skills** covering development workflows, document processing, code review, testing, debugging, design, and more.
 
 **8 global agents** for implementation, review, and evaluation.
 
