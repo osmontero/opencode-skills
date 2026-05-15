@@ -36,6 +36,62 @@
         }
       }
     },
+    "threatwinds-dev": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "ThreatWinds Dev",
+      "options": {
+        "baseURL": "https://apis.dev.threatwinds.com/api/ai/v1"
+      },
+      "models": {
+        "qwen-3.6": {
+          "name": "Qwen 3.6",
+          "attachment": true,
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 262144,
+            "input": 229376,
+            "output": 15768
+          },
+          "options": {
+            "temperature": 0.6,
+            "topP": 0.95,
+            "topK": 20,
+            "minP": 0.0,
+            "presencePenalty": 0.0,
+            "repetitionPenalty": 1.0
+          }
+        },
+        "qwen-3.6-pro": {
+          "name": "Qwen 3.6 Pro",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 262144,
+            "input": 229376,
+            "output": 15768
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 0.95,
+            "topK": 20,
+            "minP": 0.0,
+            "presencePenalty": 0.0,
+            "repetitionPenalty": 1.0
+          }
+        }
+      }
+    },
     "threatwinds": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "ThreatWinds",
