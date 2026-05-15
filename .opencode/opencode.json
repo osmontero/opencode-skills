@@ -1,6 +1,41 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
+    "aorus": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "AORUS",
+      "options": {
+        "baseURL": "https://aorus.threatwinds.net/v1"
+      },
+      "models": {
+        "unsloth/Qwen3.6-27B-NVFP4": {
+          "name": "Qwen 3.6",
+          "attachment": true,
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "limit": {
+            "context": 131072,
+            "input": 115304,
+            "output": 15768
+          },
+          "options": {
+            "temperature": 0.6,
+            "topP": 0.95,
+            "topK": 20,
+            "minP": 0.0,
+            "presencePenalty": 0.0,
+            "repetitionPenalty": 1.0
+          }
+        }
+      }
+    },
     "threatwinds": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "ThreatWinds",
