@@ -6,7 +6,7 @@ Adapted skills and agents for the opencode agent ecosystem.
 
 **26 skills** covering development workflows, document processing, code review, testing, debugging, design, and more.
 
-**8 global agents** for implementation, review, and evaluation.
+**9 global agents** for implementation, review, and evaluation.
 
 ## License
 
@@ -83,6 +83,7 @@ cp agents/* ~/.config/opencode/agents/
 | `comparator`            | Blind A/B comparison of skill outputs                             |
 | `analyzer`              | Post-hoc analysis + benchmark pattern detection                   |
 | `internet-researcher`   | Web research, fact-checking, and source gathering                 |
+| `pdf-extractor`         | Full PDF extraction via image conversion and OCR                  |
 
 ## Skills
 

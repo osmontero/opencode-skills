@@ -6,8 +6,7 @@ This repository contains **opencode skills and global agents** — Markdown-base
 
 ```
 skills/          — 26 skill directories (each: SKILL.md + optional scripts/, references/, assets/)
-agents/          — 9 agent definition files (YAML-frontmatter Markdown, *.md)
-docs/            — Design specs and documentation
+agents/          — 8 agent definition files (YAML-frontmatter Markdown, *.md) + LICENSE.txt
 .opencode/       — Local opencode config (opencode.json, prompts/, plans/)
 ```
 
@@ -51,6 +50,10 @@ These are wired into `opencode.json` under `agent.plan.prompt` and `agent.build.
 ### README contains license attribution info and full skill/agent lists
 
 The README documents third-party licenses and attributions, plus tables of all skills and agents. Keep it synchronized if you add/remove skills, agents, or change attribution sources.
+
+### customize-opencode is built-in
+
+The `customize-opencode` skill appears in the available skills list as `<built-in>` and is not in the repo. However, it triggers for editing `opencode.json`, `opencode.jsonc`, files under `.opencode/`, and files under `~/.config/opencode/`. Use it when working on opencode's own configuration.
 
 ### creating-skills is the meta-skill
 
