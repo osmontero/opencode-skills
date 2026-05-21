@@ -64,7 +64,8 @@ fi
 # Install prompt files referenced by opencode.json
 if [ -d "$SCRIPT_DIR/.opencode/prompts" ]; then
   echo "Installing prompt files..."
-  cp -r "$SCRIPT_DIR/.opencode/prompts" "$CONFIG_DIR/prompts"
+  mkdir -p "$CONFIG_DIR/prompts"
+  cp "$SCRIPT_DIR/.opencode/prompts/"* "$CONFIG_DIR/prompts/"
 fi
 
 # Remove legacy common folder from older installs

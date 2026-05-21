@@ -38,7 +38,7 @@ Each `agents/<name>.md` has frontmatter with `description`, `mode: subagent`, an
 
 `.opencode/opencode.json` configures providers, models, MCP servers, LSP, and agent prompts. It references `prompts/plan.txt` and `prompts/build.txt` for the plan and build workflows. The `plans/` directory stores implementation plans.
 
-**LSP servers:** TypeScript/JavaScript uses `npx -y typescript-language-server --stdio` (no global install). Other LSPs (gopls, rust-analyzer, dart, jdtls) require their respective tools installed globally.
+**LSP servers:** All LSP servers (typescript, gopls, pyright for Python, rust, dart, java, etc.) use opencode's built-in support and are enabled automatically when their requirements are met. The `"lsp": {}` entry in `opencode.json` enables all built-ins without overrides. Do not add custom `command` entries for built-in LSPs — it bypasses opencode's auto-install logic and breaks if the binary isn't globally available.
 
 ### Plan and build prompts define the core workflow
 
