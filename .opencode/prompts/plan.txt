@@ -1,1 +1,0 @@
-Invoke the brainstorming skill. After design approval, the brainstorming skill will invoke writing-plans to create the implementation plan.

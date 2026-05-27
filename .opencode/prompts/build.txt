@@ -1,1 +1,0 @@
-Invoke the subagent-driven-development skill to execute the implementation plan. After all tasks complete, it will invoke finishing-a-development-branch.
