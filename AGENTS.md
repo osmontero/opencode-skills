@@ -38,7 +38,7 @@ Each `agents/<name>.md` has frontmatter with `description`, `mode: subagent`, an
 
 `.opencode/opencode.json` configures providers, models, MCP servers, LSP, and agent prompts. It references `prompts/plan.txt` and `prompts/build.txt` for the plan and build workflows. The `plans/` directory stores implementation plans.
 
-**LSP servers:** All LSP servers use opencode's built-in support (`"lsp": {}` in `opencode.json`). Do NOT add custom `command` entries — they replace built-ins entirely and bypass auto-install. Built-in LSPs that need bundled npm packages (`typescript`, `typescript-language-server`, `pyright`) are installed by `install.sh` into `~/.opencode/node_modules/`. The TypeScript LSP also requires a project lock file (`package-lock.json`, `bun.lock`, etc.) to determine the project root.
+**LSP servers:** All LSP servers use opencode's built-in support (`"lsp": {}` in `opencode.json`). Do NOT add custom `command` entries — they replace built-ins entirely and bypass auto-install. Built-in LSPs that need bundled npm packages (`typescript`, `typescript-language-server`, `pyright`) are installed by `install.sh` into both `~/.opencode/node_modules/` (opencode's internal directory) and `.opencode/node_modules/` (project directory). The TypeScript LSP requires `typescript` as a project dependency in `.opencode/package.json` and a project lock file (`package-lock.json`, `bun.lock`, etc.) to determine the project root.
 
 ### Plan and build prompts define the core workflow
 

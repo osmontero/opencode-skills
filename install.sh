@@ -109,4 +109,11 @@ if [ -d "$OPENCODE_DIR/node_modules" ]; then
   done
 fi
 
+# Install LSP dependencies in project's .opencode/node_modules
+# The typescript LSP server requires 'typescript' as a project dependency
+if [ -f "$SCRIPT_DIR/.opencode/package.json" ]; then
+  echo "Setting up project LSP dependencies..."
+  (cd "$SCRIPT_DIR/.opencode" && npm install --ignore-scripts 2>/dev/null)
+fi
+
 echo "Done. $(ls -d "$CONFIG_DIR/skills/"*/ 2>/dev/null | wc -l) skills and $(ls "$CONFIG_DIR/agents/"*.md 2>/dev/null | wc -l) agents installed."
