@@ -318,7 +318,6 @@
       }
     }
   },
-  "lsp": {},
   "agent": {
     "plan": {
       "prompt": "{file:./prompts/plan.txt}"
