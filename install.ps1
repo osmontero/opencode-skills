@@ -1,7 +1,3 @@
----
-title: install.ps1
----
-
 $ErrorActionPreference = "Stop"
 
 $SCRIPT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Definition
@@ -110,8 +106,9 @@ if (Test-Path -LiteralPath $OPENVEN) {
     uv pip install --python "$OPENVEN\Scripts\python.exe" -e "$SCRIPT_DIR"
 } else {
     Write-Host "  Creating virtual environment..."
-    $null = uv venv $OPENVEN --python 3.12 --allow-incomplete-chapters 2>$null
-    if (-not $?) {
+    try {
+        uv venv $OPENVEN --python 3.12 --allow-incomplete-chapters 2>$null
+    } catch {
         uv venv $OPENVEN --python 3.12
     }
     uv pip install --python "$OPENVEN\Scripts\python.exe" -e "$SCRIPT_DIR"
