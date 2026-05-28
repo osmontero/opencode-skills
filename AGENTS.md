@@ -6,7 +6,7 @@ This repository contains **opencode skills and global agents** — Markdown-base
 
 ```
 skills/          — 26 skill directories (each: SKILL.md + optional scripts/, references/, assets/)
-agents/          — 8 agent definition files (YAML-frontmatter Markdown, *.md) + LICENSE.txt
+agents/          — 9 agent definition files (YAML-frontmatter Markdown, *.md) + LICENSE.txt
 .opencode/       — Local opencode config (opencode.json, prompts/, plans/)
 ```
 
@@ -18,17 +18,17 @@ Each skill is a `skills/<name>/SKILL.md` with YAML frontmatter (`name`, `descrip
 
 **Editing a skill means editing its SKILL.md and any bundled files.** There is no compilation or build step.
 
+### install.sh / install.ps1 is the deployment mechanism
+
+`./install.sh` (Linux/macOS) or `./install.ps1` (Windows) copies skills, agents, MCP servers, and config to `~/.config/opencode/`. It also removes stale skills/agents/MCP servers no longer in the repo, installs Python deps via `uv`, replaces the global `opencode.json`, and copies prompt files. **After editing files in this repo, run the install script to apply changes to the active opencode configuration.**
+
 ### Python dependencies are managed by `uv`
 
-`pyproject.toml` lists dependencies (pdfplumber, pypdf, pypdfium2, pillow, playwright, etc.). The virtual environment is installed at `~/.local/opencode-venv/` by `install.sh`. Before running any Python scripts:
+`pyproject.toml` lists dependencies (pdfplumber, pypdf, pypdfium2, pillow, playwright, etc.). The virtual environment is installed at `~/.local/opencode-venv/` by the install script. Before running any Python scripts:
 
 ```bash
 source ~/.local/opencode-venv/bin/activate
 ```
-
-### install.sh is the deployment mechanism
-
-`./install.sh` copies skills, agents, and config to `~/.config/opencode/`. It also removes stale skills/agents no longer in the repo, installs Python deps, replaces the global `opencode.json`, and copies prompt files. **After editing files in this repo, run `./install.sh` to apply changes to the active opencode configuration.**
 
 ### Agent files use YAML frontmatter
 
@@ -66,4 +66,4 @@ These three agents are used exclusively by `skills/creating-skills/` for eval/be
 - Do not run `npm test`, `pytest`, `make`, or similar — there are none.
 - Do not create CI workflows — this repo has none and doesn't need them.
 - Do not commit `uv.lock`, `.venv/`, `node_modules/`, or `.egg-info/` — they are gitignored.
-- Do not edit skills directly in `~/.config/opencode/` — edit in the repo, then run `./install.sh`.
+- Do not edit skills directly in `~/.config/opencode/` — edit in the repo, then run the install script.
