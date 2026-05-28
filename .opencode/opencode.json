@@ -296,6 +296,7 @@
       }
     }
   },
+  "lsp": true,
   "model": "threatwinds/qwen-3.6",
   "mcp": {
     "chrome-devtools": {
