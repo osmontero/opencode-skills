@@ -180,10 +180,24 @@ Fine-grained bash control:
 }
 ```
 
+**Important: insertion order matters.** opencode evaluates the LAST matching
+rule, so put broad rules first and narrow rules last. For example, `"*": "ask"`
+should come before specific `"git status *": "allow"` so the narrow rule wins.
+
+`permission: "allow"` (a string at the top level) is shorthand for "allow
+everything" and is rarely what you want.
+
 Permission keys: `read`, `edit`, `glob`, `grep`, `list`, `bash`, `task`,
 `external_directory`, `todowrite`, `webfetch`, `websearch`, `lsp`, `skill`,
 `question`, `doom_loop`, plus arbitrary custom keys for tools not listed.
-`write` maps to `edit`.
+`write` maps to `edit`. Some keys (`todowrite`, `question`, `webfetch`,
+`websearch`, `doom_loop`) only accept a flat action, not a per-pattern object.
+
+`external_directory` patterns are filesystem paths (use `~/`, absolute paths,
+or globs like `~/secrets/**`).
+
+Per-agent `permission:` overrides top-level `permission:`. Plan Mode lives on
+the `plan` agent's permission ruleset (`edit: deny`).
 
 ### Agents (JSON)
 
@@ -295,6 +309,11 @@ JSON config for additional skill paths and remote skills:
 }
 ```
 
+**External skills auto-loading:** opencode also auto-discovers skills from
+`~/.claude/skills/<name>/SKILL.md` and `~/.agents/skills/<name>/SKILL.md`.
+Set `OPENCODE_DISABLE_EXTERNAL_SKILLS=1` or `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1`
+to skip these scans.
+
 ### Commands (JSON)
 
 ```json
@@ -324,6 +343,41 @@ Command fields: `template` (required), `description`, `model` (specific model fo
 ### Commands (Markdown)
 
 Create at `~/.config/opencode/commands/<name>.md`.
+
+### References
+
+References make local directories and Git repositories outside the active
+project available as supporting context. Configure them under `references`,
+keyed by the alias used in `@` autocomplete:
+
+```json
+{
+  "references": {
+    "docs": {
+      "path": "../product-docs",
+      "description": "Use for product behavior and terminology"
+    },
+    "effect": {
+      "repository": "Effect-TS/effect",
+      "branch": "main",
+      "description": "Use for Effect implementation details"
+    }
+  }
+}
+```
+
+Local `path` values may be relative to the declaring config, absolute, or use
+`~/`. Git `repository` values accept Git URLs, host/path references, and GitHub
+`owner/repo` shorthand; `branch` is optional. Both forms support optional
+`description` and `hidden` fields.
+
+- Only references with a `description` are advertised to agents in system context.
+- `hidden: true` removes a reference from TUI `@` autocomplete only. It remains
+  available to agents and by direct path.
+- Reference directories are automatically allowed through the external-directory
+  boundary; normal read/edit/tool permissions still apply.
+- String shorthand is supported: `"docs": "../docs"` for local paths or
+  `"effect": "Effect-TS/effect"` for Git repositories.
 
 ### Rules (Instructions)
 
@@ -626,6 +680,21 @@ in `{file:./reference.md}`. Common ones:
 | `OPENCODE_EXPERIMENTAL` | Enable all experimental features |
 | `OPENCODE_SERVER_PASSWORD` | Web UI password |
 
+### Escape Hatches for Broken Config
+
+When a config error prevents opencode from starting, use these env vars to
+recover:
+
+| Variable | Purpose |
+|---|---|
+| `OPENCODE_DISABLE_PROJECT_CONFIG=1` | Skip the project's local `opencode.json`; start from globals only. Use this to load opencode, fix the broken file, then restart without the flag |
+| `OPENCODE_CONFIG=/path/to/file.json` | Load an additional explicit config file |
+| `OPENCODE_CONFIG_CONTENT='{"$schema":"..."}'` | Inject inline JSON as a final local-scope merge |
+| `OPENCODE_DISABLE_DEFAULT_PLUGINS=1` | Skip default plugins |
+| `OPENCODE_PURE=1` | Skip external plugins entirely |
+| `OPENCODE_DISABLE_EXTERNAL_SKILLS=1` | Skip external skill scans under `~/.claude/` and `~/.agents/` |
+| `OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1` | Skip only the `~/.claude/` skill scan |
+
 ### Shell
 
 ```json
@@ -646,7 +715,68 @@ in `{file:./reference.md}`. Common ones:
 ```
 
 Plugins can be simple strings or `[name, config]` tuples. Place local plugins in
-`.opencode/plugins/` or `~/.config/opencode/plugins/`.
+`.opencode/plugins/` or `~/.config/opencode/plugins/` for auto-discovery (any
+`*.ts` or `*.js` file is loaded automatically).
+
+Plugin entries support:
+
+```json
+"plugin": [
+  "opencode-gemini-auth",            // npm spec, latest
+  "opencode-foo@1.2.3",              // npm spec, pinned
+  "./local-plugin.ts",               // file path, relative to the declaring config
+  "file:///abs/path/plugin.js",      // file URL
+  ["opencode-bar", { "key": "val" }] // tuple form with options
+]
+```
+
+A plugin module exports a function of type
+`Plugin = (input: PluginInput, options?) => Promise<Hooks>`. The export is a
+function (not a plain object), returning a hooks object (return `{}` if nothing
+to register):
+
+```ts
+import type { Plugin } from "@opencode-ai/plugin"
+
+export default (async ({ client, project, directory, $ }) => {
+  return {
+    config: (cfg) => {
+      // cfg is the live merged config; mutate fields here.
+    },
+    "tool.execute.before": async (input, output) => {
+      // mutate output.args before the tool runs
+    },
+  }
+}) satisfies Plugin
+```
+
+**Available hooks** (mutate `output` in place; return `void`):
+
+| Hook | Fires |
+|---|---|
+| `event(input)` | Every bus event |
+| `config(cfg)` | Once on init with the merged config |
+| `chat.message` | Before each chat message is sent |
+| `chat.params` | Before chat params are built |
+| `chat.headers` | Before chat HTTP headers are set |
+| `tool.execute.before` | Before a tool runs |
+| `tool.execute.after` | After a tool runs |
+| `tool.definition` | When tool definitions are built |
+| `command.execute.before` | Before a command runs |
+| `shell.env` | Before shell environment is built |
+| `permission.ask` | When permission prompt is shown |
+| `experimental.chat.messages.transform` | Transform messages before sending |
+| `experimental.chat.system.transform` | Transform system prompt |
+| `experimental.session.compacting` | During session compaction |
+| `experimental.compaction.autocontinue` | After auto-continue compaction |
+| `experimental.text.complete` | During text completion |
+
+Special object-shaped hooks (not callbacks): `tool: { my_tool: { ... } }`,
+`auth: { ... }`, `provider: { ... }`.
+
+**Note:** Plugins are TypeScript or JavaScript only — no Go or compiled binary
+support. If you need Go, write an MCP server in Go and have a thin TS plugin
+call it via HTTP.
 
 ## Built-in Agents
 
@@ -679,6 +809,10 @@ CLI: `opencode agent create`, `opencode debug config`, `opencode models`, `openc
 
 ## Tips
 
+- **Config is not hot-reloaded.** After saving changes to `opencode.json`, an
+  agent file, a skill, a plugin, or any other config-time file, tell the user to
+  quit and restart opencode for changes to take effect. The running session keeps
+  using the already-loaded config until then.
 - Config files are **merged** across locations, not replaced
 - Use `opencode debug config` to see the fully resolved configuration
 - Agent file name becomes agent name for markdown agents
