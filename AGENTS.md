@@ -1,3 +1,5 @@
+> Org overview: [../../AGENTS.md](../../AGENTS.md)
+
 # AGENTS.md
 
 This repository contains **opencode skills and global agents** — Markdown-based instruction files installed into `~/.config/opencode/`. There is no application to run, no tests to execute, and no CI pipeline.
