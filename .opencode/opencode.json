@@ -17,8 +17,8 @@
           },
           "limit": {
             "context": 262144,
-            "input": 232144,
-            "output": 30000
+            "input": 204800,
+            "output": 57344
           },
           "options": {
             "temperature": 0.6,
@@ -38,8 +38,8 @@
           },
           "limit": {
             "context": 262144,
-            "input": 232144,
-            "output": 30000
+            "input": 204800,
+            "output": 57344
           },
           "options": {
             "temperature": 1,
@@ -59,8 +59,8 @@
           },
           "limit": {
             "context": 262144,
-            "input": 232144,
-            "output": 30000
+            "input": 204800,
+            "output": 57344
           },
           "options": {
             "temperature": 0.6,
@@ -80,8 +80,8 @@
           },
           "limit": {
             "context": 262144,
-            "input": 232144,
-            "output": 30000
+            "input": 204800,
+            "output": 57344
           },
           "options": {
             "temperature": 1,
@@ -110,8 +110,8 @@
           },
           "limit": {
             "context": 262144,
-            "input": 232144,
-            "output": 30000
+            "input": 204800,
+            "output": 57344
           },
           "options": {
             "temperature": 0.6,
@@ -131,8 +131,8 @@
           },
           "limit": {
             "context": 262144,
-            "input": 232144,
-            "output": 30000
+            "input": 204800,
+            "output": 57344
           },
           "options": {
             "temperature": 1,
@@ -152,8 +152,8 @@
           },
           "limit": {
             "context": 262144,
-            "input": 232144,
-            "output": 30000
+            "input": 204800,
+            "output": 57344
           },
           "options": {
             "temperature": 0.6,
@@ -173,8 +173,8 @@
           },
           "limit": {
             "context": 262144,
-            "input": 232144,
-            "output": 30000
+            "input": 204800,
+            "output": 57344
           },
           "options": {
             "temperature": 1,

@@ -9,7 +9,7 @@ This repository contains **opencode skills and global agents** — Markdown-base
 ```
 skills/          — 26 skill directories (each: SKILL.md + optional scripts/, references/, assets/)
 agents/          — 9 agent definition files (YAML-frontmatter Markdown, *.md) + LICENSE.txt
-.opencode/       — Local opencode config (opencode.json, prompts/, plans/)
+.opencode/       — Local opencode config (opencode.json, prompts/)
 ```
 
 ## Key Facts
@@ -38,7 +38,7 @@ Each `agents/<name>.md` has frontmatter with `description`, `mode: subagent`, an
 
 ### .opencode/ contains local config
 
-`.opencode/opencode.json` configures providers, models, MCP servers, and agent prompts. It references `prompts/plan.txt` and `prompts/build.txt` for the plan and build workflows. The `plans/` directory stores implementation plans.
+`.opencode/opencode.json` configures providers, models, MCP servers, and agent prompts. It references `prompts/plan.txt` and `prompts/build.txt` for the plan and build workflows.
 
 ### Plan and build prompts define the core workflow
 
