@@ -24,7 +24,7 @@ To begin, create an ALGORITHMIC PHILOSOPHY (not static images or templates) that
 ### THE CRITICAL UNDERSTANDING
 - What is received: Some subtle input or instructions by the user to take into account, but use as a foundation; it should not constrain creative freedom.
 - What is created: An algorithmic philosophy/generative aesthetic movement.
-- What happens next: The same version receives the philosophy and EXPRESSES IT IN CODE - creating p5.js sketches that are 90% algorithmic generation, 10% essential parameters.
+- What happens next: The next agent receives the philosophy and EXPRESSES IT IN CODE - creating p5.js sketches that are 90% algorithmic generation, 10% essential parameters.
 
 Consider this approach:
 - Write a manifesto for a generative art movement
@@ -48,7 +48,7 @@ To capture the ALGORITHMIC essence, express how this philosophy manifests throug
 **CRITICAL GUIDELINES:**
 - **Avoid redundancy**: Each algorithmic aspect should be mentioned once. Avoid repeating concepts about noise theory, particle dynamics, or mathematical principles unless adding new depth.
 - **Emphasize craftsmanship REPEATEDLY**: The philosophy MUST stress multiple times that the final algorithm should appear as though it took countless hours to develop, was refined with care, and comes from someone at the absolute top of their field. This framing is essential - repeat phrases like "meticulously crafted algorithm," "the product of deep computational expertise," "painstaking optimization," "master-level implementation."
-- **Leave creative space**: Be specific about the algorithmic direction, but concise enough that the next the agent has room to make interpretive implementation choices at an extremely high level of craftsmanship.
+- **Leave creative space**: Be specific about the algorithmic direction, but concise enough that the next agent has room to make interpretive implementation choices at an extremely high level of craftsmanship.
 
 The philosophy must guide the next version to express ideas ALGORITHMICALLY, not through static images. Beauty lives in the process, not the final frame.
 
@@ -404,3 +404,50 @@ This skill includes helpful templates and documentation:
 - The **algorithm is where to create** something unique
 - Don't copy the flow field example - build what the philosophy demands
 - But DO keep the exact UI structure and consistent branding from the template
+
+---
+
+## VERIFICATION — MANDATORY BEFORE PRESENTING
+
+A sketch that runs is not a sketch that works. Generative code fails in ways that are invisible in the source and obvious in the render: particles escaping the canvas, the field collapsing to a single attractor, density saturating to solid ink, or every seed producing a near-identical result.
+
+**Render it and look at it. Across at least four seeds.**
+
+```bash
+source ~/.local/opencode-venv/bin/activate
+python3 - <<'PY'
+from playwright.sync_api import sync_playwright
+import pathlib
+url = "file://" + str(pathlib.Path("artifact.html").resolve())
+with sync_playwright() as p:
+    b = p.chromium.launch(); pg = b.new_page(viewport={"width": 1400, "height": 900})
+    errs = []
+    pg.on("console", lambda m: m.type == "error" and errs.append(m.text))
+    pg.on("pageerror", lambda e: errs.append(str(e)))
+    for seed in (1, 7, 42, 1337):
+        pg.goto(url); pg.wait_for_timeout(400)
+        pg.evaluate(f"() => {{ if (window.setSeed) setSeed({seed}); }}")
+        pg.wait_for_timeout(3500)                    # let the system reach equilibrium
+        pg.locator("canvas").screenshot(path=f"/tmp/seed-{seed}.png")
+    print("CONSOLE ERRORS:", errs); b.close()
+PY
+```
+
+Read all four PNGs and check:
+
+- [ ] **Seeds differ meaningfully.** Four near-identical images mean the randomness is not reaching the parameters that matter — the whole premise of seeded generative work has failed.
+- [ ] **Seeds share a family resemblance.** Four unrelated images mean there is no system, only noise.
+- [ ] **Nothing escapes the canvas.** Particles leaving the frame, or clustering in one corner, indicate unbounded forces.
+- [ ] **Ink coverage is in the 8-40% band.** Below reads empty; above saturates to a solid field with no structure.
+- [ ] **The composition holds as a thumbnail.** Downscale to 200px. If it becomes an even gray wash, the value structure has no hierarchy.
+- [ ] **Zero console errors**, including during animation — not just on load.
+- [ ] **It reaches a resting state.** An algorithm that never settles produces a different image every time it is screenshotted, which is not reproducible art.
+
+If the piece fails any of these, fix the algorithm — do not adjust the screenshot timing to hide it.
+
+## RELATED SKILLS
+
+- **designing-canvas-art** — static PDF/PNG art; its `references/rendering.md` covers grain, halftone, margin contracts, and mark-making systems that transfer directly to p5 output
+- **designing-frontend-interfaces** — for the viewer chrome around the canvas; `references/color-and-theme.md` covers OKLCH ramps, which produce far better generative palettes than raw HSL
+- **testing-webapps** — Playwright patterns for driving and capturing the artifact
+- **building-web-artifacts** — when the sketch grows into a multi-component application

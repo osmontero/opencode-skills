@@ -248,6 +248,44 @@ It does NOT provide:
 
 Be creative! Combine concepts (bouncing + rotating, pulsing + sliding, etc.) and use PIL's full capabilities.
 
+## Verification — Before Presenting
+
+Emoji render at **roughly 22×22 px** in Slack messages. A 128×128 design that reads beautifully at full size can be an illegible smudge at actual display size, and this is the single most common failure.
+
+```python
+from PIL import Image
+from core.validators import validate_gif
+
+passes, info = validate_gif('out.gif', is_emoji=True, verbose=True)
+print(info)                       # dimensions, frame count, file size, color count
+
+# What Slack actually shows — inspect this, not the 128px version
+im = Image.open('out.gif')
+im.seek(0); im.convert('RGB').resize((22, 22), Image.LANCZOS).resize(
+    (176, 176), Image.NEAREST).save('/tmp/emoji-actual-size.png')
+```
+
+Read `/tmp/emoji-actual-size.png` and confirm the subject is still identifiable. Then check:
+
+- [ ] **Recognizable at 22px.** One clear silhouette. Detail below ~4px of stroke width disappears entirely.
+- [ ] **Reads on both backgrounds.** Slack has light and dark themes — check the GIF against `#ffffff` and `#1a1d21`. A dark subject on transparency vanishes in dark mode.
+- [ ] **Loops seamlessly.** The last frame must flow into the first. A visible jump on every repeat is the most distracting possible defect in a looping image.
+- [ ] **Under 128 KB** for emoji (Slack's hard limit), under 2 MB for message GIFs.
+- [ ] **Motion is legible at speed.** At 10 fps, a 12-frame animation lasts 1.2s. If the key moment occupies 2 frames, nobody sees it.
+- [ ] **No flashing above 3 Hz.** A rapidly strobing emoji is a genuine seizure risk in a busy channel.
+
+Seamless loop check — the first and last frames should be near-identical for a cyclic animation:
+
+```python
+import numpy as np
+frames = []
+im = Image.open('out.gif')
+for i in range(im.n_frames):
+    im.seek(i); frames.append(np.asarray(im.convert('RGB'), dtype=float))
+delta = np.abs(frames[0] - frames[-1]).mean()
+print(f"loop seam delta: {delta:.1f}")     # under ~6 is a clean cycle
+```
+
 ## Prerequisites
 
 Before running any Python scripts, **activate the opencode virtual environment**:
@@ -257,3 +295,8 @@ source ~/.local/opencode-venv/bin/activate
 ```
 
 Then use `python3 core/...` normally. All dependencies (Pillow, imageio, imageio-ffmpeg, numpy) are managed centrally by the opencode Python venv.
+
+## Related Skills
+
+- **designing-frontend-interfaces** — `references/motion.md` covers easing choice and orchestration; `references/color-and-theme.md` covers building a palette that survives a 48-color quantization
+- **designing-canvas-art** — `canvas-fonts/` supplies real typefaces if the GIF needs text, and `references/rendering.md` covers PIL compositing techniques

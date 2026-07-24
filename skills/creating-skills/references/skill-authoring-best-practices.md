@@ -1137,8 +1137,8 @@ Before sharing a Skill, verify:
     Create your first Skill
   </Card>
 
-  <Card title="Use Skills in the agent Code" icon="terminal" href="">
-    Create and manage Skills in the agent Code
+  <Card title="Use Skills in opencode" icon="terminal" href="">
+    Create and manage Skills in opencode
   </Card>
 
   <Card title="Use Skills with the API" icon="code" href="/en/api/skills-guide">

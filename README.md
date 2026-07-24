@@ -4,9 +4,22 @@ Adapted skills and agents for the opencode agent ecosystem.
 
 ## Contents
 
-**26 skills** covering development workflows, document processing, code review, testing, debugging, design, and more.
+**29 skills** covering development workflows, design and UX, accessibility, document processing, code review, testing, debugging, and more.
 
-**9 global agents** for implementation, review, and evaluation.
+**10 global agents** for implementation, review, and evaluation.
+
+### Design & UX cluster
+
+Four skills that compose into a full interface workflow, plus a review agent:
+
+| Skill | Covers |
+|---|---|
+| `designing-frontend-interfaces` | Visual craft — aesthetic direction, type scales, color ramps, layout, motion. Five reference files including a catalog of 12 parameterized aesthetic directions. |
+| `designing-user-experience` | Behavior — flows, the empty/loading/error/partial state matrix, forms, microcopy, destructive actions, touch. |
+| `building-accessible-interfaces` | WCAG 2.2 AA in practice — semantics, keyboard, focus management, ARIA, contrast, live regions, component patterns. |
+| `reviewing-interface-quality` | Critique rubric tying the three together, with an evidence requirement and severity grading. |
+
+`applying-themes` supplies ten contrast-verified palettes with semantic tokens and a `check_contrast.py` gate. The `interface-reviewer` agent runs the review rubric as a subagent.
 
 ## License
 
@@ -49,6 +62,16 @@ The following skills are MIT-licensed adaptations from [obra/superpowers](https:
 - `verifying-before-completion` — Pre-commit verification and evidence gathering
 - `writing-plans` — Implementation plan creation from specs
 
+#### MIT License (this repository)
+
+The following are original to this repository and carry the repository's MIT license:
+
+- `designing-user-experience` — Interaction design, state coverage, forms, microcopy
+- `building-accessible-interfaces` — Practical WCAG 2.2 AA guidance and component patterns
+- `reviewing-interface-quality` — Interface critique and QA rubric
+- `configuring-opencode` — opencode configuration reference
+- `agents/interface-reviewer.md` — UI review subagent
+
 See individual `skills/<name>/LICENSE.txt` files for full license text and attribution notices.
 
 ## Install
@@ -82,6 +105,7 @@ cp agents/* ~/.config/opencode/agents/
 | `grader`                | Evaluates skill test expectations with pass/fail verdicts         |
 | `comparator`            | Blind A/B comparison of skill outputs                             |
 | `analyzer`              | Post-hoc analysis + benchmark pattern detection                   |
+| `interface-reviewer`    | UI quality audit: visual, UX, and accessibility, with rendered evidence |
 | `internet-researcher`   | Web research, fact-checking, and source gathering                 |
 | `pdf-extractor`         | Full PDF extraction via image conversion and OCR                  |
 
@@ -91,6 +115,7 @@ cp agents/* ~/.config/opencode/agents/
 |----------------------------------|---------------|
 | `applying-themes`                | Design        |
 | `brainstorming`                  | Workflow      |
+| `building-accessible-interfaces` | Design        |
 | `building-mcp-servers`           | Development   |
 | `building-web-artifacts`         | Development   |
 | `coauthoring-docs`               | Documents     |
@@ -100,12 +125,14 @@ cp agents/* ~/.config/opencode/agents/
 | `creating-slack-gifs`            | Design        |
 | `designing-canvas-art`           | Design        |
 | `designing-frontend-interfaces`  | Design        |
+| `designing-user-experience`      | Design        |
 | `dispatching-parallel-agents`    | Workflow      |
 | `executing-plans`                | Workflow      |
 | `finishing-a-development-branch` | Workflow      |
 | `processing-pdf`                 | Documents     |
 | `receiving-code-review`          | Workflow      |
 | `requesting-code-review`         | Workflow      |
+| `reviewing-interface-quality`    | Design        |
 | `subagent-driven-development`    | Workflow      |
 | `systematic-debugging`           | Development   |
 | `test-driven-development`        | Development   |

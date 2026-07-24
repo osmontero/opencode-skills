@@ -48,7 +48,7 @@ digraph skill_flow {
     "Invoke skill tool" [shape=box];
     "Announce: 'Using [skill] to [purpose]'" [shape=box];
     "Has checklist?" [shape=diamond];
-    "Create TodoWrite todo per item" [shape=box];
+    "Create a `todowrite` todo per item" [shape=box];
     "Follow skill exactly" [shape=box];
     "Respond (including clarifications)" [shape=doublecircle];
 
@@ -62,9 +62,9 @@ digraph skill_flow {
     "Might any skill apply?" -> "Respond (including clarifications)" [label="definitely not"];
     "Invoke skill tool" -> "Announce: 'Using [skill] to [purpose]'";
     "Announce: 'Using [skill] to [purpose]'" -> "Has checklist?";
-    "Has checklist?" -> "Create TodoWrite todo per item" [label="yes"];
+    "Has checklist?" -> "Create a `todowrite` todo per item" [label="yes"];
     "Has checklist?" -> "Follow skill exactly" [label="no"];
-    "Create TodoWrite todo per item" -> "Follow skill exactly";
+    "Create a `todowrite` todo per item" -> "Follow skill exactly";
 }
 ```
 
@@ -92,7 +92,7 @@ These thoughts mean STOP—you're rationalizing:
 When multiple skills could apply, use this order:
 
 1. **Process skills first** (brainstorming, systematic-debugging) - these determine HOW to approach the task
-2. **Implementation skills second** (frontend-design, mcp-builder) - these guide execution
+2. **Implementation skills second** (designing-frontend-interfaces, designing-user-experience, building-mcp-servers) - these guide execution
 
 "Let's build X" → brainstorming first, then implementation skills.
 "Fix this bug" → systematic-debugging first, then domain-specific skills.

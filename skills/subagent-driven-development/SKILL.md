@@ -6,7 +6,7 @@ compatibility: opencode
 
 # Subagent-Driven Development
 
-Execute plan by dispatching fresh sub-agent per task using the Task tool, with two-stage review after each: spec compliance review first, then code quality review.
+Execute plan by dispatching fresh sub-agent per task using the `task` tool, with two-stage review after each: spec compliance review first, then code quality review.
 
 **Why sub-agents:** You delegate tasks to specialized agents with isolated context. By precisely crafting their instructions and context, you ensure they stay focused and succeed at their task. They should never inherit your session's context or history — you construct exactly what they need. This also preserves your own context for coordination work.
 
@@ -56,15 +56,15 @@ digraph process {
         "Dispatch code quality reviewer sub-agent (@code-quality-reviewer)" [shape=box];
         "Code quality reviewer sub-agent approves?" [shape=diamond];
         "Implementer sub-agent fixes quality issues" [shape=box];
-        "Mark task complete in TodoWrite" [shape=box];
+        "Mark task complete in `todowrite`" [shape=box];
     }
 
-    "Read plan, extract all tasks with full text, note context, create TodoWrite" [shape=box];
+    "Read plan, extract all tasks with full text, note context, create `todowrite` list" [shape=box];
     "More tasks remain?" [shape=diamond];
     "Dispatch final code reviewer sub-agent for entire implementation" [shape=box];
     "Use finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
 
-    "Read plan, extract all tasks with full text, note context, create TodoWrite" -> "Dispatch implementer sub-agent (@implementer)";
+    "Read plan, extract all tasks with full text, note context, create `todowrite` list" -> "Dispatch implementer sub-agent (@implementer)";
     "Dispatch implementer sub-agent (@implementer)" -> "Implementer sub-agent asks questions?";
     "Implementer sub-agent asks questions?" -> "Answer questions, provide context" [label="yes"];
     "Answer questions, provide context" -> "Dispatch implementer sub-agent (@implementer)";
@@ -77,8 +77,8 @@ digraph process {
     "Dispatch code quality reviewer sub-agent (@code-quality-reviewer)" -> "Code quality reviewer sub-agent approves?";
     "Code quality reviewer sub-agent approves?" -> "Implementer sub-agent fixes quality issues" [label="no"];
     "Implementer sub-agent fixes quality issues" -> "Dispatch code quality reviewer sub-agent (@code-quality-reviewer)" [label="re-review"];
-    "Code quality reviewer sub-agent approves?" -> "Mark task complete in TodoWrite" [label="yes"];
-    "Mark task complete in TodoWrite" -> "More tasks remain?";
+    "Code quality reviewer sub-agent approves?" -> "Mark task complete in `todowrite`" [label="yes"];
+    "Mark task complete in `todowrite`" -> "More tasks remain?";
     "More tasks remain?" -> "Dispatch implementer sub-agent (@implementer)" [label="yes"];
     "More tasks remain?" -> "Dispatch final code reviewer sub-agent for entire implementation" [label="no"];
     "Dispatch final code reviewer sub-agent for entire implementation" -> "Use finishing-a-development-branch";
@@ -129,14 +129,14 @@ Implementer sub-agents report one of four statuses. Handle each appropriately:
 ```
 You: I'm using Subagent-Driven Development to execute this plan.
 
-[Read plan file once: docs/opencode-skills/plans/feature-plan.md]
+[Read plan file once: docs/plans/feature-plan.md]
 [Extract all 5 tasks with full text and context]
-[Create TodoWrite with all tasks]
+[Create `todowrite` list with all tasks]
 
 Task 1: Hook installation script
 
 [Get Task 1 text and context (already extracted)]
-[Dispatch implementation sub-agent using the Task tool with full task text + context]
+[Dispatch implementation sub-agent using the `task` tool with full task text + context]
 
 Implementer: "Before I begin - should the hook be installed at user or system level?"
 
@@ -160,7 +160,7 @@ Code reviewer: Strengths: Good test coverage, clean. Issues: None. Approved.
 Task 2: Recovery modes
 
 [Get Task 2 text and context (already extracted)]
-[Dispatch implementation sub-agent using the Task tool with full task text + context]
+[Dispatch implementation sub-agent using the `task` tool with full task text + context]
 
 Implementer: [No questions, proceeds]
 Implementer:

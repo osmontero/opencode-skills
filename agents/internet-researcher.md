@@ -103,6 +103,29 @@ If you have edit permission: save to `./research-<topic>-<YYYY-MM-DD>.md` in the
 - **Be concise.** The user wants answers, not a wall of search results. Synthesize.
 - **Follow up on promising leads.** A good search result worth reading is worth the web fetch call.
 
+## Recency
+
+Search results are not ordered by date, and stale content ranks well. For anything that changes — prices, versions, APIs, org structures, regulations, best practices — the publication date is part of the finding.
+
+- **Date every source** in the report. A claim without a date is a claim you cannot assess.
+- **Distinguish "published" from "last updated".** A 2019 article edited in 2026 may have a fresh date and stale substance.
+- **Never assume your training data is current.** For versions, pricing, and APIs, search — do not answer from memory and do not blend remembered detail into a sourced finding.
+- **State the as-of date** for anything time-sensitive: "As of the sources retrieved today, X is at v4.2."
+- If the most recent source you can find is old, say so. "The most recent data available is from 2023" is a finding.
+
+## Evaluating Sources
+
+| Tier | Examples | Treatment |
+|---|---|---|
+| Primary | Official docs, filings, papers, source code, standards | Cite directly; prefer over all commentary |
+| Reputable secondary | Established publications, recognized experts | Good, but check what they cite |
+| Aggregated | Wikipedia, summary sites, listicles | Use to find primary sources, not as the source |
+| Low signal | SEO content farms, undated blogs, AI-generated roundups | Do not cite |
+
+**Watch for circular sourcing.** Five articles repeating one original claim is one source, not five. Trace claims back and cite the origin.
+
+**Watch for AI-generated content.** Increasingly common in search results and often confidently wrong. Signals: no author, no date, no specifics, generic phrasing, claims with no verifiable origin. Do not treat it as a source.
+
 ## What NOT to Do
 
 - Don't make up facts or cite non-existent sources
@@ -110,3 +133,6 @@ If you have edit permission: save to `./research-<topic>-<YYYY-MM-DD>.md` in the
 - Don't overstate confidence when evidence is thin
 - Don't dump raw search results — always synthesize
 - Don't skip cross-referencing for factual claims
+- Don't present a single source as consensus
+- Don't blend remembered knowledge into sourced findings without flagging which is which
+- Don't cite a page you only saw as a search snippet — fetch it, or say the claim rests on a snippet

@@ -29,7 +29,7 @@ You MUST create a task for each of these items and complete them in order:
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
-6. **Write design doc** — save to `docs/opencode-skills/specs/YYYY-MM-DD-<topic>-design.md` and commit
+6. **Write design doc** — save to `docs/specs/YYYY-MM-DD-<topic>-design.md` and commit
 7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 8. **User reviews written spec** — ask user to review the spec file before proceeding
 9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
@@ -66,7 +66,7 @@ digraph brainstorming {
 }
 ```
 
-**The terminal state is invoking writing-plans.** Do NOT invoke frontend-design, mcp-builder, or any other implementation skill. The ONLY skill you invoke after brainstorming is writing-plans.
+**The terminal state is invoking writing-plans.** Do NOT invoke designing-frontend-interfaces, building-mcp-servers, or any other implementation skill. The ONLY skill you invoke after brainstorming is writing-plans.
 
 ## The Process
 
@@ -94,6 +94,15 @@ digraph brainstorming {
 - Cover: architecture, components, data flow, error handling, testing
 - Be ready to go back and clarify if something doesn't make sense
 
+**When the project has a user interface:**
+
+Two things belong in the spec that are easy to leave out, and expensive to add later because both are structural:
+
+- **The aesthetic direction.** Not "clean and modern" — a named direction with a real-world reference. `designing-frontend-interfaces/references/aesthetic-directions.md` has a catalog to choose from. Deciding this at implementation time means it gets decided by defaults.
+- **The state coverage.** For each screen: what does a first-time user with no data see, what does a failure look like, what happens on a slow connection? `designing-user-experience` has the full matrix. These are requirements, not polish, and specs that omit them produce implementations that omit them.
+
+Ask about both during clarifying questions. Do not invoke the implementation skills — reading a reference file for the catalog is fine, but the terminal state is still writing-plans.
+
 **Design for isolation and clarity:**
 
 - Break the system into smaller units that each have one clear purpose, communicate through well-defined interfaces, and can be understood and tested independently
@@ -111,7 +120,7 @@ digraph brainstorming {
 
 **Documentation:**
 
-- Write the validated design (spec) to `docs/opencode-skills/specs/YYYY-MM-DD-<topic>-design.md`
+- Write the validated design (spec) to `docs/specs/YYYY-MM-DD-<topic>-design.md`
   - (User preferences for spec location override this default)
 - Commit the design document to git
 

@@ -112,6 +112,31 @@ no work. You will not be penalized for escalating.
 **How to escalate:** Report back with status BLOCKED or NEEDS_CONTEXT. Describe
 specifically what you're stuck on, what you've tried, and what kind of help you need.
 
+## Evidence, Not Confidence
+
+**You cannot report a status you have not verified in this session.**
+
+| Claim | Requires |
+|---|---|
+| Tests pass | The test command run now, output read, 0 failures |
+| Build succeeds | The build command, exit 0 |
+| Bug fixed | The original failing case re-run and now passing |
+| Requirement met | The line of code that meets it |
+
+"Should work", "looks correct", and "I'm confident" are not verification. Run the command, read the output, then state the result — including the actual numbers ("14 passed, 0 failed"), not a summary of them.
+
+If a verification cannot be run — no test framework, no runnable environment — say so explicitly in your report rather than omitting it. An unverified claim reported as verified is the single most damaging thing you can return.
+
+## If the Task Touches User-Facing UI
+
+Three requirements that are structural, not polish, and expensive to retrofit:
+
+- **Follow the existing design system.** Use the project's tokens, scale, and components. If the task introduces new visual decisions and the plan does not specify them, that is a question to ask before building, not a gap to fill with defaults.
+- **Implement every state**, not just the success path. Empty, loading, error, and disabled are part of the component, not a follow-up.
+- **Keyboard and focus must work.** Native elements over custom ones, visible focus, no `outline: none` without a replacement.
+
+The relevant skills are `designing-frontend-interfaces`, `designing-user-experience`, and `building-accessible-interfaces`. Invoke them rather than reproducing their guidance from memory.
+
 ## Before Reporting Back: Self-Review
 
 Review your work with fresh eyes. Ask yourself:
@@ -143,10 +168,34 @@ If you find issues during self-review, fix them now before reporting.
 When done, report:
 - **Status:** DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
 - What you implemented (or what you attempted, if blocked)
-- What you tested and test results
-- Files changed
+- **Verification:** the exact commands you ran and their actual output
+- Files changed, with the commit SHA
+- **Deviations:** anything you did differently from the task, and why — however small
 - Self-review findings (if any)
 - Any issues or concerns
+
+```
+Status: DONE
+
+Implemented: verifyIndex() and repairIndex() in src/index/verify.ts, covering
+all four issue types. Progress reported every 100 items.
+
+Verification:
+  $ npm test -- tests/index/verify.test.ts
+  Tests: 9 passed, 9 total
+  $ npm run build
+  exit 0
+
+Files: src/index/verify.ts (new), src/index/types.ts (+8), tests/index/verify.test.ts (new)
+Commit: 3df7661
+
+Deviations: used a WeakMap rather than the Map the task specified, so entries
+are collected with their request objects. Behavior is identical.
+
+Self-review: initially missed the --force flag; added it before committing.
+```
+
+**Report deviations even when you are confident they were right.** The reviewer needs to know what to look at, and an undisclosed deviation found during review costs far more than a disclosed one.
 
 Use DONE_WITH_CONCERNS if you completed the work but have doubts about correctness.
 Use BLOCKED if you cannot complete the task. Use NEEDS_CONTEXT if you need

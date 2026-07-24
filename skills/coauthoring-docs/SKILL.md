@@ -7,6 +7,45 @@ description: Use when co-authoring documentation with users through a structured
 
 This skill provides a structured workflow for guiding users through collaborative document creation. Act as an active guide, walking users through three stages: Context Gathering, Refinement & Structure, and Reader Testing.
 
+## Overview
+
+**Core principle:** The user has the context; you have the structure. The workflow's job is to transfer their context into you efficiently, then build the document section by section so they never have to review a wall of text they did not shape.
+
+**Why the three stages exist:**
+
+| Stage | Solves |
+|---|---|
+| 1. Context Gathering | You writing plausible-sounding content that is wrong because you lacked the org context |
+| 2. Refinement & Structure | The user receiving a finished draft and having to reverse-engineer what to change |
+| 3. Reader Testing | The doc making sense to its authors and confusing everyone else |
+
+Stage 3 is the one most often skipped and the one that catches the most. A doc that reads perfectly to the people who wrote it is the default failure mode of all documentation.
+
+## Checklist
+
+Create a todo for each. Stages are sequential; sections within Stage 2 loop.
+
+1. **Offer the workflow** — get agreement, or work freeform
+2. **Stage 1: meta-questions** — type, audience, desired impact, template, constraints
+3. **Stage 1: info dump** — let them empty their head; do not interrupt to organize
+4. **Stage 1: clarifying questions** — 5-10 numbered, answerable in shorthand
+5. **Stage 2: agree the structure** — then create the file with placeholders for every section
+6. **Stage 2: per section** — questions → brainstorm 5-20 → they curate → gap check → draft → refine
+7. **Stage 2: whole-doc read** — flow, redundancy, contradictions, filler
+8. **Stage 3: reader testing** — fresh agent with no context answers predicted reader questions
+9. **Stage 3: fix the gaps**, then loop until clean
+10. **Final review** — hand ownership back to the user
+
+## Exit Conditions
+
+Each stage has a specific test for being done. Do not advance on feeling finished.
+
+| Stage | Done when |
+|---|---|
+| 1 | You can ask about edge cases and trade-offs without needing basics explained |
+| 2 | Three consecutive iterations produce no substantial change |
+| 3 | A fresh agent answers the predicted reader questions correctly and surfaces no new ambiguity |
+
 ## When to Offer This Workflow
 
 **Trigger conditions:**
@@ -19,7 +58,7 @@ Offer the user a structured workflow for co-authoring the document. Explain the 
 
 1. **Context Gathering**: User provides all relevant context while the agent asks clarifying questions
 2. **Refinement & Structure**: Iteratively build each section through brainstorming and editing
-3. **Reader Testing**: Test the doc with a fresh the agent (no context) to catch blind spots before others read it
+3. **Reader Testing**: Test the doc with a fresh agent (no context) to catch blind spots before others read it
 
 Explain that this approach helps ensure the doc works well when others read it (including when they paste it into the agent). Ask if they want to try this workflow or prefer to work freeform.
 
@@ -69,7 +108,7 @@ Advise them not to worry about organizing it - just get it all out. Offer multip
 
 **If integrations are available** (e.g., Slack, Teams, Google Drive, SharePoint, or other MCP servers), mention that these can be used to pull in context directly.
 
-**If no integrations are detected and in the agent.ai or the agent app:** Suggest they can enable connectors in their the agent settings to allow pulling context from messaging apps and document storage directly.
+**If no integrations are detected and in a hosted agent UI:** Suggest they can enable connectors in their agent settings to allow pulling context from messaging apps and document storage directly.
 
 Inform them clarifying questions will be asked once they've done their initial dump.
 
@@ -132,7 +171,7 @@ Ask if this structure works, or if they want to adjust it.
 Create the initial document structure with placeholder text for all sections.
 
 **If artifact rendering is available:**
-Use `the Write tool` to create an artifact. This gives both the agent and the user a scaffold to work from.
+Use the `write` tool to create an artifact. This gives both the agent and the user a scaffold to work from.
 
 Inform them that the initial structure with placeholders for all sections will be created.
 
@@ -185,7 +224,7 @@ Based on what they've selected, ask if there's anything important missing for th
 
 ### Step 5: Drafting
 
-Use `the Edit tool` to replace the placeholder text for this section with the actual drafted content.
+Use the `edit` tool to replace the placeholder text for this section with the actual drafted content.
 
 Announce the [SECTION NAME] section will be drafted now based on what they've selected.
 
@@ -205,7 +244,7 @@ Provide a note: Instead of editing the doc directly, ask them to indicate what t
 ### Step 6: Iterative Refinement
 
 As user provides feedback:
-- Use `the Edit tool` to make edits (never reprint the whole doc)
+- Use the `edit` tool to make edits (never reprint the whole doc)
 - **If using artifact rendering:** Confirm file path after each edit
 - **Using file-based rendering:** Just confirm edits are complete
 - If user edits doc directly and asks to read it: mentally note the changes they made and keep them in mind for future sections (this shows their preferences)
@@ -241,14 +280,14 @@ Ask if ready to move to Reader Testing, or if they want to refine anything else.
 
 ## Stage 3: Reader Testing
 
-**Goal:** Test the document with a fresh the agent (no context bleed) to verify it works for readers.
+**Goal:** Test the document with a fresh agent (no context bleed) to verify it works for readers.
 
 **Instructions to user:**
 Explain that testing will now occur to see if the document actually works for readers. This catches blind spots - things that make sense to the authors but might confuse others.
 
 ### Testing Approach
 
-**If access to sub-agents is available (e.g., in the agent Code):**
+**If access to sub-agents is available (e.g., in opencode via the `task` tool):**
 
 Perform the testing directly without user involvement.
 
@@ -260,11 +299,11 @@ Generate 5-10 questions that readers would realistically ask.
 
 ### Step 2: Test with sub-agent
 
-Announce that these questions will be tested with a fresh the agent instance (no context from this conversation).
+Announce that these questions will be tested with a fresh agent instance (no context from this conversation).
 
 For each question, invoke a sub-agent with just the document content and the question.
 
-Summarize what Reader the agent got right/wrong for each question.
+Summarize what Reader Agent got right/wrong for each question.
 
 ### Step 3: Run Additional Checks
 
@@ -277,7 +316,7 @@ Summarize any issues found.
 ### Step 4: Report and Fix
 
 If issues found:
-Report that Reader the agent struggled with specific issues.
+Report that Reader Agent struggled with specific issues.
 
 List the specific issues.
 
@@ -293,34 +332,34 @@ The user will need to do the testing manually.
 
 ### Step 1: Predict Reader Questions
 
-Ask what questions people might ask when trying to discover this document. What would they type into the agent.ai?
+Ask what questions people might ask when trying to discover this document. What would they type into a search box or an AI assistant?
 
 Generate 5-10 questions that readers would realistically ask.
 
 ### Step 2: Setup Testing
 
 Provide testing instructions:
-1. Open a fresh the agent conversation: https://opencode
+1. Open a fresh agent session with no prior context
 2. Paste or share the document content (if using a shared doc platform with connectors enabled, provide the link)
-3. Ask Reader the agent the generated questions
+3. Ask Reader Agent the generated questions
 
-For each question, instruct Reader the agent to provide:
+For each question, instruct Reader Agent to provide:
 - The answer
 - Whether anything was ambiguous or unclear
 - What knowledge/context the doc assumes is already known
 
-Check if Reader the agent gives correct answers or misinterprets anything.
+Check if Reader Agent gives correct answers or misinterprets anything.
 
 ### Step 3: Additional Checks
 
-Also ask Reader the agent:
+Also ask Reader Agent:
 - "What in this doc might be ambiguous or unclear to readers?"
 - "What knowledge or context does this doc assume readers already have?"
 - "Are there any internal contradictions or inconsistencies?"
 
 ### Step 4: Iterate Based on Results
 
-Ask what Reader the agent got wrong or struggled with. Indicate intention to fix those gaps.
+Ask what Reader Agent got wrong or struggled with. Indicate intention to fix those gaps.
 
 Loop back to refinement for any problematic sections.
 
@@ -328,12 +367,12 @@ Loop back to refinement for any problematic sections.
 
 ### Exit Condition (Both Approaches)
 
-When Reader the agent consistently answers questions correctly and doesn't surface new gaps or ambiguities, the doc is ready.
+When Reader Agent consistently answers questions correctly and doesn't surface new gaps or ambiguities, the doc is ready.
 
 ## Final Review
 
 When Reader Testing passes:
-Announce the doc has passed Reader the agent testing. Before completion:
+Announce the doc has passed Reader Agent testing. Before completion:
 
 1. Recommend they do a final read-through themselves - they own this document and are responsible for its quality
 2. Suggest double-checking any facts, links, or technical details
@@ -364,8 +403,8 @@ Announce document completion. Provide a few final tips:
 - Don't let gaps accumulate - address them as they come up
 
 **Artifact Management:**
-- Use `the Write tool` for drafting full sections
-- Use `the Edit tool` for all edits
+- Use the `write` tool for drafting full sections
+- Use the `edit` tool for all edits
 - Provide file path after every change
 - Never use artifacts for brainstorming lists - that's just conversation
 
@@ -373,3 +412,26 @@ Announce document completion. Provide a few final tips:
 - Don't rush through stages
 - Each iteration should make meaningful improvements
 - The goal is a document that actually works for readers
+
+## Common Mistakes
+
+**Drafting before Stage 1 is complete.** You produce fluent, confident, wrong content. The tell: you are describing *what* the team is doing but cannot explain *why* the obvious alternative was rejected. That is a Stage 1 gap, not a writing problem.
+
+**Brainstorming too few options.** Five safe options means the user curates from a weak set. Twenty options for a complex section is not excessive — most get cut, and cutting is cheap.
+
+**Reprinting the whole document after each edit.** Use the `edit` tool on the section that changed. Reprinting buries the change and wastes the user's attention.
+
+**Editing the doc for them without being asked.** When the user says "make the third paragraph more concise", they are also teaching you their style for every later section. Ask what to change rather than changing it silently — the instruction is the valuable part.
+
+**Skipping Stage 3.** The doc reads perfectly to the two people who built it. That says nothing about the twenty who will read it cold.
+
+**Reader testing with a contaminated agent.** A subagent that inherits this conversation's context already knows everything the doc fails to say. It must receive only the document and the question.
+
+**Treating "looks good" as approval.** Freeform positive feedback usually means the user has stopped reading closely. Ask a specific question about a specific section to check.
+
+## Related Skills
+
+- **brainstorming** — for exploring an idea before there is a document to write
+- **writing-internal-comms** — for updates and announcements rather than substantial documents
+- **dispatching-parallel-agents** — Stage 3 reader tests are independent and can run concurrently
+- **verifying-before-completion** — verify every fact, link, and number before calling the doc done

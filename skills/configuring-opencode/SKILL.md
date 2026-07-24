@@ -6,9 +6,6 @@ description: >
   opencode, set permissions, configure agents, change themes, add keybinds, set up rules, configure
   LSP or MCP servers, or anything related to opencode.json, tui.json, or opencode.jsonc
   configuration.
-mode: subagent
-permission:
-  edit: deny
 ---
 
 # OpenCode Setup and Configuration Guide
@@ -791,7 +788,7 @@ call it via HTTP.
 | **Summary** | primary | Hidden, creates session summaries |
 
 Switch primary agents with **Tab** key. Invoke subagents with `@mention` or
-automatically via the Task tool.
+automatically via the `task` tool.
 
 ## Useful Interactive Commands
 

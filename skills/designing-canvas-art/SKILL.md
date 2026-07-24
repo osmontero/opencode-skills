@@ -23,7 +23,7 @@ To begin, create a VISUAL PHILOSOPHY (not layouts or templates) that will be int
 ### THE CRITICAL UNDERSTANDING
 - What is received: Some subtle input or instructions by the user that should be taken into account, but used as a foundation; it should not constrain creative freedom.
 - What is created: A design philosophy/aesthetic movement.
-- What happens next: Then, the same version receives the philosophy and EXPRESSES IT VISUALLY - creating artifacts that are 90% visual design, 10% essential text.
+- What happens next: Then, the next agent receives the philosophy and EXPRESSES IT VISUALLY - creating artifacts that are 90% visual design, 10% essential text.
 
 Consider this approach:
 - Write a manifesto for an art movement
@@ -47,7 +47,7 @@ To capture the VISUAL essence, express how the philosophy manifests through:
 **CRITICAL GUIDELINES:**
 - **Avoid redundancy**: Each design aspect should be mentioned once. Avoid repeating points about color theory, spatial relationships, or typographic principles unless adding new depth.
 - **Emphasize craftsmanship REPEATEDLY**: The philosophy MUST stress multiple times that the final work should appear as though it took countless hours to create, was labored over with care, and comes from someone at the absolute top of their field. This framing is essential - repeat phrases like "meticulously crafted," "the product of deep expertise," "painstaking attention," "master-level execution."
-- **Leave creative space**: Remain specific about the aesthetic direction, but concise enough that the next the agent has room to make interpretive choices also at a extremely high level of craftmanship.
+- **Leave creative space**: Remain specific about the aesthetic direction, but concise enough that the next agent has room to make interpretive choices also at a extremely high level of craftmanship.
 
 The philosophy must guide the next version to express ideas VISUALLY, not through text. Information lives in design, not paragraphs.
 
@@ -115,6 +115,16 @@ To push boundaries, follow design instinct/intuition while using the philosophy 
 **CRITICAL**: To achieve human-crafted quality (not AI-generated), create work that looks like it took countless hours. Make it appear as though someone at the absolute top of their field labored over every detail with painstaking care. Ensure the composition, spacing, color choices, typography - everything screams expert-level craftsmanship. Double-check that nothing overlaps, formatting is flawless, every detail perfect. Create something that could be shown to people to prove expertise and rank as undeniably impressive.
 
 Output the final result as a single, downloadable .pdf or .png file, alongside the design philosophy used as a .md file.
+
+### HOW TO ACTUALLY RENDER IT
+
+**REQUIRED READING before writing any drawing code:** `references/rendering.md`. It covers renderer selection, canvas geometry and DPI, the margin contract, loading the bundled `canvas-fonts/` faces, systematic mark-making, grain and finishing, and the verification pass.
+
+The three rules that decide whether the output is professional:
+
+1. **Seed the RNG.** `rng = random.Random(7)`, and record the seed in the philosophy `.md`. An unreproducible piece cannot be refined, and refinement is the entire second pass below.
+2. **Measure text before placing it.** Compute the bounding box and assert it falls inside the safe area (~8.5% of the short edge). "Nothing falls off the page and nothing overlaps" is only guaranteed if it is checked, not intended.
+3. **Read the rendered image back and look at it.** Overlap, overflow, crowding, and muddy value structure are all visible in the render and all invisible in the code. Check ink coverage lands in the 8-35% band, and view it at thumbnail size — a strong composition still reads at 200px.
 
 ---
 

@@ -22,7 +22,7 @@ Then use `python3 scripts/...` normally.
 
 | Tool                  | Command                          | Use For                                                           |
 |-----------------------|----------------------------------|-------------------------------------------------------------------|
-| `pdf-extractor` agent | Global agent (dispatch via Task) | Full PDF extraction (all pages, all data, structured folder tree) |
+| `pdf-extractor` agent | Global agent (dispatch via `task`) | Full PDF extraction (all pages, all data, structured folder tree) |
 | `pdftotext`           | System (Poppler)                 | Quick text extraction                                             |
 | `pdfinfo`             | System (Poppler)                 | Metadata, page count                                              |
 | `pypdf`               | Python (venv)                    | Merge, split, rotate                                              |

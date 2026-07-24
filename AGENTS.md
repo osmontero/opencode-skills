@@ -7,8 +7,8 @@ This repository contains **opencode skills and global agents** — Markdown-base
 ## Repository Structure
 
 ```
-skills/          — 26 skill directories (each: SKILL.md + optional scripts/, references/, assets/)
-agents/          — 9 agent definition files (YAML-frontmatter Markdown, *.md) + LICENSE.txt
+skills/          — 29 skill directories (each: SKILL.md + optional scripts/, references/, assets/)
+agents/          — 10 agent definition files (YAML-frontmatter Markdown, *.md) + LICENSE.txt
 .opencode/       — Local opencode config (opencode.json, prompts/)
 ```
 
@@ -40,12 +40,32 @@ Each `agents/<name>.md` has frontmatter with `description`, `mode: subagent`, an
 
 `.opencode/opencode.json` configures providers, models, MCP servers, and agent prompts. It references `prompts/plan.txt` and `prompts/build.txt` for the plan and build workflows.
 
-### Plan and build prompts define the core workflow
+### Plan and build prompts are intentionally empty
 
-- `.opencode/prompts/plan.txt` — Brainstorming workflow: explore → clarify → design → spec → writing-plans skill
-- `.opencode/prompts/build.txt` — Subagent-driven development: implementer → spec-reviewer → code-quality-reviewer → code-reviewer
+`.opencode/prompts/plan.txt` and `build.txt` are **0 bytes** (emptied in commit `45c1d4a`). They are still referenced by `opencode.json` under `agent.plan.prompt` and `agent.build.prompt`, so the plan and build agents currently run with no custom prompt override — the workflow comes from the `brainstorming` and `subagent-driven-development` skills instead.
 
-These are wired into `opencode.json` under `agent.plan.prompt` and `agent.build.prompt`.
+Leave them empty unless deliberately reinstating prompt overrides. If they are no longer wanted, remove the `agent.plan` / `agent.build` blocks from `opencode.json` as well so the config does not reference empty files.
+
+### Design and UX is a four-skill cluster
+
+`designing-frontend-interfaces` (visual craft, 5 reference files) → `designing-user-experience` (flows and states) → `building-accessible-interfaces` (WCAG 2.2 AA) → `reviewing-interface-quality` (audit rubric). `applying-themes` supplies contrast-verified palettes; the `interface-reviewer` agent runs the audit as a subagent.
+
+**When editing any of them, keep the cross-references intact** — they name each other by skill name and by reference-file path, and the design skills are written to compose rather than duplicate. Contrast values in `applying-themes/themes/*.md` are machine-checked:
+
+```bash
+source ~/.local/opencode-venv/bin/activate
+python3 skills/applying-themes/scripts/check_contrast.py skills/applying-themes/themes/*.md
+```
+
+That script exits non-zero on failure, so it works as a gate after editing any palette.
+
+> `skills/applying-themes/theme-showcase.pdf` predates the current palettes and no longer matches the theme files. The markdown files are authoritative; regenerate or delete the PDF rather than treating it as a preview.
+
+### Frontmatter conventions
+
+Skills take `name` (must equal the directory name) and `description` only — plus `license` for Anthropic-derived skills and `compatibility: opencode` for superpowers-derived ones. **`mode`, `permission`, and `tools` are agent-only fields and must not appear on a skill.** Agents require `mode: subagent`; `permission.edit: deny` is correct for read-only reviewer agents.
+
+Descriptions start with "Use when…" and describe *triggering conditions only* — never the skill's workflow. A description that summarizes the process gives the agent a shortcut it will take instead of reading the skill.
 
 ### README contains license attribution info and full skill/agent lists
 
