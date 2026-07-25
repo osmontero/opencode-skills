@@ -4,9 +4,9 @@ Adapted skills and agents for the opencode agent ecosystem.
 
 ## Contents
 
-**29 skills** covering development workflows, design and UX, accessibility, document processing, code review, testing, debugging, and more.
+**33 skills** covering development workflows, design and UX, accessibility, security, performance, schema evolution, document processing, code review, testing, debugging, and more.
 
-**10 global agents** for implementation, review, and evaluation.
+**11 global agents** for implementation, review, and evaluation.
 
 ### Design & UX cluster
 
@@ -20,6 +20,19 @@ Four skills that compose into a full interface workflow, plus a review agent:
 | `reviewing-interface-quality` | Critique rubric tying the three together, with an evidence requirement and severity grading. |
 
 `applying-themes` supplies ten contrast-verified palettes with semantic tokens and a `check_contrast.py` gate. The `interface-reviewer` agent runs the review rubric as a subagent.
+
+### Engineering rigor cluster
+
+Four skills for the failure modes that cost the most to undo, each built around one refusal:
+
+| Skill | Refuses |
+|---|---|
+| `reviewing-security` | A finding without a traced path from attacker-controlled input to impact. Sink table, authorization checklist, scanner reachability, plus a vulnerability-patterns reference. |
+| `evolving-apis-and-schemas` | Additive and destructive changes in the same deploy. Expand/contract sequencing, proto and SQL compatibility rules, migration recipes. |
+| `investigating-performance` | An optimization without a measurement that names the bottleneck. Characterization table, profiling per dimension, tail-latency causes. |
+| `writing-release-notes` | An entry that describes the code instead of the reader's change. |
+
+The `security-reviewer` agent runs the security rubric as a subagent.
 
 ## License
 
@@ -69,8 +82,13 @@ The following are original to this repository and carry the repository's MIT lic
 - `designing-user-experience` — Interaction design, state coverage, forms, microcopy
 - `building-accessible-interfaces` — Practical WCAG 2.2 AA guidance and component patterns
 - `reviewing-interface-quality` — Interface critique and QA rubric
+- `reviewing-security` — Path-based security review with a vulnerability-patterns reference
+- `evolving-apis-and-schemas` — Backward-compatible proto, SQL, and API evolution
+- `investigating-performance` — Measurement-first performance investigation and profiling
+- `writing-release-notes` — Changelogs, release notes, and upgrade guides
 - `configuring-opencode` — opencode configuration reference
 - `agents/interface-reviewer.md` — UI review subagent
+- `agents/security-reviewer.md` — Security review subagent
 
 See individual `skills/<name>/LICENSE.txt` files for full license text and attribution notices.
 
@@ -102,6 +120,7 @@ cp agents/* ~/.config/opencode/agents/
 | `spec-reviewer`         | Verifies implementation matches spec (nothing more, nothing less) |
 | `code-quality-reviewer` | Code quality review after spec compliance passes                  |
 | `code-reviewer`         | General production-readiness code review                          |
+| `security-reviewer`     | Security audit: traced exploit paths, severity by exploitability  |
 | `grader`                | Evaluates skill test expectations with pass/fail verdicts         |
 | `comparator`            | Blind A/B comparison of skill outputs                             |
 | `analyzer`              | Post-hoc analysis + benchmark pattern detection                   |
@@ -127,12 +146,15 @@ cp agents/* ~/.config/opencode/agents/
 | `designing-frontend-interfaces`  | Design        |
 | `designing-user-experience`      | Design        |
 | `dispatching-parallel-agents`    | Workflow      |
+| `evolving-apis-and-schemas`      | Development   |
 | `executing-plans`                | Workflow      |
 | `finishing-a-development-branch` | Workflow      |
+| `investigating-performance`      | Development   |
 | `processing-pdf`                 | Documents     |
 | `receiving-code-review`          | Workflow      |
 | `requesting-code-review`         | Workflow      |
 | `reviewing-interface-quality`    | Design        |
+| `reviewing-security`             | Development   |
 | `subagent-driven-development`    | Workflow      |
 | `systematic-debugging`           | Development   |
 | `test-driven-development`        | Development   |
@@ -142,4 +164,5 @@ cp agents/* ~/.config/opencode/agents/
 | `verifying-before-completion`    | Workflow      |
 | `writing-internal-comms`         | Documents     |
 | `writing-plans`                  | Workflow      |
+| `writing-release-notes`          | Documents     |
  

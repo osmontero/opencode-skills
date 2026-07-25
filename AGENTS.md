@@ -7,8 +7,8 @@ This repository contains **opencode skills and global agents** — Markdown-base
 ## Repository Structure
 
 ```
-skills/          — 29 skill directories (each: SKILL.md + optional scripts/, references/, assets/)
-agents/          — 10 agent definition files (YAML-frontmatter Markdown, *.md) + LICENSE.txt
+skills/          — 33 skill directories (each: SKILL.md + optional scripts/, references/, assets/)
+agents/          — 11 agent definition files (YAML-frontmatter Markdown, *.md) + LICENSE.txt
 .opencode/       — Local opencode config (opencode.json, prompts/)
 ```
 
@@ -60,6 +60,19 @@ python3 skills/applying-themes/scripts/check_contrast.py skills/applying-themes/
 That script exits non-zero on failure, so it works as a gate after editing any palette.
 
 > `skills/applying-themes/theme-showcase.pdf` predates the current palettes and no longer matches the theme files. The markdown files are authoritative; regenerate or delete the PDF rather than treating it as a preview.
+
+### Engineering rigor is a four-skill cluster
+
+`reviewing-security` (+ `security-reviewer` agent), `evolving-apis-and-schemas`, `investigating-performance`, and `writing-release-notes`. Each is built around a single refusal stated as an Iron Law, and the value is in the refusal — an edit that softens one into advice removes the reason the skill exists:
+
+| Skill | Iron Law |
+|---|---|
+| `reviewing-security` | No finding without a path from attacker-controlled input to impact |
+| `evolving-apis-and-schemas` | Additive first, destructive last — never in the same deploy |
+| `investigating-performance` | No optimization without a measurement that names the bottleneck |
+| `writing-release-notes` | Every entry states what changed for the reader, not what changed in the code |
+
+The first three carry a `references/` file each (vulnerability patterns, migration recipes, profiling tools) linked one level deep from SKILL.md. Keep them one level deep — nested references get partially read.
 
 ### Frontmatter conventions
 
