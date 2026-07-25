@@ -40,14 +40,18 @@ Each `agents/<name>.md` has frontmatter with `description`, `mode: subagent`, an
 
 `.opencode/opencode.json` configures providers, models, MCP servers, and agent prompts. It references `prompts/plan.txt` and `prompts/build.txt` for the plan and build workflows.
 
-### Prompt overrides are seeded with opencode's own defaults
+### Prompt overrides are general-purpose by design
 
-`.opencode/prompts/{build,plan,compaction}.txt` hold the **verbatim opencode 1.18.4 defaults**, wired via `agent.<name>.prompt` in `opencode.json`. They were previously 0 bytes; seeding them changed no behavior, it just made the baseline editable.
+`.opencode/prompts/{build,plan,compaction}.txt` are **custom prompts**, wired via `agent.<name>.prompt` in `opencode.json`. They replaced opencode's defaults, which were coding-specific.
 
-- **`build.txt` and `plan.txt` are byte-identical**, and that is correct. opencode has no separate plan prompt — plan mode is enforced by injected `<system-reminder>` blocks and by permissions, not by a different system prompt. Divergence between the two files is a deliberate choice, never a fix.
-- **The variant is the generic fallback.** opencode picks a system prompt by substring-matching the model id (`claude`, `gpt`/`codex`, `gemini-`, `kimi`, `trinity`, `muse-spark`), falling through to a generic default. The configured ThreatWinds models (`qwen-*`, `silas-*`) match no branch, so the generic default is what these files contain. **Pinning it means a future switch to a Claude or GPT model keeps the generic prompt instead of the model-appropriate one** — re-seed from the new default if the model family changes.
+**The governing rule: these prompts carry methodology, not domain knowledge.** How to work — task management, evidence before assertion, scope discipline, delegation, communication. Domain technique belongs in skills. That split only holds because each prompt opens with a **Skills Come First** section instructing the agent to check for an applicable skill and to let it govern; removing that section reopens the gap that stripping the coding guidance created. Anything added here that is specific to code, or to any one domain, is in the wrong file.
+
+- **`build.txt` and `plan.txt` deliberately diverge.** build is execution methodology; plan is investigation methodology (explore → constraints → options → agreement) with a definition of what a plan must contain. Upstream has no separate plan prompt — plan mode is enforced by injected `<system-reminder>` blocks and by permissions — so this divergence is ours, and both files still defer enforcement to those reminders rather than restating prohibitions.
+- **Task Management is load-bearing, not boilerplate.** The upstream variant these replaced (`Ta`, the generic fallback) ships with *no* task-management section, which is why the agents did not maintain todo lists. Both prompts now specify: list before starting, one `in_progress`, complete immediately without batching, discovered work becomes new items, re-read before claiming done.
+- **`compaction.txt` cooperates with a contract it cannot override.** opencode supplies its own user-side prompt demanding a fixed five-section structure wrapped in `<summary>` tags. The system prompt cannot change that, so it adds *fidelity* rules inside it: standing user instructions and unreconstructable literals (keys, IDs, paths, versions, exact commands) are copied verbatim, and narrative is what gets cut when space runs short. Do not add competing section structures here — they will fight the user prompt.
+- **Overriding bypasses model-family selection.** opencode picks a default system prompt by substring-matching the model id (`claude`, `gpt`/`codex`, `gemini-`, `kimi`, `trinity`, `muse-spark`), falling through to a generic variant — which is what the ThreatWinds `qwen-*`/`silas-*` ids resolve to. With an override set, that selection no longer happens at all, for any model.
 - **A prompt override replaces the model-family prompt entirely**, but not everything: the merge is `agent.prompt ? [agent.prompt] : provider(model)`, and the environment block plus any user system prompt are still appended after it.
-- **Emptying a file is the revert.** That truthiness check means a 0-byte file falls back to opencode's default — which is why the previous empty files were harmless.
+- **Emptying a file is the revert.** That truthiness check means a 0-byte file falls back to opencode's default.
 
 Re-extract a current default after upgrading opencode (this prints the live resolved prompt, so run it from a directory whose config does *not* override the agent):
 
