@@ -217,6 +217,9 @@
     },
     "build": {
       "prompt": "{file:./prompts/build.txt}"
+    },
+    "compaction": {
+      "prompt": "{file:./prompts/compaction.txt}"
     }
   }
 }

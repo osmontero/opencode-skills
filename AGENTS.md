@@ -40,11 +40,24 @@ Each `agents/<name>.md` has frontmatter with `description`, `mode: subagent`, an
 
 `.opencode/opencode.json` configures providers, models, MCP servers, and agent prompts. It references `prompts/plan.txt` and `prompts/build.txt` for the plan and build workflows.
 
-### Plan and build prompts are intentionally empty
+### Prompt overrides are seeded with opencode's own defaults
 
-`.opencode/prompts/plan.txt` and `build.txt` are **0 bytes** (emptied in commit `45c1d4a`). They are still referenced by `opencode.json` under `agent.plan.prompt` and `agent.build.prompt`, so the plan and build agents currently run with no custom prompt override — the workflow comes from the `brainstorming` and `subagent-driven-development` skills instead.
+`.opencode/prompts/{build,plan,compaction}.txt` hold the **verbatim opencode 1.18.4 defaults**, wired via `agent.<name>.prompt` in `opencode.json`. They were previously 0 bytes; seeding them changed no behavior, it just made the baseline editable.
 
-Leave them empty unless deliberately reinstating prompt overrides. If they are no longer wanted, remove the `agent.plan` / `agent.build` blocks from `opencode.json` as well so the config does not reference empty files.
+- **`build.txt` and `plan.txt` are byte-identical**, and that is correct. opencode has no separate plan prompt — plan mode is enforced by injected `<system-reminder>` blocks and by permissions, not by a different system prompt. Divergence between the two files is a deliberate choice, never a fix.
+- **The variant is the generic fallback.** opencode picks a system prompt by substring-matching the model id (`claude`, `gpt`/`codex`, `gemini-`, `kimi`, `trinity`, `muse-spark`), falling through to a generic default. The configured ThreatWinds models (`qwen-*`, `silas-*`) match no branch, so the generic default is what these files contain. **Pinning it means a future switch to a Claude or GPT model keeps the generic prompt instead of the model-appropriate one** — re-seed from the new default if the model family changes.
+- **A prompt override replaces the model-family prompt entirely**, but not everything: the merge is `agent.prompt ? [agent.prompt] : provider(model)`, and the environment block plus any user system prompt are still appended after it.
+- **Emptying a file is the revert.** That truthiness check means a 0-byte file falls back to opencode's default — which is why the previous empty files were harmless.
+
+Re-extract a current default after upgrading opencode (this prints the live resolved prompt, so run it from a directory whose config does *not* override the agent):
+
+```bash
+opencode debug agent compaction    # also: build, plan, title, summary
+```
+
+Config keys are schema-verified against `https://opencode.ai/config.json`: `agent` accepts the named built-ins `plan`, `build`, `general`, `explore`, `title`, `summary`, and `compaction`, each taking a full `AgentConfig` (`prompt`, `model`, `variant`, `temperature`, `top_p`, `steps`, `permission`).
+
+The separate top-level `compaction` block (`auto`, `prune`, `reserved`, `tail_turns`, `preserve_recent_tokens`) controls *when and how much* to compact and is unrelated to the prompt.
 
 ### Design and UX is a four-skill cluster
 
