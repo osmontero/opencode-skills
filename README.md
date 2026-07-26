@@ -75,6 +75,15 @@ The following skills are MIT-licensed adaptations from [obra/superpowers](https:
 - `verifying-before-completion` — Pre-commit verification and evidence gathering
 - `writing-plans` — Implementation plan creation from specs
 
+#### MIT License (sst/opencode)
+
+The agent prompts in `.opencode/prompts/` are adapted from opencode's own built-in agent prompts ([sst/opencode](https://github.com/sst/opencode), MIT), extracted from the opencode 1.18.4 binary:
+
+- `build.txt`, `plan.txt` — from opencode's default agent system prompt
+- `compaction.txt` — from opencode's built-in compaction prompt
+
+All three have since been substantially rewritten to be general-purpose rather than coding-specific (see `AGENTS.md`). What remains derived is the structure plus a small amount of verbatim text: the opencode self-help block, the code-reference example, and two lines of the compaction anchoring contract.
+
 #### MIT License (this repository)
 
 The following are original to this repository and carry the repository's MIT license:
