@@ -4,7 +4,7 @@ Adapted skills and agents for the opencode agent ecosystem.
 
 ## Contents
 
-**33 skills** covering development workflows, design and UX, accessibility, security, performance, schema evolution, document processing, code review, testing, debugging, and more.
+**34 skills** covering development workflows, design and UX, accessibility, security, performance, schema evolution, document processing, code review, testing, debugging, and more.
 
 **11 global agents** for implementation, review, and evaluation.
 
@@ -70,6 +70,7 @@ The following skills are MIT-licensed adaptations from [obra/superpowers](https:
 - `subagent-driven-development` — Multi-agent implementation workflow
 - `systematic-debugging` — Structured bug investigation and resolution
 - `test-driven-development` — TDD implementation workflow
+- `testing-skills` — Pressure-testing skills against agents before deployment
 - `using-git-worktrees` — Git worktree isolation for feature development
 - `using-superpowers` — Skill discovery and activation
 - `verifying-before-completion` — Pre-commit verification and evidence gathering
@@ -167,6 +168,7 @@ cp agents/* ~/.config/opencode/agents/
 | `subagent-driven-development`    | Workflow      |
 | `systematic-debugging`           | Development   |
 | `test-driven-development`        | Development   |
+| `testing-skills`                 | Development   |
 | `testing-webapps`                | Development   |
 | `using-git-worktrees`            | Workflow      |
 | `using-superpowers`              | Workflow      |

@@ -7,7 +7,7 @@ This repository contains **opencode skills and global agents** — Markdown-base
 ## Repository Structure
 
 ```
-skills/          — 33 skill directories (each: SKILL.md + optional scripts/, references/, assets/)
+skills/          — 34 skill directories (each: SKILL.md + optional scripts/, references/, assets/)
 agents/          — 11 agent definition files (YAML-frontmatter Markdown, *.md) + LICENSE.txt
 .opencode/       — Local opencode config (opencode.json, prompts/, command/)
 ```

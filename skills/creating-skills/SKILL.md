@@ -267,6 +267,8 @@ See `references/schemas.md` for the full schema (including the `assertions` fiel
 
 ### Testing All Skill Types
 
+For discipline-enforcing skills specifically, the `testing-skills` skill covers the full RED-GREEN-REFACTOR campaign: writing pressure scenarios, capturing rationalizations verbatim, the four places to plug each loophole, and meta-testing when a skill is read and violated anyway.
+
 Different skill types need different test approaches:
 
 **Discipline-enforcing skills** (rules/requirements like TDD, verification-before-completion):
