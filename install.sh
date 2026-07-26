@@ -68,6 +68,21 @@ if [ -d "$SCRIPT_DIR/.opencode/prompts" ]; then
   cp "$SCRIPT_DIR/.opencode/prompts/"* "$CONFIG_DIR/prompts/"
 fi
 
+# Install custom commands — these override built-ins of the same name
+if [ -d "$SCRIPT_DIR/.opencode/command" ]; then
+  echo "Installing commands to $CONFIG_DIR/command/..."
+  mkdir -p "$CONFIG_DIR/command"
+  for f in "$CONFIG_DIR/command/"*.md; do
+    [ -f "$f" ] || continue
+    name="$(basename "$f")"
+    if [ ! -f "$SCRIPT_DIR/.opencode/command/$name" ]; then
+      echo "  Removing $name (no longer in repo)"
+      rm "$f"
+    fi
+  done
+  cp "$SCRIPT_DIR/.opencode/command/"*.md "$CONFIG_DIR/command/"
+fi
+
 # Remove legacy common folder from older installs
 if [ -d "$CONFIG_DIR/common" ]; then
   echo "Removing legacy common folder from $CONFIG_DIR..."

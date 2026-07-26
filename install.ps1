@@ -88,6 +88,23 @@ if (Test-Path -LiteralPath "$SCRIPT_DIR\.opencode\prompts") {
     }
 }
 
+# Install custom commands — these override built-ins of the same name
+if (Test-Path -LiteralPath "$SCRIPT_DIR\.opencode\command") {
+    Write-Host "Installing commands to $CONFIG_DIR\command\..."
+    New-Item -ItemType Directory -Path "$CONFIG_DIR\command" -Force | Out-Null
+    if (Test-Path -LiteralPath "$CONFIG_DIR\command") {
+        Get-ChildItem -File -Filter *.md -LiteralPath "$CONFIG_DIR\command" | ForEach-Object {
+            if (-not (Test-Path -LiteralPath "$SCRIPT_DIR\.opencode\command\$($_.Name)")) {
+                Write-Host "  Removing $($_.Name) (no longer in repo)"
+                Remove-Item -LiteralPath $_.FullName -Force
+            }
+        }
+    }
+    Get-ChildItem -File -Filter *.md -LiteralPath "$SCRIPT_DIR\.opencode\command" | ForEach-Object {
+        Copy-Item -LiteralPath $_.FullName -Destination "$CONFIG_DIR\command\$($_.Name)" -Force
+    }
+}
+
 # Remove legacy common folder from older installs
 if (Test-Path -LiteralPath "$CONFIG_DIR\common") {
     Write-Host "Removing legacy common folder from $CONFIG_DIR..."

@@ -625,6 +625,9 @@ The following global agents are available for skill evaluation:
 
 The references/ directory has additional documentation:
 - `references/schemas.md` — JSON structures for evals.json, grading.json, etc.
+- `references/skill-authoring-best-practices.md` — Anthropic's official authoring guidance: conciseness, degrees of freedom, progressive disclosure, description writing, and the pre-publish checklist
+- `references/persuasion-principles.md` — Why bulletproofing language works, for discipline-enforcing skills
+- `references/graphviz-conventions.dot` — Style rules for flowcharts in skills
 
 ---
 

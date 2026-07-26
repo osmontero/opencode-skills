@@ -68,7 +68,7 @@ with sync_playwright() as p:
 
 Then **read both screenshots**. The distinct-value counts tell you where the system broke; the screenshots tell you what it looks like. You need both.
 
-For a server-backed app, wrap this with `testing-webapps`' `scripts/with_server.py`.
+For a server-backed app, wrap this with `testing-webapps/scripts/with_server.py`.
 
 If the UI genuinely cannot be rendered (no runtime, a fragment, a component in isolation), say so explicitly in the report and mark every visual finding `PLAUSIBLE` rather than `CONFIRMED`.
 

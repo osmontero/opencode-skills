@@ -298,5 +298,5 @@ Then use `python3 core/...` normally. All dependencies (Pillow, imageio, imageio
 
 ## Related Skills
 
-- **designing-frontend-interfaces** — `references/motion.md` covers easing choice and orchestration; `references/color-and-theme.md` covers building a palette that survives a 48-color quantization
-- **designing-canvas-art** — `canvas-fonts/` supplies real typefaces if the GIF needs text, and `references/rendering.md` covers PIL compositing techniques
+- **designing-frontend-interfaces** — `designing-frontend-interfaces/references/motion.md` covers easing choice and orchestration; `designing-frontend-interfaces/references/color-and-theme.md` covers building a palette that survives a 48-color quantization
+- **designing-canvas-art** — `canvas-fonts/` supplies real typefaces if the GIF needs text, and `designing-canvas-art/references/rendering.md` covers PIL compositing techniques

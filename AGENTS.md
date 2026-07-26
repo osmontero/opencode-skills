@@ -9,7 +9,7 @@ This repository contains **opencode skills and global agents** — Markdown-base
 ```
 skills/          — 33 skill directories (each: SKILL.md + optional scripts/, references/, assets/)
 agents/          — 11 agent definition files (YAML-frontmatter Markdown, *.md) + LICENSE.txt
-.opencode/       — Local opencode config (opencode.json, prompts/)
+.opencode/       — Local opencode config (opencode.json, prompts/, command/)
 ```
 
 ## Key Facts
@@ -22,7 +22,9 @@ Each skill is a `skills/<name>/SKILL.md` with YAML frontmatter (`name`, `descrip
 
 ### install.sh / install.ps1 is the deployment mechanism
 
-`./install.sh` (Linux/macOS) or `./install.ps1` (Windows) copies skills, agents, MCP servers, and config to `~/.config/opencode/`. It also removes stale skills/agents/MCP servers no longer in the repo, installs Python deps via `uv`, replaces the global `opencode.json`, and copies prompt files. **After editing files in this repo, run the install script to apply changes to the active opencode configuration.**
+`./install.sh` (Linux/macOS) or `./install.ps1` (Windows) copies skills, agents, MCP servers, commands, and config to `~/.config/opencode/`. It also removes stale skills/agents/MCP servers/commands no longer in the repo, installs Python deps via `uv`, replaces the global `opencode.json`, and copies prompt files. **After editing files in this repo, run the install script to apply changes to the active opencode configuration.**
+
+Both installers must stay in sync. A new deployable directory added to one is a bug in the other.
 
 ### Python dependencies are managed by `uv`
 
@@ -90,6 +92,14 @@ That script exits non-zero on failure, so it works as a gate after editing any p
 | `writing-release-notes` | Every entry states what changed for the reader, not what changed in the code |
 
 The first three carry a `references/` file each (vulnerability patterns, migration recipes, profiling tools) linked one level deep from SKILL.md. Keep them one level deep — nested references get partially read.
+
+### Custom commands override built-ins by name
+
+`.opencode/command/<name>.md` defines a slash command. opencode globs `{command,commands}/**/*.md` from its config directories and merges each by name with `c.template = a.template` — an **unconditional** assignment, so a file named `init.md` replaces the built-in `/init` entirely. This is the same override surface as `agent.<name>`, and it is how `/init` in this repo is customized.
+
+The file is frontmatter (`description`, optionally `agent`, `model`, `subtask`) plus a body that becomes the template. Templates support `$ARGUMENTS` and positional `$1`, `$2`. They do **not** support `${path}` — that appears in opencode's built-in prompts but is JS interpolation resolved at build time, not template syntax.
+
+Recover a built-in command's original text by extracting it from the opencode binary; `opencode debug` has no command inspector, and there is no `debug command` equivalent to `debug agent`.
 
 ### Frontmatter conventions
 

@@ -447,7 +447,7 @@ If the piece fails any of these, fix the algorithm — do not adjust the screens
 
 ## RELATED SKILLS
 
-- **designing-canvas-art** — static PDF/PNG art; its `references/rendering.md` covers grain, halftone, margin contracts, and mark-making systems that transfer directly to p5 output
-- **designing-frontend-interfaces** — for the viewer chrome around the canvas; `references/color-and-theme.md` covers OKLCH ramps, which produce far better generative palettes than raw HSL
+- **designing-canvas-art** — static PDF/PNG art; its `designing-canvas-art/references/rendering.md` covers grain, halftone, margin contracts, and mark-making systems that transfer directly to p5 output
+- **designing-frontend-interfaces** — for the viewer chrome around the canvas; `designing-frontend-interfaces/references/color-and-theme.md` covers OKLCH ramps, which produce far better generative palettes than raw HSL
 - **testing-webapps** — Playwright patterns for driving and capturing the artifact
 - **building-web-artifacts** — when the sketch grows into a multi-component application

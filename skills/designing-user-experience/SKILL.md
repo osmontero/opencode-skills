@@ -59,6 +59,8 @@ Branches:
 
 **Reduce steps before styling them.** Each step is a chance to abandon. Ask of every one: can this be defaulted, inferred, deferred to later, or removed? A form field that can be derived should not be asked.
 
+Worked flows for the patterns that recur — onboarding, search and filtering, multi-step wizards, undo, permissions and paywalls: [references/flow-patterns.md](references/flow-patterns.md).
+
 ## Step 2: The State Matrix
 
 Every component that displays data or accepts input has these states. Enumerate them explicitly; do not discover them in production.
