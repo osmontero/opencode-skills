@@ -4,7 +4,7 @@ Adapted skills and agents for the opencode agent ecosystem.
 
 ## Contents
 
-**34 skills** covering development workflows, design and UX, accessibility, security, performance, schema evolution, document processing, code review, testing, debugging, and more.
+**35 skills** covering development workflows, design and UX, accessibility, security, performance, schema evolution, document processing, code review, testing, debugging, LLM fine-tuning, and more.
 
 **11 global agents** for implementation, review, and evaluation.
 
@@ -145,6 +145,7 @@ cp agents/* ~/.config/opencode/agents/
 | `applying-themes`                | Design        |
 | `brainstorming`                  | Workflow      |
 | `building-accessible-interfaces` | Design        |
+| `building-finetuning-datasets`   | ML            |
 | `building-mcp-servers`           | Development   |
 | `building-web-artifacts`         | Development   |
 | `coauthoring-docs`               | Documents     |

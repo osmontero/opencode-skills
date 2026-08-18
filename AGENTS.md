@@ -106,6 +106,37 @@ That script exits non-zero on failure, so it works as a gate after editing any p
 
 The first three carry a `references/` file each (vulnerability patterns, migration recipes, profiling tools) linked one level deep from SKILL.md. Keep them one level deep — nested references get partially read.
 
+### building-finetuning-datasets is gate-shaped, not checklist-shaped
+
+The only ML skill in the repo, and the only one whose SKILL.md is mostly two decision gates plus a
+required-parts contract, with all technique detail pushed into five `references/` files
+(`choosing-technique`, `synthetic-generation`, `data-quality`, `lora-configuration`,
+`avoiding-degradation`).
+
+That shape came out of the baseline run, not from taste. Without the skill, the agent produced a
+thorough 935-line plan that nonetheless: treated "know our service names and runbook facts" as a
+fine-tuning target with zero mention of retrieval; set `lora_alpha` to half the rank, calling
+`alpha/r = 0.5` "the standard starting point"; and never once mentioned forgetting, replay, dedup,
+decontamination, loss masking, chat templates, EOS, or measuring the base model first. The failure was
+never refusal — it was a complete-looking deliverable with required parts missing. Per
+`creating-skills`, omitted elements call for a structural contract rather than prohibitions, which is
+why "The deliverable" section enumerates six required artifacts in build order instead of warning
+against skipping them.
+
+Two facts in there are load-bearing and get "corrected" by well-meaning edits: `alpha = 2r` (not
+`0.5r`), and facts belong in RAG because training on unknown facts *linearly increases hallucination*
+rather than merely failing to stick. Both are cited to their papers in the skill; keep the citations.
+
+Several claims were cross-checked against a real fine-tuning operation (`threatwinds/llm-finetune`,
+a sibling repo) and adjusted where field evidence disagreed with the literature: `lora_dropout` and a
+validation split are documented there as *regression* levers, not just anti-overfitting ones (their
+v13→v14 narrowed a benchmark regression with that single change), so the skill promotes them; `packing`
+is framed as off-by-default for small/multi-turn data because their agentic runs disable it; and their
+practice of probing the base model and *dropping* slices it already passes became "Gate 3." That repo's
+per-behavior mix-share findings (≈33% fixes a hard prior, ≈18% regresses) are in `data-quality.md`. The
+anonymized "documented ~750-row case" phrasing in the references points at that work — keep it
+anonymized; the skill is general and their redteam/exploit specifics are sensitive.
+
 ### Custom commands override built-ins by name
 
 `.opencode/command/<name>.md` defines a slash command. opencode globs `{command,commands}/**/*.md` from its config directories and merges each by name with `c.template = a.template` — an **unconditional** assignment, so a file named `init.md` replaces the built-in `/init` entirely. This is the same override surface as `agent.<name>`, and it is how `/init` in this repo is customized.
