@@ -40,7 +40,7 @@ Each `agents/<name>.md` has frontmatter with `description`, `mode: subagent`, an
 
 ### .opencode/ contains local config
 
-`.opencode/opencode.json` configures providers, models, MCP servers, and agent prompts. It references `prompts/plan.txt` and `prompts/build.txt` for the plan and build workflows.
+`.opencode/opencode.json` configures providers, models, MCP servers, agent prompts, and the `instructions` files that carry memory. It references `prompts/plan.txt` and `prompts/build.txt` for the plan and build workflows.
 
 ### Prompt overrides are general-purpose by design
 
@@ -64,6 +64,19 @@ opencode debug agent compaction    # also: build, plan, title, summary
 Config keys are schema-verified against `https://opencode.ai/config.json`: `agent` accepts the named built-ins `plan`, `build`, `general`, `explore`, `title`, `summary`, and `compaction`, each taking a full `AgentConfig` (`prompt`, `model`, `variant`, `temperature`, `top_p`, `steps`, `permission`).
 
 The separate top-level `compaction` block (`auto`, `prune`, `reserved`, `tail_turns`, `preserve_recent_tokens`) controls *when and how much* to compact and is unrelated to the prompt.
+
+### Memory is two MEMORY.md files wired through `instructions`
+
+`build.txt` has a **Memory** section telling the agent to record durable lessons on its own initiative — corrections, standing preferences, undocumented failure modes — into `~/.config/opencode/MEMORY.md` (global) or `.opencode/MEMORY.md` (per project). Global writes are autonomous; project writes are proposed first, because they land in the user's repository. This replaces the plugin-based memory system in `docs/specs/2026-08-05-local-memory-design.md`, which is superseded.
+
+```json
+"instructions": ["~/.config/opencode/MEMORY.md", ".opencode/MEMORY.md"]
+```
+
+- **One line here enables memory in every project**, because the install scripts copy this file over the *global* `~/.config/opencode/opencode.json`. No per-project setup.
+- **Relative entries resolve per-project, not against the config file.** `Instruction.systemPaths` sends them to `globUp(pattern, session.directory, worktree)`, which scans the session cwd and every ancestor up to the worktree root, with `dot: true` — that is why `.opencode/MEMORY.md` matches. `~/`-prefixed and absolute entries resolve against home instead. Missing files are silently skipped and empty ones are filtered out of the prompt, so no project needs the file to exist.
+- **`MEMORY.md` rather than `AGENTS.md`, deliberately.** Built-in global discovery takes the first *existing* of `~/.config/opencode/AGENTS.md` then `~/.claude/CLAUDE.md` and then breaks — so creating a global `AGENTS.md` silently displaces a user's `~/.claude/CLAUDE.md`. Project discovery takes the first *matching* of `AGENTS.md`, `CLAUDE.md`, `CONTEXT.md` via `findUp` and breaks likewise. Keeping agent writes out of `AGENTS.md` also keeps them clear of `/init`, which rewrites that file.
+- **opencode's own built-in prompt points agents at `AGENTS.md`** for the same purpose ("proactively suggest writing it to `AGENTS.md` so that you will know to run it next time"). The split here is a deliberate divergence, not an oversight: `AGENTS.md` stays human-owned.
 
 ### Design and UX is a four-skill cluster
 

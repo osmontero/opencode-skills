@@ -190,6 +190,7 @@
   },
   "lsp": true,
   "model": "threatwinds/qwen-3.6",
+  "instructions": ["~/.config/opencode/MEMORY.md", ".opencode/MEMORY.md"],
   "mcp": {
     "chrome-devtools": {
       "type": "local",

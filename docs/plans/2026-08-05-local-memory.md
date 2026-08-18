@@ -1,5 +1,11 @@
 # Local Memory System Implementation Plan
 
+> **SUPERSEDED (2026-08-18). Do not execute this plan.** Memory shipped instead as two
+> `MEMORY.md` files loaded through the `instructions` array in `.opencode/opencode.json`,
+> driven by the **Memory** section of `.opencode/prompts/build.txt` — no plugin, no SQLite,
+> no embedding model. See `AGENTS.md` → *Memory is two MEMORY.md files wired through
+> `instructions`*, and the superseded spec at `docs/specs/2026-08-05-local-memory-design.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use subagent-driven-development (recommended) or executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add a memory plugin and schedules plugin skeleton to the repo, with install-script deployment, so the agent has persistent factual and episodic memory across sessions.
