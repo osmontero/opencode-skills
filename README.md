@@ -96,7 +96,6 @@ The following are original to this repository and carry the repository's MIT lic
 - `evolving-apis-and-schemas` — Backward-compatible proto, SQL, and API evolution
 - `investigating-performance` — Measurement-first performance investigation and profiling
 - `writing-release-notes` — Changelogs, release notes, and upgrade guides
-- `configuring-opencode` — opencode configuration reference
 - `agents/interface-reviewer.md` — UI review subagent
 - `agents/security-reviewer.md` — Security review subagent
 
@@ -149,7 +148,6 @@ cp agents/* ~/.config/opencode/agents/
 | `building-mcp-servers`           | Development   |
 | `building-web-artifacts`         | Development   |
 | `coauthoring-docs`               | Documents     |
-| `configuring-opencode`           | Configuration |
 | `creating-algorithmic-art`       | Design        |
 | `creating-skills`                | Development   |
 | `creating-slack-gifs`            | Design        |
