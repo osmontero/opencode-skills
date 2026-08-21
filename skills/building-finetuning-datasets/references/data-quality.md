@@ -24,7 +24,11 @@ Your eval suite needs three parts, and skipping the second and third is how mode
 3. **Behavior set** — refusals, safety, tone, and any invariant the base model had that you need kept.
 
 Measure all three on the *base* model before training. A fine-tune with no base-model measurement has no
-denominator, and "it looks good" is not a result.
+denominator, and "it looks good" is not a result. For behavior-set items like refusals, measure a *rate*,
+not a single shot: refusal behavior is stochastic in the temperature/seed region (Larsen et al., 2025;
+APST, 2026 — models with comparable single-shot scores have substantially different failure rates under
+repeated sampling), so sample 3–5 completions per boundary prompt and report "2/3 refused" rather than
+pass/fail.
 
 ## How much data
 

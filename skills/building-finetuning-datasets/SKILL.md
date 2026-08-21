@@ -65,8 +65,11 @@ The two costs are real and documented:
   cost capability elsewhere; rows that teach nothing pay that cost for no gain.
 
 So the probe is not optional diligence — it decides what goes in the dataset. Keep the confirmed-failing
-cases, resample the ambiguous ones (a 1-of-3 refusal is sampling noise, not a failure), and drop what
-the base model already does.
+cases, resample the ambiguous ones (a 1-of-3 refusal is sampling noise, not a failure — single-shot
+refusal evaluation is only ~92% accurate, Larsen et al. 2025), and drop what the base model already
+does. Report confirmed categories as a rate ("2/3", "3/3"), not a binary: a 2/3 confirmation is a
+watch-item, not a solved one, since under pure noise it still confirms ~26% of the time, and it is
+exactly the category to re-probe after the next training run.
 
 ## The deliverable
 
@@ -175,8 +178,13 @@ the same modes back.
 
 ## Quality over quantity, with numbers
 
-Curated hundreds beat unfiltered tens of thousands — the consistent result across LIMA (1,000 curated
-examples competitive against 50k), AlpaGasus, and LIMO (817 reasoning traces). Typical ranges:
+Within a *fixed budget*, curated hundreds beat unfiltered tens of thousands for **general instruction
+and style** — the consistent result across LIMA (1,000 curated competitive against 50k), AlpaGasus, and
+LIMO (817 reasoning traces). That is what those papers measured, and it does not transfer to
+*overriding a base prior* (a safety refusal, a strong default): there the behavior needs both a minimum
+*count* and a minimum *share of the mix*, and a small set of rephrased variants of a handful of scenarios
+is the least-favorable regime for "less is more." Judge which regime you are in before reaching for the
+quality-over-quantity conclusion. Typical ranges:
 
 | Goal | Examples |
 |---|---|
@@ -186,8 +194,12 @@ examples competitive against 50k), AlpaGasus, and LIMO (817 reasoning traces). T
 | General instruction following | 1,000–10,000 |
 | Reasoning distillation | 800–10,000 verified traces |
 
-When a run underperforms, doubling the data is the wrong reflex. Check learning rate, target modules,
-and diversity first — in that order.
+When a run underperforms, **doubling the data is usually the wrong reflex** — and specifically wrong when
+the extra rows are rephrasings of scenarios you already have: at a fixed update budget, repeating a small
+set causes the same world-knowledge forgetting as scaling, and a narrow, repetitive dataset is the
+mode-collapse setup. The data move that *does* help retention is adding **new** general replay, not more
+of the target behavior. Check in this order: **LR** (retention-side, first), then target modules, then
+diversity, then mix.
 
 ## Degradation gates
 
@@ -197,7 +209,7 @@ failure mode, and passing the task metric while failing these is the most common
 | Gate | Check | Action if it fails |
 |---|---|---|
 | Task | Target metric improved on held-out real examples | The fine-tune did nothing — check LR and target modules |
-| Retention | General capability within ~2–3 points of base | Catastrophic forgetting — try `lora_dropout` 0.05 and a val split first, then replay, lower LR, fewer epochs |
+| Retention | Above run-to-run noise (≥1 SE at your n) on capabilities the base already passed | A single-digit drop on a few benches is a *common* LoRA-SFT outcome, not "catastrophic" (the literature's catastrophe is a bench near 0, e.g. SLIM's MMLU→0.00). Fix in this order: **lower LR** (retention-side, see `lora-configuration.md`) and **add a replay mix** — the evidence-backed levers — then a val split + small `lora_dropout` as cheap overfitting control, then fewer epochs |
 | Factuality | Hallucination rate not above base | You taught unknown facts — move them to RAG |
 | Safety | Refusal behavior preserved | Safety alignment degrades even from purely benign data (Qi et al., ICLR 2024) — add safety examples to the mix |
 | Format | Outputs terminate and parse | EOS or chat-template bug, not a data problem |
@@ -236,7 +248,7 @@ The `scripts/` are a runnable reference pipeline — adapt, don't rewrite:
 | No base-model measurement | No denominator; regressions are invisible |
 | No replay data in the mix | The model gets the task and loses everything else |
 | Raising temperature for diversity | Diversity comes from varying conditioning — personas, taxonomy cells — not sampling noise |
-| Trusting an unvalidated LLM judge | Position, verbosity, and self-preference bias measure the wrong thing |
+| Trusting an unvalidated LLM judge | Position, verbosity, and self/familiarity-preference bias measure the wrong thing. For *code* quality, deterministic checks (syntax, execution, schema) are the validated layer — the judge is an advisory ranking, not a pass/fail gate |
 | Deduplicating exact matches only | Synthetic pipelines overproduce semantic near-duplicates that exact hashing misses |
 | Packing a small dataset | No throughput to gain on hundreds of rows, and cross-contamination risk on multi-turn data — leave it off |
 | Training a slice the base model already passes | Wasted rows at best; every added row can cost capability elsewhere |

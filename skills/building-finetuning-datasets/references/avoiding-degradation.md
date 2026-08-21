@@ -27,17 +27,26 @@ Mixing data from the original distribution into the fine-tuning set is the simpl
 mitigation for forgetting, and it is the step most pipelines omit entirely.
 
 **Ratios.** There is no universal number, but the shape of the answer is consistent: a minority fraction
-of general data buys most of the retention.
+of general data buys most of the retention, and the optimum is **intermediate**, not "as little as
+possible."
 
 | Situation | General-data fraction |
 |---|---|
-| Narrow task, short run, LoRA | 5–10% |
+| Narrow task, short run, LoRA, target data is *abundant/diverse* | 5–10% |
+| Narrow task where the target data is *scarce or repetitive* (most behavior SFTs) | 15–30% |
 | Broad behavior change, or full fine-tuning | 20–30% |
 | Continual/sequential tuning across several tasks | 10–30%, including data from *prior* tasks |
 | Highly specialized domain shift | 30–50% |
 
-Published continual-learning work has maintained instruction-following with as little as 1% replay per
-task, so start low and raise it if the retention gate fails. Replay costs training tokens; buying more
+The scarce-target row is the one most often hit, and it is now directly measured: Kotha & Liang (2026)
+swept replay fraction ρ over {0.25, 0.5, 0.75, 0.875} of stage-2 steps and found the **peak at an
+intermediate value, with higher fractions mattering more when target data is scarce** — and the mixed
+setup beat replaying a related task and beat tuning weight decay (which gained <2%). Their real-model
+confirmation (Llama-3.1-8B, Weblinx) improved the *target* task by +4.5pp while preserving retention,
+i.e. the replay row also helps the thing you are teaching, not just what you are losing. Published
+continual-learning work has maintained instruction-following with as little as 1% replay per task, so
+you can start low and raise it if the retention gate fails — but "start low" is a floor, not a target,
+when the rest of the set is one narrow repeated behavior. Replay costs training tokens; buying more
 than you need is real waste.
 
 **Sources**, in rough order of preference:
@@ -56,14 +65,21 @@ model *before* training, not from the tuned model after.
 **Other levers**, roughly in order of cost-effectiveness:
 
 - **Fewer epochs and lower LR.** The cheapest forgetting mitigation is not moving the weights as far.
-- **`lora_dropout` 0.05.** Cheap, isolated, and a *validated regression lever*, not only an
-  anti-overfitting one. In a documented ~750-row case, adding 0.05 dropout (alongside a val split)
-  narrowed a confirmed benchmark regression on every affected task without touching the target
-  behaviors. Try it before the more invasive options below. See `lora-configuration.md`.
-- **LoRA itself.** Low-rank adaptation forgets less than full fine-tuning, and less than weight decay or
-  dropout as regularizers (Biderman et al.). The constraint that limits how much it learns is the same
-  one that preserves the base model.
-- **Lower rank.** Less capacity to overwrite. Trades task performance for retention.
+  LR is the single biggest retention lever: a documented 27B LoRA run had a confirmed 5–9pp regression
+  on four reasoning benchmarks at LR 2e-5, and the literature (Lin et al., 2025, full-FT on 3B–4B Qwen)
+  shows LR 1e-6 largely eliminated general-capability degradation at comparable domain performance,
+  with 2e-5 being exactly the degrading end. If the target behavior is already learned, your binding
+  constraint is forgetting, not learning — drop LR before adding data or regularization.
+- **`lora_dropout`.** Cheap and isolated, so it is worth *trying* — a documented ~750-row run narrowed a
+  confirmed regression on every affected benchmark after adding 0.05 (alongside a val split), without
+  touching the target behaviors. But do not expect it: Biderman et al. measured that attention dropout
+  does **not** reduce forgetting at all (full FT + dropout 0.05/0.1 "learn as much and forget as much as"
+  no dropout) — LoRA's forgetting protection is structural (low rank), not regularization. Read the
+  v14-style win as *overfitting control* on a small templated dataset, keep the knob, and stop tuning it.
+- **LoRA itself.** Low-rank adaptation forgets less than full fine-tuning — a structural property, not a
+  regularizer effect. The constraint that limits how much it learns is the same one that preserves the
+  base model. Do **not** raise rank to help benchmarks: Biderman et al. found r=256 forgets nearly as
+  much as full FT, so more capacity buys learning *and* forgetting in the same proportion.
 - **Narrower target modules.** Targeting all linear layers maximizes learning but also maximizes what
   can be overwritten; dropping back toward attention-only (or a smaller module set) is a plausible
   retention lever when the task is narrow. This is in direct tension with the "target everything"
@@ -73,11 +89,12 @@ model *before* training, not from the tuned model after.
 - **Merging** the tuned model back toward base weights (TIES/DARE, or a simple weighted interpolation)
   recovers general capability at some cost to the task. A legitimate last-resort dial.
 
-A note on ordering these against replay: replay is the best-supported defense in the literature, but a
-real ~750-row run narrowed a regression substantially with dropout and a val split *before* trying
-replay at all (rehearsal data was listed as the next thing to try, not the first). The lesson is not
-that replay is wrong — it is that the cheap regularization knobs are worth spending first, because they
-are one-line changes you can attribute, whereas building a good replay mix is real work.
+A note on ordering these against replay: a documented ~750-row run did narrow its regression with a
+dropout + val split *before* trying replay, which is why those cheap knobs are still worth spending —
+they are one-line changes you can attribute, and they control *overfitting*, which is a different
+mechanism from forgetting. But they are not substitutes for the levers the forgetting actually responds
+to: lowering LR and adding general replay data. If the retention gate fails, do all three — cheap knobs
+for the loss curve, LR and mix for the benchmarks — and attribute each change in isolation.
 
 ## Unknown knowledge
 
@@ -86,9 +103,12 @@ know.**
 
 Fine-tuning examples that introduce new knowledge are learned significantly more slowly than examples
 consistent with the model's existing knowledge, and as they are eventually learned they linearly
-increase hallucination rates (Gekhman et al., EMNLP 2024, on closed-book QA). The rate is measured
-across the whole evaluation rather than only the newly taught items, and it climbs with training time —
-so the longer you train to make the new facts stick, the more factuality you pay for them.
+increase hallucination rates (Gekhman et al., EMNLP 2024, on closed-book QA; β_unk ≈ −8.3, R² = 0.95
+out-of-distribution). Two details that matter for diagnosis: the effect is measured *across the whole
+evaluation*, not only the newly taught items — fitting "where is E1" degrades "who founded E2" — and it
+is **neutral at early stopping**, materializing in the later/overfitting regime once the unknowns are
+actually fitted. A degradation curve that stays flat then turns down in late training is the signature
+of this mechanism, not of mode collapse.
 
 **Detecting unknowns before training** — for each candidate example, sample the base model K times
 (K≈8–16) at moderate temperature with a few-shot prompt and check how often it produces the correct fact:
@@ -111,7 +131,24 @@ without making the knowledge usable.
 Fine-tuning on *purely benign, utility-oriented* datasets measurably degrades safety alignment — this is
 documented for Alpaca, Dolly, and LLaVA-Instruct across Llama-2 and GPT-3.5-Turbo (Qi et al., ICLR
 2024). Adversarially, ten examples were enough to strip guardrails from a commercial model. You do not
-need bad intent to lose alignment; you only need to fine-tune.
+need bad intent to lose alignment; you only need to fine-tune. The symmetric finding matters when you
+are fine-tuning *against* a refusal: refusal is a movable prior in both directions (Arditi et al. 2024:
+a single direction; ~1,000 samples can unlearn it), so the dose-response is real — a documented case
+needed ~300 rows at ~33%+ of the mix to reliably override one behavior, and ~130 rows at ~28% regressed.
+Too few rows or too small a share, and the base prior re-asserts itself on the hardest phrasings.
+
+Two risks specific to *conditional* compliance (the "authorized engagement" framing that gates a
+behavior on a textual cue):
+
+- **The cue is a spoofable trigger.** BackdoorAlign (NeurIPS 2024) measured that trigger-conditional
+  behavior is trivially learnable — 11 examples make a model flip behavior on a secret prefix. Read in
+  reverse: a behavior conditioned on a phrase is the same mechanism as a jailbreak backdoor, cheap to
+  learn and cheap to spoof. Put the *enforcement* (KYC, platform-level auth) outside the model and treat
+  the in-prompt authorization as a stylistic condition; then probe the phrase in an *unauthorized*
+  context as a regression check.
+- **Bad rows are a safety variable, not just a quality variable.** A 2025 measurement found as little
+  as 10–25% incorrect/misaligned SFT data raises dangerous outputs by an order of magnitude — so the
+  judge gate on your compliance rows is doing safety work, not just QA.
 
 Practical response:
 
@@ -147,7 +184,7 @@ Reasonable defaults; tighten them for anything user-facing.
 | Gate | Threshold | Measured on |
 |---|---|---|
 | Task improvement | Beats base by a margin larger than run-to-run noise | Held-out real examples, ≥50 (100+ better) |
-| Retention | Within 2–3 points of base | MMLU/ARC/HellaSwag subset, or production-traffic prompts |
+| Retention | Deltas on base-passed capabilities are below run-to-run noise (≥1 SE at your n); a 5–9pp drop on a few benches after a ~1k-row narrow LoRA SFT is a *common moderate* outcome (NoRM, ICLR 2025, standard LoRA on Qwen2-7B: GSM8K −4.17, TruthfulQA −6.85, flat average), not a catastrophe — the literature's catastrophe is a bench near 0 (SLIM, NAACL 2025: MMLU→0.00) | MMLU/ARC/HellaSwag subset, or production-traffic prompts |
 | Factuality | Hallucination rate ≤ base | Closed-book QA on known-answer items |
 | Safety | Refusal rate on boundary prompts ≥ base | Behavior subset |
 | Format validity | ≥99% parse and terminate | Held-out task set |
@@ -162,7 +199,9 @@ seeds and measure the spread. A 1-point "improvement" inside a 3-point noise ban
    learn which mattered, and several trade task performance away.
 2. **Check config before regenerating data.** Learning rate and target modules explain more failures
    than data volume does, and re-running training is far cheaper than re-running generation.
-3. **If retention failed**, raise replay fraction one band and cut epochs before touching anything else.
+3. **If retention failed**, lower LR first (to 1e-5–5e-5, single variable), then raise the replay
+   fraction one band, before touching anything else. Each is one-line attributable; do not stack them
+   in the same run or you cannot tell which mattered.
 4. **If factuality failed**, run the unknown-knowledge filter over the training set and move the
    unknowns to retrieval. This is a data fix; no hyperparameter rescues it.
 5. **If everything degraded at once**, suspect a format bug — chat template mismatch, missing EOS, or

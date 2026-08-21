@@ -38,7 +38,7 @@ trade, not a default.
 | 4–8 | Classification, narrow style transfer, tiny datasets |
 | 16–32 | Default working range for instruction/format/tone tuning |
 | 64–128 | Complex reasoning, code generation, large diverse datasets |
-| 256+ | Instruction tuning where you want to close the gap to full FT and have the VRAM |
+| 256+ | Instruction tuning where you want to close the gap to full FT and have the VRAM — but only if *learning* is the bottleneck; at high rank LoRA forgets nearly as much as full FT (Biderman et al.), so never raise rank to "fix" retention benchmarks |
 
 Start at 16 or 32. Raise rank only after target modules and LR are settled — and re-tune LR when you do,
 since the optimal LR shifts with rank.
@@ -78,6 +78,11 @@ A documented case: an otherwise-identical pair of runs on a ~750-row dataset whe
 general-capability regression on every affected benchmark — multilingual grade-school math went from
 -15.6pp to -8.9pp against the reference model, MMLU-Pro and GPQA each closed 2–3pp — while fully
 preserving the task behaviors the fine-tune was for. It was a real lever, though not a complete fix.
+Read the mechanism carefully: Biderman et al. measured that dropout does **not** reduce forgetting
+(full FT + dropout 0.05/0.1 forgets exactly as much as no dropout), so this win is *overfitting control*
+on a small templated set — consistent with a sawtooth train-loss pattern — and it is confounded, since
+the val split also removed ~5% of rows from training. Keep it as a cheap first step, and do not keep
+tuning it; the levers with a direct path to the benchmark gap are lower LR and general replay data.
 
 Practical reading: start at 0, but if the retention gate fails, **0.05 is a cheap first thing to try**,
 and it is an isolated one-knob change you can attribute. Do not wait for train loss to tell you.
@@ -99,7 +104,8 @@ case.
 
 | Knob | Value | Note |
 |---|---|---|
-| Learning rate (SFT) | `2e-4` start; `1e-4` for longer runs or high rank | Range `5e-5`–`3e-4`. LoRA tolerates far higher LR than full FT because only adapters move. |
+| Learning rate (SFT, *learning-bound*) | `2e-4` start; range `5e-5`–`5e-4` | LoRA tolerates far higher LR than full FT (Biderman et al.) — that is the answer when the model has *not* learned the task. |
+| Learning rate (SFT, *retention-bound*) | `1e-5`–`5e-5` | When the behavior is already learned but benchmarks regressed, the binding constraint is forgetting: Lin et al. (2025) show 1e-6 largely eliminates general-capability degradation at comparable domain performance, while 2e-5 (the "learning-bound" default) is the degrading end. This is the first knob to try against a retention gate failure. |
 | Learning rate (DPO/GRPO) | `5e-6` | Preference optimization needs 1–2 orders of magnitude less. |
 | Epochs | 1–3 | Past 3 the returns are diminishing and overfitting risk climbs sharply. |
 | Scheduler | `cosine` (or `linear`) | Cosine is the common default. |
@@ -228,7 +234,7 @@ copied from a blog post.
 | Val loss rising while train loss falls | Overfitting | Stop at the divergence point; use `load_best_model_at_end` |
 | Model repeats phrases, never stops | EOS not learned, or mode collapse | Verify the chat template's EOS is present and unmasked in labels; reduce epochs |
 | Correct content, wrong wrapper/format | Chat template mismatch between train and inference | Use `tokenizer.apply_chat_template` on both sides |
-| Gained the task, lost general ability | Catastrophic forgetting | See `avoiding-degradation.md` — replay mix, lower LR, fewer epochs |
+| Gained the task, lost general ability | Capability regression (often LR-side) | See `avoiding-degradation.md` — **lower LR first** (to 1e-5–5e-5), then add a general replay mix, then fewer epochs; dropout/val are cheap overfitting control, not the forgetting fix |
 | Confidently wrong new facts | Taught unknown knowledge | See `avoiding-degradation.md` — this is a data problem, not a config problem |
 | Loss spikes to NaN | fp16 with high LR | Switch to bf16; lower LR |
 

@@ -78,18 +78,31 @@ Match the verifier to what "correct" means for the task:
 
 **LLM judges need bias controls or they measure the wrong thing.** Position bias (favoring whichever
 response came first) requires randomizing order and averaging across both orderings. Verbosity bias
-requires a rubric that states how length is treated. Self-preference bias means a model judging its own
-outputs inflates them — use a different model as judge where you can. Validate the judge against a small
-human-scored set before trusting it at scale, and use chance-corrected agreement rather than raw match
-rate, which overstates agreement substantially.
+requires a rubric that states how length is treated. Self-preference is real and causal (Panickssery et
+al., NeurIPS 2024), but the measured mechanism is *familiarity/perplexity*: judges rate lower-perplexity,
+in-distribution text higher regardless of authorship (Wataoka et al., 2024) — so a judge from the same
+base family as the generator is biased even when they are technically different models, and a judge
+fine-tuned on exactly the content being scored has no incentive to flag "in-distribution but broken"
+outputs. Use a different model as judge where you can, cross-judge borderline scores with a second
+family, and fix the judge's sampling (temperature 0; re-run any score that flips). For **code**
+quality specifically, the validated layer is deterministic: syntax checks, execution, unit tests, and
+schema validation are the pass/fail gates; the LLM judge is an advisory ranking on top of them, with an
+explicit fault taxonomy (CodeJudge, EMNLP 2024: an 8-type/4-severity rubric with the task spec as
+reference gave the biggest measured correlation gain with human judgment). Judge accuracy tracks the
+generator's difficulty (JudgeBench, 2024), so expect exactly the hard samples you care about to be the
+worst-scored.
 
 Quality-scoring approaches worth knowing: AlpaGasus prompts a strong model to rate each example and
 drops those below a threshold; DEITA scores on quality *and* difficulty jointly; IFD (Instruction
 Following Difficulty) and Superfiltering use the loss signal of a small model — even GPT-2 — to rank
 examples cheaply, which scales to sets too large for judge calls.
 
-The consistent empirical result across LIMA, AlpaGasus, and LIMO is that a curated few hundred to few
-thousand examples beat tens of thousands of unfiltered ones.
+The consistent empirical result across LIMA, AlpaGasus, and LIMO is that, **within the same total
+budget and for general instruction/style tasks**, a curated few hundred to few thousand examples beat
+tens of thousands of unfiltered ones. The result does not extend to overriding a base prior
+(safety-refusal removal, strong-default override), where the evidence points the other way: the behavior
+needs a minimum count and a minimum share of the mix, and rephrased variants of a few scenarios are the
+least-effective data there.
 
 ## Collapse and drift
 
