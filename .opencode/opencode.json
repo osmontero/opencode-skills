@@ -154,6 +154,7 @@
         "gpt-5-sol": {
           "name": "GPT-5.6 Sol",
           "attachment": true,
+          "reasoning": false,
           "modalities": {
             "input": ["text", "image"],
             "output": ["text"]
@@ -506,6 +507,7 @@
         "gpt-5-sol": {
           "name": "GPT-5.6 Sol",
           "attachment": true,
+          "reasoning": false,
           "modalities": {
             "input": ["text", "image"],
             "output": ["text"]
