@@ -16,9 +16,9 @@
             "output": ["text"]
           },
           "limit": {
-            "context": 260096,
-            "input": 202752,
-            "output": 57344
+            "context": 997952,
+            "input": 866880,
+            "output": 131072
           },
           "options": {
             "temperature": 0.6,
@@ -58,9 +58,9 @@
             "output": ["text"]
           },
           "limit": {
-            "context": 260096,
-            "input": 202752,
-            "output": 57344
+            "context": 997952,
+            "input": 866880,
+            "output": 131072
           },
           "options": {
             "temperature": 1,
@@ -79,9 +79,9 @@
             "output": ["text"]
           },
           "limit": {
-            "context": 260096,
-            "input": 202752,
-            "output": 57344
+            "context": 997952,
+            "input": 866880,
+            "output": 131072
           },
           "options": {
             "temperature": 0.6,
@@ -100,9 +100,9 @@
             "output": ["text"]
           },
           "limit": {
-            "context": 260096,
-            "input": 202752,
-            "output": 57344
+            "context": 997952,
+            "input": 866880,
+            "output": 131072
           },
           "options": {
             "temperature": 1,
@@ -111,6 +111,244 @@
             "minP": 0.0,
             "presencePenalty": 0.0,
             "repetitionPenalty": 1.0
+          }
+        },
+        "silas-1.7-pro": {
+          "name": "Silas 1.7 Pro",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 997952,
+            "input": 866880,
+            "output": 131072
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 0.95,
+            "topK": 20,
+            "minP": 0.0,
+            "presencePenalty": 0.0,
+            "repetitionPenalty": 1.0
+          }
+        },
+        "gpt-5.4-nano": {
+          "name": "GPT-5.4 Nano",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 525952,
+            "input": 397952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 1
+          }
+        },
+        "gpt-5-sol": {
+          "name": "GPT-5.6 Sol",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1175952,
+            "input": 1047952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 1,
+            "presencePenalty": 0.0,
+            "frequencyPenalty": 0.0
+          }
+        },
+        "gpt-5-terra": {
+          "name": "GPT-5.6 Terra",
+          "attachment": false,
+          "modalities": {
+            "input": ["text"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1175952,
+            "input": 1047952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 1
+          }
+        },
+        "gpt-5-luna": {
+          "name": "GPT-5.6 Luna",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1175952,
+            "input": 1047952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 1
+          }
+        },
+        "gemini-3-pro": {
+          "name": "Gemini 3.1 Pro",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1112064,
+            "input": 1046528,
+            "output": 65536
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 0.95,
+            "topK": 64
+          }
+        },
+        "gemini-3-flash-lite": {
+          "name": "Gemini 3.5 Flash Lite",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1112064,
+            "input": 1046528,
+            "output": 65536
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 0.95,
+            "topK": 64
+          }
+        },
+        "gemini-3-flash": {
+          "name": "Gemini 3.7 Flash",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1112064,
+            "input": 1046528,
+            "output": 65536
+          }
+        },
+        "gemma-4-31b-it": {
+          "name": "Gemma 4 31B Instruct",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 292864,
+            "input": 260096,
+            "output": 32768
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 0.95,
+            "topK": 64
+          }
+        },
+        "claude-opus-4": {
+          "name": "Claude Opus 4.6",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1125952,
+            "input": 997952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1
+          }
+        },
+        "claude-sonnet-4": {
+          "name": "Claude Sonnet 4.6",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1061952,
+            "input": 997952,
+            "output": 64000
+          },
+          "options": {
+            "temperature": 1
+          }
+        },
+        "claude-opus-5": {
+          "name": "Claude Opus 5",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1125952,
+            "input": 997952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1
+          }
+        },
+        "claude-sonnet-5": {
+          "name": "Claude Sonnet 5",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1125952,
+            "input": 997952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1
+          }
+        },
+        "claude-fable-5": {
+          "name": "Claude Fable 5",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1125952,
+            "input": 997952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1
           }
         }
       }
@@ -130,9 +368,9 @@
             "output": ["text"]
           },
           "limit": {
-            "context": 260096,
-            "input": 202752,
-            "output": 57344
+            "context": 997952,
+            "input": 866880,
+            "output": 131072
           },
           "options": {
             "temperature": 0.6,
@@ -172,9 +410,9 @@
             "output": ["text"]
           },
           "limit": {
-            "context": 260096,
-            "input": 202752,
-            "output": 57344
+            "context": 997952,
+            "input": 866880,
+            "output": 131072
           },
           "options": {
             "temperature": 1,
@@ -193,9 +431,9 @@
             "output": ["text"]
           },
           "limit": {
-            "context": 260096,
-            "input": 202752,
-            "output": 57344
+            "context": 997952,
+            "input": 866880,
+            "output": 131072
           },
           "options": {
             "temperature": 0.6,
@@ -214,9 +452,9 @@
             "output": ["text"]
           },
           "limit": {
-            "context": 260096,
-            "input": 202752,
-            "output": 57344
+            "context": 997952,
+            "input": 866880,
+            "output": 131072
           },
           "options": {
             "temperature": 1,
@@ -226,12 +464,250 @@
             "presencePenalty": 0.0,
             "repetitionPenalty": 1.0
           }
+        },
+        "silas-1.7-pro": {
+          "name": "Silas 1.7 Pro",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 997952,
+            "input": 866880,
+            "output": 131072
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 0.95,
+            "topK": 20,
+            "minP": 0.0,
+            "presencePenalty": 0.0,
+            "repetitionPenalty": 1.0
+          }
+        },
+        "gpt-5.4-nano": {
+          "name": "GPT-5.4 Nano",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 525952,
+            "input": 397952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 1
+          }
+        },
+        "gpt-5-sol": {
+          "name": "GPT-5.6 Sol",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1175952,
+            "input": 1047952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 1,
+            "presencePenalty": 0.0,
+            "frequencyPenalty": 0.0
+          }
+        },
+        "gpt-5-terra": {
+          "name": "GPT-5.6 Terra",
+          "attachment": false,
+          "modalities": {
+            "input": ["text"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1175952,
+            "input": 1047952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 1
+          }
+        },
+        "gpt-5-luna": {
+          "name": "GPT-5.6 Luna",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1175952,
+            "input": 1047952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 1
+          }
+        },
+        "gemini-3-pro": {
+          "name": "Gemini 3.1 Pro",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1112064,
+            "input": 1046528,
+            "output": 65536
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 0.95,
+            "topK": 64
+          }
+        },
+        "gemini-3-flash-lite": {
+          "name": "Gemini 3.5 Flash Lite",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1112064,
+            "input": 1046528,
+            "output": 65536
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 0.95,
+            "topK": 64
+          }
+        },
+        "gemini-3-flash": {
+          "name": "Gemini 3.7 Flash",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1112064,
+            "input": 1046528,
+            "output": 65536
+          }
+        },
+        "gemma-4-31b-it": {
+          "name": "Gemma 4 31B Instruct",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 292864,
+            "input": 260096,
+            "output": 32768
+          },
+          "options": {
+            "temperature": 1,
+            "topP": 0.95,
+            "topK": 64
+          }
+        },
+        "claude-opus-4": {
+          "name": "Claude Opus 4.6",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1125952,
+            "input": 997952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1
+          }
+        },
+        "claude-sonnet-4": {
+          "name": "Claude Sonnet 4.6",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1061952,
+            "input": 997952,
+            "output": 64000
+          },
+          "options": {
+            "temperature": 1
+          }
+        },
+        "claude-opus-5": {
+          "name": "Claude Opus 5",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1125952,
+            "input": 997952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1
+          }
+        },
+        "claude-sonnet-5": {
+          "name": "Claude Sonnet 5",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1125952,
+            "input": 997952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1
+          }
+        },
+        "claude-fable-5": {
+          "name": "Claude Fable 5",
+          "attachment": true,
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          },
+          "limit": {
+            "context": 1125952,
+            "input": 997952,
+            "output": 128000
+          },
+          "options": {
+            "temperature": 1
+          }
         }
       }
     }
   },
   "lsp": true,
-  "model": "threatwinds/qwen-3.6",
+  "model": "threatwinds/silas-1.7-pro",
   "instructions": ["~/.config/opencode/MEMORY.md", ".opencode/MEMORY.md"],
   "mcp": {
     "chrome-devtools": {
