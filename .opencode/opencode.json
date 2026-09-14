@@ -29,48 +29,6 @@
             "repetitionPenalty": 1.0
           }
         },
-        "qwen-3.6-pro": {
-          "name": "Qwen 3.6 Pro",
-          "attachment": true,
-          "modalities": {
-            "input": ["text", "image"],
-            "output": ["text"]
-          },
-          "limit": {
-            "context": 997952,
-            "input": 866880,
-            "output": 131072
-          },
-          "options": {
-            "temperature": 1,
-            "topP": 0.95,
-            "topK": 20,
-            "minP": 0.0,
-            "presencePenalty": 0.0,
-            "repetitionPenalty": 1.0
-          }
-        },
-        "silas-1.6-pro": {
-          "name": "Silas 1.6 Pro",
-          "attachment": true,
-          "modalities": {
-            "input": ["text", "image"],
-            "output": ["text"]
-          },
-          "limit": {
-            "context": 997952,
-            "input": 866880,
-            "output": 131072
-          },
-          "options": {
-            "temperature": 1,
-            "topP": 0.95,
-            "topK": 20,
-            "minP": 0.0,
-            "presencePenalty": 0.0,
-            "repetitionPenalty": 1.0
-          }
-        },
         "silas-1.7-pro": {
           "name": "Silas 1.7 Pro",
           "attachment": true,
@@ -103,48 +61,6 @@
       "models": {
         "qwen-3.8": {
           "name": "Qwen 3.8",
-          "attachment": true,
-          "modalities": {
-            "input": ["text", "image"],
-            "output": ["text"]
-          },
-          "limit": {
-            "context": 997952,
-            "input": 866880,
-            "output": 131072
-          },
-          "options": {
-            "temperature": 1,
-            "topP": 0.95,
-            "topK": 20,
-            "minP": 0.0,
-            "presencePenalty": 0.0,
-            "repetitionPenalty": 1.0
-          }
-        },
-        "qwen-3.6-pro": {
-          "name": "Qwen 3.6 Pro",
-          "attachment": true,
-          "modalities": {
-            "input": ["text", "image"],
-            "output": ["text"]
-          },
-          "limit": {
-            "context": 997952,
-            "input": 866880,
-            "output": 131072
-          },
-          "options": {
-            "temperature": 1,
-            "topP": 0.95,
-            "topK": 20,
-            "minP": 0.0,
-            "presencePenalty": 0.0,
-            "repetitionPenalty": 1.0
-          }
-        },
-        "silas-1.6-pro": {
-          "name": "Silas 1.6 Pro",
           "attachment": true,
           "modalities": {
             "input": ["text", "image"],
