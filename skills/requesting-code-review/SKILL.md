@@ -16,6 +16,7 @@ Dispatch code-reviewer sub-agent using the `task` tool to catch issues before th
 - After each task in subagent-driven development
 - After completing major feature
 - Before merge to main
+- When the change touches security-relevant code — untrusted input, authn/authz, secrets, injection sinks, subprocess/plugin boundaries, or new dependencies (dispatch `security-reviewer`)
 
 **Optional but valuable:**
 - When stuck (fresh perspective)
@@ -30,9 +31,9 @@ BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
 HEAD_SHA=$(git rev-parse HEAD)
 ```
 
-**2. Dispatch `code-reviewer` or `code-quality-reviewer` global agent using the `task` tool:**
+**2. Dispatch `code-reviewer`, `code-quality-reviewer`, or `security-reviewer` global agent using the `task` tool:**
 
-The `code-reviewer` and `code-quality-reviewer` agents are registered globally with appropriate review checklists. Invoke with context about what was implemented, plan reference, and git diff range. The agent will use `git diff {BASE_SHA}..{HEAD_SHA}` to inspect changes.
+The `code-reviewer`, `code-quality-reviewer`, and `security-reviewer` agents are registered globally with appropriate review checklists. Invoke with context about what was implemented, plan reference, and git diff range. The agent will use `git diff {BASE_SHA}..{HEAD_SHA}` to inspect changes.
 
 **Context to include in your Task tool prompt:**
 - What you just built (brief summary)
@@ -95,10 +96,11 @@ You: [Fix progress indicators]
 |---|---|---|
 | `spec-reviewer` | Immediately after implementation — does the code match the spec, nothing more, nothing less? | Comment on style or quality |
 | `code-quality-reviewer` | **After** spec compliance passes — decomposition, naming, error handling, test quality | Re-litigate scope |
+| `security-reviewer` | When the change touches untrusted input, authn/authz, secrets, injection sinks, subprocess/plugin boundaries, or new dependencies — after spec and quality pass | Report findings without a traced input-to-impact path |
 | `code-reviewer` | End of a feature or before merge — production readiness across the whole change | — |
 | `reviewing-interface-quality` (skill) | The change includes user-facing UI | — |
 
-**Order matters.** Running quality review before spec compliance wastes effort polishing code that may not be what was asked for. See subagent-driven-development.
+**Order matters.** Run spec compliance first, then code quality, then security, then the final production-readiness review. Running quality review before spec compliance wastes effort polishing code that may not be what was asked for; running security before spec compliance audits behavior that may be wrong on purpose. See subagent-driven-development.
 
 ## Writing the Dispatch Prompt
 

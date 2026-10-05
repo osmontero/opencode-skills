@@ -6,11 +6,11 @@ compatibility: opencode
 
 # Subagent-Driven Development
 
-Execute plan by dispatching fresh sub-agent per task using the `task` tool, with two-stage review after each: spec compliance review first, then code quality review.
+Execute plan by dispatching fresh sub-agent per task using the `task` tool, with a spec-compliance review first, then a code-quality review, then — when the task touches security-relevant code — a blocking security review.
 
 **Why sub-agents:** You delegate tasks to specialized agents with isolated context. By precisely crafting their instructions and context, you ensure they stay focused and succeed at their task. They should never inherit your session's context or history — you construct exactly what they need. This also preserves your own context for coordination work.
 
-**Core principle:** Fresh sub-agent per task + two-stage review (spec then quality) = high quality, fast iteration
+**Core principle:** Fresh sub-agent per task + spec review, then quality review, then security review (when the task touches security-relevant code) = high quality, fast iteration
 
 ## When to Use
 
@@ -35,7 +35,7 @@ digraph when_to_use {
 **vs. Executing Plans (parallel session):**
 - Same session (no context switch)
 - Fresh sub-agent per task (no context pollution)
-- Two-stage review after each task: spec compliance first, then code quality
+- Review after each task: spec compliance first, then code quality, then security when the task touches security-relevant code
 - Faster iteration (no human-in-loop between tasks)
 
 ## The Process
@@ -56,6 +56,10 @@ digraph process {
         "Dispatch code quality reviewer sub-agent (@code-quality-reviewer)" [shape=box];
         "Code quality reviewer sub-agent approves?" [shape=diamond];
         "Implementer sub-agent fixes quality issues" [shape=box];
+        "Task touches security-relevant code?" [shape=diamond];
+        "Dispatch security reviewer sub-agent (@security-reviewer)" [shape=box];
+        "Security reviewer sub-agent: no Critical or High open?" [shape=diamond];
+        "Implementer sub-agent fixes security findings" [shape=box];
         "Mark task complete in `todowrite`" [shape=box];
     }
 
@@ -77,7 +81,13 @@ digraph process {
     "Dispatch code quality reviewer sub-agent (@code-quality-reviewer)" -> "Code quality reviewer sub-agent approves?";
     "Code quality reviewer sub-agent approves?" -> "Implementer sub-agent fixes quality issues" [label="no"];
     "Implementer sub-agent fixes quality issues" -> "Dispatch code quality reviewer sub-agent (@code-quality-reviewer)" [label="re-review"];
-    "Code quality reviewer sub-agent approves?" -> "Mark task complete in `todowrite`" [label="yes"];
+    "Code quality reviewer sub-agent approves?" -> "Task touches security-relevant code?" [label="yes"];
+    "Task touches security-relevant code?" -> "Dispatch security reviewer sub-agent (@security-reviewer)" [label="yes"];
+    "Task touches security-relevant code?" -> "Mark task complete in `todowrite`" [label="no"];
+    "Dispatch security reviewer sub-agent (@security-reviewer)" -> "Security reviewer sub-agent: no Critical or High open?";
+    "Security reviewer sub-agent: no Critical or High open?" -> "Implementer sub-agent fixes security findings" [label="no"];
+    "Implementer sub-agent fixes security findings" -> "Dispatch security reviewer sub-agent (@security-reviewer)" [label="re-review"];
+    "Security reviewer sub-agent: no Critical or High open?" -> "Mark task complete in `todowrite`" [label="yes"];
     "Mark task complete in `todowrite`" -> "More tasks remain?";
     "More tasks remain?" -> "Dispatch implementer sub-agent (@implementer)" [label="yes"];
     "More tasks remain?" -> "Dispatch final code reviewer sub-agent for entire implementation" [label="no"];
@@ -123,6 +133,7 @@ Implementer sub-agents report one of four statuses. Handle each appropriately:
 - `implementer` (global agent) - Dispatch implementer sub-agent
 - `spec-reviewer` (global agent) - Dispatch spec compliance reviewer sub-agent
 - `code-quality-reviewer` (global agent) - Dispatch code quality reviewer sub-agent
+- `security-reviewer` (global agent) - Dispatch security reviewer sub-agent (when the task touches security-relevant code)
 
 ## Example Workflow
 
@@ -191,6 +202,19 @@ Code reviewer: APPROVED
 
 [Mark Task 2 complete]
 
+Task 3: Token signing key (touches security-relevant code)
+
+[Spec APPROVED, quality APPROVED]
+
+[Dispatch security reviewer]
+Security reviewer: Critical open — signing key from env, no check it is
+non-empty (fails open to unsigned tokens). Path traced, fix named.
+
+[Implementer fixes, security reviewer re-reviews]
+Security reviewer: APPROVED - no Critical or High open
+
+[Mark Task 3 complete]
+
 ...
 
 [After all tasks]
@@ -221,13 +245,14 @@ Done!
 
 **Quality gates:**
 - Self-review catches issues before handoff
-- Two-stage review: spec compliance, then code quality
+- Review: spec compliance first, then code quality, then security for security-relevant tasks
 - Review loops ensure fixes actually work
 - Spec compliance prevents over/under-building
 - Code quality ensures implementation is well-built
+- Security review traces attacker paths before they ship
 
 **Cost:**
-- More sub-agent invocations (implementer + 2 reviewers per task)
+- More sub-agent invocations (implementer + 2 reviewers per task, + security reviewer for security-relevant tasks)
 - Controller does more prep work (extracting all tasks upfront)
 - Review loops add iterations
 - But catches issues early (cheaper than debugging later)
@@ -236,8 +261,9 @@ Done!
 
 **Never:**
 - Start implementation on main/master branch without explicit user consent
-- Skip reviews (spec compliance AND code quality, both required)
+- Skip reviews (spec compliance AND code quality, both required; security review required when the task touches security-relevant code)
 - Proceed with unfixed issues
+- Skip the security reviewer on a task that touches untrusted input, authn/authz, secrets, injection sinks, subprocess/plugin boundaries, or new dependencies (see `reviewing-security` triggers)
 - Dispatch multiple implementation sub-agents in parallel (conflicts)
 - Make sub-agent read plan file (provide full text instead)
 - Skip scene-setting context (sub-agent needs to understand where task fits)
@@ -246,7 +272,8 @@ Done!
 - Skip review loops (reviewer found issues = implementer fixes = review again)
 - Let implementer self-review replace actual review (both are needed)
 - **Start code quality review before spec compliance is passed** (wrong order)
-- Move to next task while either review has open issues
+- **Start security review before spec compliance and code quality have passed** (wrong order)
+- Move to next task while any review has open issues
 
 **If sub-agent asks questions:**
 - Answer clearly and completely
@@ -270,6 +297,7 @@ Done!
 - **writing-plans** - Creates the plan this skill executes
 - **requesting-code-review** - Code review workflow for reviewer sub-agents
 - **code-quality-reviewer** - Global agent for code quality review
+- **security-reviewer** - Global agent for security review of security-relevant tasks
 - **finishing-a-development-branch** - Complete development after all tasks
 
 **Sub-agents should use:**

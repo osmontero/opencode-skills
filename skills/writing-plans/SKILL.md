@@ -183,7 +183,7 @@ After saving the plan, offer execution choice:
 
 **If Subagent-Driven chosen:**
 - **REQUIRED SUB-SKILL:** Use subagent-driven-development
-- Fresh sub-agent per task + two-stage review
+- Fresh sub-agent per task + spec review, then quality review, then security review for security-relevant tasks
 
 **If Inline Execution chosen:**
 - **REQUIRED SUB-SKILL:** Use executing-plans

@@ -12,7 +12,7 @@ Load the plan, review it critically, execute in batches with checkpoints, verify
 
 **Announce at start:** "I'm using the executing-plans skill to implement this plan."
 
-**Prefer subagent-driven-development when you can.** Fresh context per task and two-stage review produce measurably better results than inline execution. Use this skill when subagents are unavailable, when tasks are too tightly coupled to isolate, or when the plan is small enough that dispatch overhead exceeds the benefit.
+**Prefer subagent-driven-development when you can.** Fresh context per task and staged review (spec, quality, and security for security-relevant tasks) produce measurably better results than inline execution. Use this skill when subagents are unavailable, when tasks are too tightly coupled to isolate, or when the plan is small enough that dispatch overhead exceeds the benefit.
 
 ## The Iron Law
 
@@ -112,7 +112,7 @@ Continue with tasks 4-6?
 
 Checkpoints report **evidence**, not confidence — actual command output, not "should be working." See verifying-before-completion.
 
-Optionally dispatch a reviewer at each checkpoint — see requesting-code-review.
+Optionally dispatch a reviewer at each checkpoint — see requesting-code-review. If the batch touched security-relevant code, dispatch the `security-reviewer` and treat Critical or High findings as blocking.
 
 ## Step 5: Handling Deviations
 
