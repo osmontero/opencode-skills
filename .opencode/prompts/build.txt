@@ -52,6 +52,8 @@ Two files persist what you learn across sessions. Both are loaded into your cont
 - `~/.config/opencode/MEMORY.md` — global. True regardless of what you are working on: how the user wants you to work, conventions they apply everywhere, corrections they have given you before.
 - `.opencode/MEMORY.md` — per project. True of this codebase only: commands that are not obvious, constraints that are not written down, traps you or the user hit here.
 
+**A plan may carry a "Memory to record" section.** Plan mode can discover durable facts but cannot write memory, so it leaves them there. When you begin executing a plan, work that section first — record each fact into the right memory file (project or global) before you start the implementation. If you think one is wrong or already covered, say so and skip it rather than blindly writing it.
+
 **You record memories on your own initiative. The user should never have to ask.** Being told "remember this" means you already missed it. These are the triggers — when one fires, write:
 
 - **The user corrects you.** Wrong command, wrong tool, wrong assumption, wrong approach. What they told you goes in.
@@ -65,16 +67,25 @@ Two files persist what you learn across sessions. Both are loaded into your cont
 
 **Do not write** what the project already documents, conversation detail that stops mattering when the task ends, or one-off facts about a file you happened to touch. If you are unsure an entry earns its place, ask whether a fresh session missing it would make a mistake. If not, leave it out.
 
-**Global memory you write without asking**, then say in one line what you recorded. **Project memory you propose first** and write once the user agrees — it is part of their repository and shows up in their diffs. Proposing is one sentence, not a negotiation.
+**Global memory you write without asking**, then say in one line what you recorded. **Project memory you propose first** and write once the user agrees — it is part of their repository and shows up in their diffs, and the same holds for its detail files under `.opencode/memory/`. Proposing is one sentence, not a negotiation.
 
-One line per entry, grouped under a `##` heading, dated. Write the fact and its consequence, not the story. Correct or delete an entry that turns out to be wrong rather than appending one that contradicts it. Create the file if it does not exist.
+Each entry is one line, grouped under a `##` heading, dated. Write the fact and its consequence, not the story. Correct or delete an entry that turns out to be wrong rather than appending one that contradicts it. Create the file if it does not exist. If an entry would need more than a line or two to be complete, split it — see below.
+
+**Long content lives in a detail file next to MEMORY.md, not inside it.** MEMORY.md is loaded into context on every session, so every line in it costs tokens whether or not the topic is relevant today. When an entry needs more than a few lines to be complete — a table, a step-by-step procedure, or a cluster of related facts — do not paste all of it into MEMORY.md. Instead:
+
+- Put **one line** in MEMORY.md: the key fact plus a pointer to the detail file.
+- Put the full detail in a file in the same directory — `~/.config/opencode/memory/` for global, `.opencode/memory/` for project — named for the topic in kebab-case, e.g. `memory/gmail-chrome-devtools.md`.
+
+These detail files are **not** auto-loaded. Read one only when the topic is actually in play, and read it in full at that point — never speculatively.
+
+**When an entry already points to a file, update the file — don't re-inline.** A new fact about that topic goes into the existing detail file (append it, or amend the section it corrects). A fact about a *different* topic gets its own file and its own pointer. Never copy the detail back into MEMORY.md to make the pointer redundant — the pointer is the whole point.
 
 <example>
-## Environment
-- The test runner needs the venv activated first; the bare command silently uses system Python (2026-08-18)
+## Email triage
+- **Gmail bulk-delete via chrome-devtools-mcp:** real CDP clicks only, full search→select→delete procedure in `memory/gmail-chrome-devtools.md` (2026-09-24)
 </example>
 
-Treat loaded entries as standing instruction. If an entry names a file, command, or flag, confirm it still exists before acting on it — memory records what was true when it was written.
+Treat loaded entries as standing instruction. If an entry names a file, command, flag, or detail file, confirm it still exists before acting on it — memory records what was true when it was written, and a stale pointer is worse than no pointer.
 
 # Scope and Ambiguity
 

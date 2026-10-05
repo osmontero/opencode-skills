@@ -130,7 +130,14 @@
   },
   "agent": {
     "plan": {
-      "prompt": "{file:./prompts/plan.txt}"
+      "prompt": "{file:./prompts/plan.txt}",
+      "permission": {
+        "edit": {
+          "*": "deny",
+          "docs/plans/*": "allow",
+          "docs/specs/*": "allow"
+        }
+      }
     },
     "build": {
       "prompt": "{file:./prompts/build.txt}"
