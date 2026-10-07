@@ -1,4 +1,0 @@
-# Project memory
-
-## Git / binary assets
-- **Never add a binary extension under a `text` rule in `.gitattributes`.** The old `* text eol=lf` corrupted this repo's binary assets (fonts in `skills/designing-canvas-art/canvas-fonts/` + `applying-themes/theme-showcase.pdf`) by stripping CR bytes on commit. TTF stores absolute table offsets, so even 1–4 deleted bytes pushed them out of bounds → the committed fonts stopped parsing and tripped false-positive "malicious OpenType font" AV detections (issue #1, CVE-2015-2426 heuristic). Fixed in `c99cb4801d6a58828b1b77483a426b3c2cab5e86`: `.gitattributes` now has explicit `binary` rules for `*.ttf *.otf *.woff *.woff2 *.eot *.png *.jpg *.jpeg *.gif *.webp *.ico *.pdf *.gz *.zip *.pyc *.heic *.tiff`. If you add a new binary format, add its extension here before committing. (2026-10-07)

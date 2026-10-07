@@ -10,3 +10,8 @@ dist/
 build/
 .venv/
 .idea/
+
+# Local opencode agent memory — keep out of the repo (per user, 2026-10-07).
+# It is machine-generated and would otherwise land in the project's diffs.
+.opencode/MEMORY.md
+.opencode/memory/
