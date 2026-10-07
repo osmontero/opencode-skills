@@ -5,7 +5,9 @@
       "npm": "@ai-sdk/openai-compatible",
       "name": "ThreatWinds",
       "options": {
-        "baseURL": "https://apis.threatwinds.com/api/ai/v1"
+        "baseURL": "https://apis.threatwinds.com/api/ai/v1",
+        "timeout": 2700000,
+        "headerTimeout": 2700000
       },
       "models": {
         "silas-1.7-pro": {
@@ -35,7 +37,9 @@
       "npm": "@ai-sdk/openai-compatible",
       "name": "ThreatWinds Dev",
       "options": {
-        "baseURL": "https://apis.dev.threatwinds.com/api/ai/v1"
+        "baseURL": "https://apis.dev.threatwinds.com/api/ai/v1",
+        "timeout": 2700000,
+        "headerTimeout": 2700000
       },
       "models": {
         "silas-1.7-pro": {
@@ -64,6 +68,9 @@
   },
   "lsp": true,
   "model": "threatwinds/silas-1.7-pro",
+  "compaction": {
+    "reserved": 68519
+  },
   "instructions": ["~/.config/opencode/MEMORY.md", ".opencode/MEMORY.md"],
   "mcp": {
     "chrome-devtools": {
