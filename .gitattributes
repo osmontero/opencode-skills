@@ -1,1 +1,24 @@
+# Normalize line endings to LF for text files (cross-platform).
 * text eol=lf
+
+# Binary files must never be treated as text: `text` makes git do
+# CRLF->LF normalization on commit, which deletes bytes and corrupts
+# the file (e.g. TrueType/PDF absolute offsets go out of bounds).
+# These rules override the `*` above for the matching extensions.
+*.ttf  binary
+*.otf  binary
+*.woff binary
+*.woff2 binary
+*.eot  binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.ico  binary
+*.pdf  binary
+*.gz   binary
+*.zip  binary
+*.pyc  binary
+*.heic binary
+*.tiff binary
