@@ -64,10 +64,10 @@ Each `agents/<name>.md` has frontmatter with `description`, `mode: subagent`, an
 - **Emptying a file is the revert.** A 0-byte `{file:}` reference substitutes an empty string, falling back to the default for that agent.
 - **Prompt file references resolve against the config file's directory, not CWD or home.** `{file:./prompts/x.txt}` resolves relative to the `opencode.json` that contains it — so this repo's `.opencode/opencode.json` (auto-loaded as project config, which outranks the global one) reads `.opencode/prompts/` (what you edit), and the installed global config reads `~/.config/opencode/prompts/` (what install.sh placed there). Do not "fix" the references to `{file:~/.config/opencode/prompts/...}`: this repo would then silently use the installed copies and repo prompt edits would be ignored until the next reinstall.
 
-Re-extract a current default after upgrading opencode (this prints the live resolved prompt, so run it from a directory whose config does *not* override the agent):
+Re-extract a current default after upgrading opencode (this dumps the live resolved prompt for every agent as JSON, so run it from a directory whose config does *not* override the agent, then find the agent's `system` field):
 
 ```bash
-opencode debug agent build    # also: plan, compaction, title, summary
+opencode debug agents    # JSON of all agents; grep for "build"/"plan"/"compaction"
 ```
 
 Config keys are schema-verified against `https://opencode.ai/config.json`: `agents` accepts the named built-ins `build`, `plan`, `general`, `explore`, `title`, `summary`, and `compaction`, each taking `system`, `model`, `steps`, `permissions`, `request`, and other fields. `prompt` (v1) is auto-translated to `system`; `permission` (v1 map) is auto-translated to `permissions` (v2 ordered array); `variant` joins the model reference after `#`.
