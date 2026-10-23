@@ -141,37 +141,6 @@ if (Test-Path -LiteralPath $OPENVEN) {
 
 Write-Host "  Python environment ready at $OPENVEN"
 
-# Install LSP dependencies in opencode's node_modules
-# These are required by built-in LSP servers that resolve from opencode's internal directory
-$OPENCODE_DIR = "$env:USERPROFILE\.opencode"
-if (Test-Path -LiteralPath "$OPENCODE_DIR\node_modules") {
-    Write-Host "Setting up LSP dependencies..."
-    $OPENCODE_NPM_DEPS = @("typescript", "typescript-language-server", "pyright")
-    foreach ($dep in $OPENCODE_NPM_DEPS) {
-        if (-not (Test-Path -LiteralPath "$OPENCODE_DIR\node_modules\$dep")) {
-            Write-Host "  Installing $dep..."
-            Push-Location $OPENCODE_DIR
-            try {
-                npm install --no-save $dep 2>$null
-            } finally {
-                Pop-Location
-            }
-        }
-    }
-}
-
-# Install LSP dependencies in project's .opencode/node_modules
-# The typescript LSP server requires 'typescript' as a project dependency
-if (Test-Path -LiteralPath "$SCRIPT_DIR\.opencode\package.json") {
-    Write-Host "Setting up project LSP dependencies..."
-    Push-Location "$SCRIPT_DIR\.opencode"
-    try {
-        npm install --ignore-scripts 2>$null
-    } finally {
-        Pop-Location
-    }
-}
-
 # Count installed skills and agents
 $skillCount = (Get-ChildItem -Directory -LiteralPath "$CONFIG_DIR\skills" -ErrorAction SilentlyContinue).Count
 $agentCount = (Get-ChildItem -File -Filter "*.md" -LiteralPath "$CONFIG_DIR\agents" -ErrorAction SilentlyContinue).Count
