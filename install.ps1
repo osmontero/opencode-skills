@@ -79,10 +79,18 @@ if (Test-Path -LiteralPath $REPO_CONFIG) {
     Copy-Item -LiteralPath $REPO_CONFIG -Destination $GLOBAL_CONFIG -Force
 }
 
-# Install prompt files referenced by opencode.json
+# Install prompt files referenced by opencode.json — remove any prompt not in the repo
 if (Test-Path -LiteralPath "$SCRIPT_DIR\.opencode\prompts") {
     Write-Host "Installing prompt files..."
     New-Item -ItemType Directory -Path "$CONFIG_DIR\prompts" -Force | Out-Null
+    if (Test-Path -LiteralPath "$CONFIG_DIR\prompts") {
+        Get-ChildItem -File -LiteralPath "$CONFIG_DIR\prompts" | ForEach-Object {
+            if (-not (Test-Path -LiteralPath "$SCRIPT_DIR\.opencode\prompts\$($_.Name)")) {
+                Write-Host "  Removing $($_.Name) (no longer in repo)"
+                Remove-Item -LiteralPath $_.FullName -Force
+            }
+        }
+    }
     Get-ChildItem -File -LiteralPath "$SCRIPT_DIR\.opencode\prompts" | ForEach-Object {
         Copy-Item -LiteralPath $_.FullName -Destination "$CONFIG_DIR\prompts\$($_.Name)" -Force
     }

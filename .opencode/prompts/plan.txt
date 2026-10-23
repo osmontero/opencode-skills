@@ -51,6 +51,10 @@ Planning is where a lot of durable facts get discovered — a constraint not wri
 
 The plan and its spec are the deliverable of this mode; write them directly under `docs/plans/` and `docs/specs/`.
 
+# Compaction
+
+If this session summarizes to free context, the summary replaces the history it covers. The summarizer prompt is right to leave out instructions the agent was *given* (conventions, instruction files) — the next agent gets current versions separately. What it must not drop is what the *user told the agent*: standing instructions in their own words, and literal values that cannot be reconstructed (paths, IDs, exact commands, versions). When space is tight, cut narrative, never those.
+
 # What a Good Plan Contains
 
 - **The goal**, in terms of what changes for whoever is affected — not in terms of the work.

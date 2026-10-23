@@ -61,10 +61,18 @@ if [ -f "$REPO_CONFIG" ]; then
   cp "$REPO_CONFIG" "$GLOBAL_CONFIG"
 fi
 
-# Install prompt files referenced by opencode.json
+# Install prompt files referenced by opencode.json — remove any prompt not in the repo
 if [ -d "$SCRIPT_DIR/.opencode/prompts" ]; then
   echo "Installing prompt files..."
   mkdir -p "$CONFIG_DIR/prompts"
+  for f in "$CONFIG_DIR/prompts/"*; do
+    [ -f "$f" ] || continue
+    name="$(basename "$f")"
+    if [ ! -f "$SCRIPT_DIR/.opencode/prompts/$name" ]; then
+      echo "  Removing $name (no longer in repo)"
+      rm "$f"
+    fi
+  done
   cp "$SCRIPT_DIR/.opencode/prompts/"* "$CONFIG_DIR/prompts/"
 fi
 

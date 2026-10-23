@@ -1,19 +1,24 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "provider": {
+  "providers": {
     "threatwinds": {
-      "npm": "@ai-sdk/openai-compatible",
       "name": "ThreatWinds",
-      "options": {
+      "package": "aisdk:@ai-sdk/openai-compatible",
+      "settings": {
         "baseURL": "https://apis.threatwinds.com/api/ai/v1",
         "timeout": 2700000,
-        "headerTimeout": 2700000
+        "headerTimeout": 2700000,
+        "temperature": 1,
+        "topP": 0.95,
+        "topK": 20,
+        "minP": 0.0,
+        "presencePenalty": 0.0,
+        "repetitionPenalty": 1.0
       },
       "models": {
         "silas-1.7-pro": {
           "name": "Silas 1.7 Pro",
-          "attachment": true,
-          "modalities": {
+          "capabilities": {
             "input": ["text", "image"],
             "output": ["text"]
           },
@@ -21,31 +26,28 @@
             "context": 997952,
             "input": 866880,
             "output": 131072
-          },
-          "options": {
-            "temperature": 1,
-            "topP": 0.95,
-            "topK": 20,
-            "minP": 0.0,
-            "presencePenalty": 0.0,
-            "repetitionPenalty": 1.0
           }
         }
       }
     },
     "threatwinds-dev": {
-      "npm": "@ai-sdk/openai-compatible",
       "name": "ThreatWinds Dev",
-      "options": {
+      "package": "aisdk:@ai-sdk/openai-compatible",
+      "settings": {
         "baseURL": "https://apis.dev.threatwinds.com/api/ai/v1",
         "timeout": 2700000,
-        "headerTimeout": 2700000
+        "headerTimeout": 2700000,
+        "temperature": 1,
+        "topP": 0.95,
+        "topK": 20,
+        "minP": 0.0,
+        "presencePenalty": 0.0,
+        "repetitionPenalty": 1.0
       },
       "models": {
         "silas-1.7-pro": {
           "name": "Silas 1.7 Pro",
-          "attachment": true,
-          "modalities": {
+          "capabilities": {
             "input": ["text", "image"],
             "output": ["text"]
           },
@@ -53,62 +55,54 @@
             "context": 997952,
             "input": 866880,
             "output": 131072
-          },
-          "options": {
-            "temperature": 1,
-            "topP": 0.95,
-            "topK": 20,
-            "minP": 0.0,
-            "presencePenalty": 0.0,
-            "repetitionPenalty": 1.0
           }
         }
       }
     }
   },
-  "lsp": true,
   "model": "threatwinds/silas-1.7-pro",
   "compaction": {
-    "reserved": 68519
+    "buffer": 137038,
+    "keep": { "tokens": 40000 }
   },
   "instructions": ["~/.config/opencode/MEMORY.md", ".opencode/MEMORY.md"],
   "mcp": {
-    "chrome-devtools": {
-      "type": "local",
-      "command": ["npx", "-y", "chrome-devtools-mcp@latest"]
-    },
-    "firecrawl": {
-      "type": "local",
-      "command": ["npx", "-y", "firecrawl-mcp"],
-      "environment": {
-        "FIRECRAWL_API_KEY": "{env:FIRECRAWL_API_KEY}"
-      }
-    },
-    "brave-search": {
-      "enabled": true,
-      "type": "local",
-      "command": ["npx", "-y", "@brave/brave-search-mcp-server"],
-      "environment": {
-        "BRAVE_API_KEY": "{env:BRAVE_API_KEY}"
+    "servers": {
+      "chrome-devtools": {
+        "type": "local",
+        "command": ["npx", "-y", "chrome-devtools-mcp@latest"]
+      },
+      "firecrawl": {
+        "type": "local",
+        "command": ["npx", "-y", "firecrawl-mcp"],
+        "environment": {
+          "FIRECRAWL_API_KEY": "{env:FIRECRAWL_API_KEY}"
+        }
+      },
+      "brave-search": {
+        "type": "local",
+        "command": ["npx", "-y", "@brave/brave-search-mcp-server"],
+        "environment": {
+          "BRAVE_API_KEY": "{env:BRAVE_API_KEY}"
+        }
+      },
+      "aws-mcp": {
+        "type": "local",
+        "command": ["uvx", "mcp-proxy-for-aws@latest", "https://aws-mcp.us-east-1.api.aws/mcp", "--metadata", "INSTALL_SOURCE=aws-cli"]
       }
     }
   },
-  "agent": {
+  "agents": {
     "plan": {
-      "prompt": "{file:./prompts/plan.txt}",
-      "permission": {
-        "edit": {
-          "*": "deny",
-          "docs/plans/*": "allow",
-          "docs/specs/*": "allow"
-        }
-      }
+      "system": "{file:./prompts/plan.txt}",
+      "permissions": [
+        { "action": "edit", "resource": "*", "effect": "deny" },
+        { "action": "edit", "resource": "docs/plans/*", "effect": "allow" },
+        { "action": "edit", "resource": "docs/specs/*", "effect": "allow" }
+      ]
     },
     "build": {
-      "prompt": "{file:./prompts/build.txt}"
-    },
-    "compaction": {
-      "prompt": "{file:./prompts/compaction.txt}"
+      "system": "{file:./prompts/build.txt}"
     }
   }
 }
