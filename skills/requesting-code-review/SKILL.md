@@ -6,7 +6,7 @@ compatibility: opencode
 
 # Requesting Code Review
 
-Dispatch code-reviewer sub-agent using the `task` tool to catch issues before they cascade. The reviewer gets precisely crafted context for evaluation — never your session's history. This keeps the reviewer focused on the work product, not your thought process, and preserves your own context for continued work.
+Dispatch code-reviewer sub-agent using the `subagent` tool to catch issues before they cascade. The reviewer gets precisely crafted context for evaluation — never your session's history. This keeps the reviewer focused on the work product, not your thought process, and preserves your own context for continued work.
 
 **Core principle:** Review early, review often.
 
@@ -31,11 +31,11 @@ BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
 HEAD_SHA=$(git rev-parse HEAD)
 ```
 
-**2. Dispatch `code-reviewer`, `code-quality-reviewer`, or `security-reviewer` global agent using the `task` tool:**
+**2. Dispatch `code-reviewer`, `code-quality-reviewer`, or `security-reviewer` global agent using the `subagent` tool:**
 
 The `code-reviewer`, `code-quality-reviewer`, and `security-reviewer` agents are registered globally with appropriate review checklists. Invoke with context about what was implemented, plan reference, and git diff range. The agent will use `git diff {BASE_SHA}..{HEAD_SHA}` to inspect changes.
 
-**Context to include in your Task tool prompt:**
+**Context to include in your subagent prompt:**
 - What you just built (brief summary)
 - What it should do (plan or requirements reference)
 - Starting commit SHA (`BASE_SHA`)
@@ -57,7 +57,7 @@ You: Let me request code review before proceeding.
 BASE_SHA=$(git log --oneline | grep "Task 1" | head -1 | awk '{print $1}')
 HEAD_SHA=$(git rev-parse HEAD)
 
-[Dispatch code-reviewer sub-agent using the `task` tool]
+[Dispatch code-reviewer sub-agent using the `subagent` tool]
   WHAT_WAS_IMPLEMENTED: Verification and repair functions for conversation index
   PLAN_OR_REQUIREMENTS: Task 2 from docs/plans/deployment-plan.md
   BASE_SHA: a7981ec

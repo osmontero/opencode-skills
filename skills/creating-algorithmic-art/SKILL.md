@@ -107,7 +107,7 @@ With the philosophy AND conceptual framework established, express it through cod
 
 **CRITICAL: BEFORE writing any HTML:**
 
-1. **Read** `templates/viewer.html` using the Read tool
+1. **Read** `templates/viewer.html` using the `read` tool
 2. **Study** the exact structure, styling, and consistent branding
 3. **Use that file as the LITERAL STARTING POINT** - not just inspiration
 4. **Keep all FIXED sections exactly as shown** (header, sidebar structure, the template colors/fonts, seed controls, action buttons)

@@ -58,11 +58,11 @@ scripts/start-server.sh --project-dir /path/to/project
 **opencode (Windows):**
 ```bash
 # Windows auto-detects and uses foreground mode, which blocks the tool call.
-# Use run_in_background: true on the Bash tool call so the server survives
+# Use background: true on the shell tool call so the server survives
 # across conversation turns.
 scripts/start-server.sh --project-dir /path/to/project
 ```
-When calling this via the Bash tool, set `run_in_background: true`. Then read `$STATE_DIR/server-info` on the next turn to get the URL and port.
+When calling this via the `shell` tool, set `background: true`. Then read `$STATE_DIR/server-info` on the next turn to get the URL and port.
 
 **Codex:**
 ```bash
@@ -97,7 +97,7 @@ Use `--url-host` to control what hostname is printed in the returned URL JSON.
    - Before each write, check that `$STATE_DIR/server-info` exists. If it doesn't (or `$STATE_DIR/server-stopped` exists), the server has shut down — restart it with `start-server.sh` before continuing. The server auto-exits after 30 minutes of inactivity.
    - Use semantic filenames: `platform.html`, `visual-style.html`, `layout.html`
    - **Never reuse filenames** — each screen gets a fresh file
-   - Use Write tool — **never use cat/heredoc** (dumps noise into terminal)
+   - Use the `write` tool — **never use cat/heredoc** (dumps noise into terminal)
    - Server automatically serves the newest file
 
 2. **Tell user what to expect and end your turn:**

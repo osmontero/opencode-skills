@@ -131,7 +131,7 @@ Write a JSON file with this structure:
     "pass_rate": 0.67
   },
   "execution_metrics": {
-    "tool_calls": {"Read": 5, "Write": 2, "Bash": 8},
+    "tool_calls": {"read": 5, "write": 2, "shell": 8},
     "total_tool_calls": 15,
     "total_steps": 6,
     "errors_encountered": 0,

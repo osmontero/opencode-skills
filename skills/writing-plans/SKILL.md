@@ -175,7 +175,7 @@ After saving the plan, offer execution choice:
 
 **"Plan complete and saved to `docs/plans/<filename>.md`. Two execution options:**
 
-**1. Subagent-Driven (recommended)** - I dispatch a fresh sub-agent per task using the `task` tool, review between tasks, fast iteration
+**1. Subagent-Driven (recommended)** - I dispatch a fresh sub-agent per task using the `subagent` tool, review between tasks, fast iteration
 
 **2. Inline Execution** - Execute tasks in this session using executing-plans, batch execution with checkpoints
 

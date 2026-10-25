@@ -67,7 +67,7 @@ Each agent gets:
 ### 3. Dispatch in Parallel
 
 ```typescript
-// Dispatch parallel sub-agents using the `task` tool
+// Dispatch parallel sub-agents using the `subagent` tool
 task("Fix agent-tool-abort.test.ts failures")
 task("Fix batch-completion-behavior.test.ts failures")
 task("Fix tool-approval-race-conditions.test.ts failures")

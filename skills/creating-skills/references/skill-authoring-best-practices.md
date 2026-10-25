@@ -10,7 +10,7 @@ For conceptual background on how Skills work, see the [Skills overview](/en/docs
 
 ### Concise is key
 
-The [context window](https://opencode.ai/docs/context/) is a public good. Your Skill shares the context window with everything else the agent needs to know, including:
+The [context window](https://opencode.ai/v2/docs/compaction/) is a public good. Your Skill shares the context window with everything else the agent needs to know, including:
 
 * The system prompt
 * Conversation history

@@ -287,7 +287,7 @@ Explain that testing will now occur to see if the document actually works for re
 
 ### Testing Approach
 
-**If access to sub-agents is available (e.g., in opencode via the `task` tool):**
+**If access to sub-agents is available (e.g., in opencode via the `subagent` tool):**
 
 Perform the testing directly without user involvement.
 

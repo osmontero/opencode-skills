@@ -28,7 +28,7 @@ If AGENTS.md says "don't use TDD" and a skill says "always use TDD," follow the 
 
 ## How to Access Skills
 
-**In opencode:** Use the `skill` tool. When you invoke a skill, its content is loaded and presented to you—follow it directly. Never use the Read tool on skill files.
+**In opencode:** Use the `skill` tool. When you invoke a skill, its content is loaded and presented to you—follow it directly. Never use the `read` tool on skill files.
 
 **In other environments:** Check your platform's documentation for how skills are loaded.
 
@@ -48,7 +48,7 @@ digraph skill_flow {
     "Invoke skill tool" [shape=box];
     "Announce: 'Using [skill] to [purpose]'" [shape=box];
     "Has checklist?" [shape=diamond];
-    "Create a `todowrite` todo per item" [shape=box];
+    "Track each checklist item (todo tool or a list in your message)" [shape=box];
     "Follow skill exactly" [shape=box];
     "Respond (including clarifications)" [shape=doublecircle];
 
@@ -62,9 +62,9 @@ digraph skill_flow {
     "Might any skill apply?" -> "Respond (including clarifications)" [label="definitely not"];
     "Invoke skill tool" -> "Announce: 'Using [skill] to [purpose]'";
     "Announce: 'Using [skill] to [purpose]'" -> "Has checklist?";
-    "Has checklist?" -> "Create a `todowrite` todo per item" [label="yes"];
+    "Has checklist?" -> "Track each checklist item (todo tool or a list in your message)" [label="yes"];
     "Has checklist?" -> "Follow skill exactly" [label="no"];
-    "Create a `todowrite` todo per item" -> "Follow skill exactly";
+    "Track each checklist item (todo tool or a list in your message)" -> "Follow skill exactly";
 }
 ```
 
