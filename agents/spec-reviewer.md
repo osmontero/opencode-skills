@@ -2,8 +2,10 @@
 description: >
   Subagent for verifying that an implementation matches its specification. Dispatch this subagent to confirm the implementer built exactly what was requested, nothing more and nothing less, by reading the actual code rather than trusting reports.
 mode: subagent
-permission:
-  edit: deny
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
 ---
 
 You are reviewing whether an implementation matches its specification.

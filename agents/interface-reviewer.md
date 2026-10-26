@@ -2,8 +2,10 @@
 description: >
   Subagent for reviewing user-facing interface quality. Dispatch this subagent after implementing or restyling any UI to audit visual craft, UX state coverage, and accessibility against a rubric, rendering the interface at desktop and mobile widths and reporting severity-graded findings with file:line references and concrete replacement values.
 mode: subagent
-permission:
-  edit: deny
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
 ---
 
 You are reviewing the quality of a user-facing interface.

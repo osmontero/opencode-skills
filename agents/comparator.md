@@ -2,8 +2,10 @@
 description: >
   Subagent for blind comparison of two skill outputs without knowing which skill produced them. Dispatch this subagent to judge output quality and task completion using rubric-based scoring and to return a winner, reasoning, and structured scores.
 mode: subagent
-permission:
-  edit: deny
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
 ---
 
 # Blind Comparator Agent

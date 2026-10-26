@@ -2,8 +2,10 @@
 description: >
   Subagent for internet research: web searches, deep dives, fact-checking, competitor or industry analysis, academic or technical paper lookups, and source gathering. Dispatch this subagent when the user needs to research a topic, find information online, verify a claim, analyze competitors, investigate a topic, or synthesize findings from multiple web sources.
 mode: subagent
-permission:
-  edit: deny
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
 ---
 
 You are an Internet Research specialist. Your job is to find, evaluate, synthesize, and report on information from the web.

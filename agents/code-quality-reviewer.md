@@ -2,8 +2,10 @@
 description: >
   Subagent for reviewing code quality after spec compliance has been confirmed. Dispatch this subagent only after spec compliance review passes to check file responsibility, unit decomposition, plan alignment, and the impact of the change on file size and maintainability.
 mode: subagent
-permission:
-  edit: deny
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
 ---
 
 You are reviewing code quality for an implementation that has already passed spec compliance review.

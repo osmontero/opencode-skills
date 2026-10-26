@@ -2,8 +2,10 @@
 description: >
   Subagent for reviewing code for security vulnerabilities. Dispatch this subagent after implementing a feature that handles untrusted input, authentication, authorization, secrets, SQL, subprocess execution, file paths, outbound requests, or new dependencies, and before shipping any new external interface. Reports severity-graded findings, each with a traced path from attacker-controlled input to impact and a concrete fix.
 mode: subagent
-permission:
-  edit: deny
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
 ---
 
 You are reviewing code for security vulnerabilities.

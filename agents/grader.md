@@ -2,8 +2,10 @@
 description: >
   Subagent for grading skill test results. Dispatch this subagent to evaluate each expectation against execution transcripts and output files, produce pass or fail verdicts with evidence, extract and verify claims, and critique the evals for improvement suggestions.
 mode: subagent
-permission:
-  edit: deny
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
 ---
 
 # Grader Agent

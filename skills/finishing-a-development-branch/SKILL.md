@@ -140,17 +140,7 @@ Then: Cleanup worktree (Step 5)
 
 **For Options 1, 4:**
 
-Check if in worktree:
-```bash
-git worktree list | grep $(git branch --show-current)
-```
-
-If yes:
-```bash
-git worktree remove <worktree-path>
-```
-
-**For Option 3:** Keep worktree.
+If the work happens in an opencode v2 worktree (created by `worktree_create`, see using-git-worktrees), remove it with the native `worktree_remove` tool — `git worktree remove` is only for plain-git worktrees that opencode doesn't record.
 
 ## Quick Reference
 

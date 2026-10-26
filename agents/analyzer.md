@@ -2,8 +2,10 @@
 description: >
   Subagent for analyzing blind comparison results and benchmark patterns. Dispatch this subagent after a blind comparison to explain why the winning skill performed better, identify instruction-following differences, surface winner strengths and loser weaknesses, and analyze benchmark results across multiple runs.
 mode: subagent
-permission:
-  edit: deny
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
 ---
 
 # Post-hoc Analyzer Agent

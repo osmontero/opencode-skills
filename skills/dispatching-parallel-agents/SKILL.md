@@ -66,12 +66,12 @@ Each agent gets:
 
 ### 3. Dispatch in Parallel
 
-```typescript
-// Dispatch parallel sub-agents using the `subagent` tool
-task("Fix agent-tool-abort.test.ts failures")
-task("Fix batch-completion-behavior.test.ts failures")
-task("Fix tool-approval-race-conditions.test.ts failures")
-// All three run concurrently
+Issue one `subagent` tool call per problem domain, all in the same message (or with `background: true`), so they run concurrently. Each call is a full subagent dispatch — `agent`, a short `description`, and a self-contained `prompt` (the agent cannot see this conversation).
+
+```
+subagent(agent="general", description="Fix abort tests", prompt="<full self-contained task>")
+subagent(agent="general", description="Fix batch tests", prompt="<full self-contained task>")
+subagent(agent="general", description="Fix race tests", prompt="<full self-contained task>")
 ```
 
 ### 4. Review and Integrate
