@@ -85,7 +85,8 @@ function main() {
     console.log('[' + (i + 1) + '/' + total + '] Testing: ' + testFile);
 
     try {
-      execSync(`${testCmd} ${testFile}`, { stdio: 'ignore' });
+      // testFile is slash-normalized by walk(); quote it so paths with spaces work.
+      execSync(`${testCmd} "${testFile}"`, { stdio: 'ignore' });
     } catch {
       /* test may fail; we only care about the pollution side effect */
     }
@@ -100,8 +101,8 @@ function main() {
       console.log(describePollution(pollutionCheck));
       console.log('');
       console.log('To investigate:');
-      console.log(`  ${testCmd} ${testFile}    # Run just this test`);
-      console.log(`  cat ${testFile}         # Review test code`);
+      console.log(`  ${testCmd} "${testFile}"    # Run just this test`);
+      console.log(`  ${testFile}                 # Review test code`);
       process.exit(1);
     }
   }

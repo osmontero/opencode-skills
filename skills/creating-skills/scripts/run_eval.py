@@ -8,16 +8,15 @@ Runs each query through `opencode run --standalone --format json` in a
 scratch project whose `.opencode/skills/` contains a single stub skill
 with the description under test. Triggering is detected from the JSON
 event stream: a `tool_use` event with `part.tool == "skill"` whose
-`part.state.input.id` contains the stub's skill name.
+`part.state.input.id` equals the stub's skill name, and whose output
+contains the per-run marker.
 """
 
 import argparse
 import json
-import os
 import shutil
 import subprocess
 import sys
-import time
 import uuid
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path

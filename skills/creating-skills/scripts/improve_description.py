@@ -8,7 +8,6 @@ server's configured credentials — no separate API key needed.
 
 import argparse
 import json
-import os
 import re
 import subprocess
 import sys
@@ -21,16 +20,18 @@ def _call_opencode(prompt: str, model: str | None, timeout: int = 300) -> str:
     """Run `opencode run --standalone` with the prompt as the message and
     return the assembled text response.
 
-    The prompt is passed as a single argv argument (not stdin) so we can
-    reuse `opencode run` directly. The prompt embeds the full SKILL.md body,
-    so callers should keep it reasonably sized.
+    The prompt goes over stdin (not argv) because it embeds the full SKILL.md
+    body, which can exceed the ~32k-character Windows command-line limit and
+    crash subprocess before opencode starts. `opencode run` reads the message
+    from stdin when no positional is given.
     """
-    cmd = ["opencode", "run", "--standalone", "--format", "json", prompt]
+    cmd = ["opencode", "run", "--standalone", "--format", "json"]
     if model:
         cmd.extend(["--model", model])
 
     result = subprocess.run(
         cmd,
+        input=prompt,
         capture_output=True,
         text=True,
         encoding="utf-8",

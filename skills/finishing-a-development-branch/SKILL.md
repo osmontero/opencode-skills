@@ -68,24 +68,18 @@ Which option?
 
 #### Option 1: Merge Locally
 
+Base-branch work happens **in the canonical checkout**, not in the session's worktree. If the session is currently in a worktree (see using-git-worktrees), run these from the primary worktree (or `session_move` back first). You cannot `git checkout <base-branch>` inside the feature worktree — the base branch is already checked out in the primary worktree, and git refuses to check out the same branch in two worktrees at once.
+
 ```bash
-# Switch to base branch
+# In the canonical checkout (primary worktree):
 git checkout <base-branch>
-
-# Pull latest
 git pull
-
-# Merge feature branch
 git merge <feature-branch>
-
-# Verify tests on merged result
-<test command>
-
-# If tests pass
+<test command>            # verify the merged result
 git branch -d <feature-branch>
 ```
 
-Then: Cleanup worktree (Step 5)
+Then: move the session back to the canonical checkout (if it was in the worktree), and clean up the worktree (Step 5).
 
 #### Option 2: Push and Create PR
 
@@ -128,19 +122,22 @@ Type 'discard' to confirm.
 
 Wait for exact confirmation.
 
-If confirmed:
+If confirmed — delete the branch **from the canonical checkout**, then clean up the worktree:
 ```bash
-git checkout <base-branch>
+# In the canonical checkout (primary worktree), NOT the session's worktree:
 git branch -D <feature-branch>
 ```
 
-Then: Cleanup worktree (Step 5)
+Then: Cleanup worktree (Step 5).
 
 ### Step 5: Cleanup Worktree
 
 **For Options 1, 4:**
 
-If the work happens in an opencode v2 worktree (created by `worktree_create`, see using-git-worktrees), remove it with the native `worktree_remove` tool — `git worktree remove` is only for plain-git worktrees that opencode doesn't record.
+Removing a worktree whose session is still inside it is not safe, so do this in two parts:
+
+1. **If the session is in the worktree**, move it back to the canonical checkout first (`session_move` to the primary worktree path — see using-git-worktrees). A worktree that is the active session Location cannot be removed cleanly.
+2. **Remove the worktree.** For an opencode v2 worktree (created by `worktree_create`), use the native `worktree_remove` tool with the worktree `directory`. `git worktree remove <path>` is only for plain-git worktrees that opencode does not record. Never set `force` unless the user has confirmed the uncommitted work should be discarded.
 
 ## Quick Reference
 

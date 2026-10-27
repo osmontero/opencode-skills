@@ -15,3 +15,6 @@ build/
 # It is machine-generated and would otherwise land in the project's diffs.
 .opencode/MEMORY.md
 .opencode/memory/
+
+# brainstorming visual-companion session mockups (generated, per-session)
+.opencode/brainstorm/

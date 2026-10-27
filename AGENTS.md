@@ -36,7 +36,7 @@ source ~/.local/opencode-venv/bin/activate
 
 ### Agent files use YAML frontmatter
 
-Each `agents/<name>.md` has frontmatter with `description`, `mode: subagent`, and optionally `permission` and `model` fields. The body is Markdown instructions. The `description` triggers the agent — keep it specific and actionable. `agents/LICENSE.txt` is not an agent file.
+Each `agents/<name>.md` has frontmatter with `description`, `mode: subagent`, and optionally `permissions` (ordered array) and `model` fields, in the native v2 shape. The body is Markdown instructions. The `description` triggers the agent — keep it specific and actionable. `agents/LICENSE.txt` is not an agent file.
 
 ### .opencode/ contains local config
 
@@ -157,9 +157,9 @@ Recover a built-in command's original text by extracting it from the opencode bi
 
 ### Frontmatter conventions
 
-Skills take `name` (must equal the directory name) and `description` only — plus `license` for Anthropic-derived skills and `compatibility: opencode` for superpowers-derived ones. **`mode`, `permission`, and `tools` are agent-only fields and must not appear on a skill.** Agents require `mode: subagent`; `permission.edit: deny` is correct for read-only reviewer agents.
+Skills take `name` (must equal the directory name) and `description` only — plus `license` for Anthropic-derived skills and `compatibility: opencode` for superpowers-derived ones. **`mode`, `permission`, and `tools` are agent-only fields and must not appear on a skill.** Agents require `mode: subagent`; a `permissions` entry of `edit: deny` on `*` is correct for read-only reviewer agents.
 
-This repo's agent files use the v1 frontmatter shape (`permission` map, `prompt`, etc.). v2 auto-translates legacy frontmatter (`permission`→`permissions`, `prompt`→`system`, `disable`→`disabled`, `model`+`variant`→`model#variant`), so the files still work unchanged. When editing an agent file, either keep the legacy shape or switch it to the native v2 form (`permissions:` ordered list) — but do not mix legacy and native keys for the same field.
+This repo's agent files use the native v2 frontmatter shape: `permissions:` is an ordered list of `{action, resource, effect}` objects (e.g. `{ action: edit, resource: "*", effect: deny }`). v2 still auto-translates legacy v1 keys (`permission` map → `permissions`, `prompt` → `system`, `disable` → `disabled`, `model`+`variant` → `model#variant`), but do not reintroduce them when editing — keep the native shape.
 
 Descriptions start with "Use when…" and describe *triggering conditions only* — never the skill's workflow. A description that summarizes the process gives the agent a shortcut it will take instead of reading the skill.
 
