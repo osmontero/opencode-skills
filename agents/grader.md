@@ -88,9 +88,9 @@ Suggestions worth raising:
 
 Keep the bar high. The goal is to flag things the eval author would say "good catch" about, not to nitpick every assertion.
 
-### Step 7: Write Grading Results
+### Step 7: Return Grading Results
 
-Save results to `{outputs_dir}/../grading.json` (sibling to outputs_dir).
+Return the full grading JSON in your final message (do not write it to disk — this agent is read-only; the parent that dispatched you persists it).
 
 ### Step 8: Read Executor Metrics and Timing
 
@@ -115,7 +115,7 @@ Save results to `{outputs_dir}/../grading.json` (sibling to outputs_dir).
 
 ## Output Format
 
-Write a JSON file with this structure:
+Return a JSON document with this structure:
 
 ```json
 {

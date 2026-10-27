@@ -480,23 +480,28 @@ if __name__ == "__main__":
 FastMCP can automatically inject a `Context` parameter into tools for advanced capabilities like logging, progress reporting, resource reading, and user interaction:
 
 ```python
+from pydantic import BaseModel
 from mcp.server.fastmcp import FastMCP, Context
 
 mcp = FastMCP("example_mcp")
+
+class ApiKeyInput(BaseModel):
+    '''Shape the client returns from the elicitation.'''
+    api_key: str
 
 @mcp.tool()
 async def advanced_search(query: str, ctx: Context) -> str:
     '''Advanced tool with context access for logging and progress.'''
 
     # Report progress for long operations
-    await ctx.report_progress(0.25, "Starting search...")
+    await ctx.report_progress(progress=0.25, message="Starting search...")
 
-    # Log information for debugging
-    await ctx.log_info("Processing query", {"query": query, "timestamp": datetime.now()})
+    # Log information for debugging (level: debug/info/warning/error)
+    await ctx.info("Processing query", query=query, timestamp=datetime.now())
 
     # Perform search
     results = await search_api(query)
-    await ctx.report_progress(0.75, "Formatting results...")
+    await ctx.report_progress(progress=0.75, message="Formatting results...")
 
     # Access server configuration
     server_name = ctx.fastmcp.name
@@ -507,20 +512,21 @@ async def advanced_search(query: str, ctx: Context) -> str:
 async def interactive_tool(resource_id: str, ctx: Context) -> str:
     '''Tool that can request additional input from users.'''
 
-    # Request sensitive information when needed
-    api_key = await ctx.elicit(
-        prompt="Please provide your API key:",
-        input_type="password"
-    )
+    # Elicitation needs a Pydantic schema describing the expected input;
+    # the client shows the message and returns a structured result.
+    result = await ctx.elicit("Please provide your API key:", ApiKeyInput)
 
-    # Use the provided key
-    return await api_call(resource_id, api_key)
+    if result.accepted and result.data:
+        # Use the provided key
+        return await api_call(resource_id, result.data.api_key)
+    return "No API key provided."
 ```
 
 **Context capabilities:**
-- `ctx.report_progress(progress, message)` - Report progress for long operations
-- `ctx.log_info(message, data)` / `ctx.log_error()` / `ctx.log_debug()` - Logging
-- `ctx.elicit(prompt, input_type)` - Request input from users
+- `ctx.report_progress(progress, total=None, message=None)` - Report progress for long operations
+- `ctx.debug(msg)` / `ctx.info(msg)` / `ctx.warning(msg)` / `ctx.error(msg)` - Log at a level (all accept `**extra`)
+- `ctx.log(level, message)` - Log with an explicit level string
+- `ctx.elicit(message, schema)` - Request structured input from users (schema is a Pydantic model)
 - `ctx.fastmcp.name` - Access server configuration
 - `ctx.read_resource(uri)` - Read MCP resources
 
@@ -625,9 +631,11 @@ FastMCP supports two main transport mechanisms:
 if __name__ == "__main__":
     mcp.run()
 
-# Streamable HTTP transport (for remote servers)
+# Streamable HTTP transport (for remote servers).
+# host and port are set on the FastMCP constructor, not on run().
+mcp = FastMCP("example_mcp", host="0.0.0.0", port=8000)
 if __name__ == "__main__":
-    mcp.run(transport="streamable_http", port=8000)
+    mcp.run(transport="streamable-http")
 ```
 
 **Transport selection:**

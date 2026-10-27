@@ -31,7 +31,7 @@ You receive these parameters in your prompt:
 - **loser_skill_path**: Path to the skill that produced the losing output
 - **loser_transcript_path**: Path to the execution transcript for the loser
 - **comparison_result_path**: Path to the blind comparator's output JSON
-- **output_path**: Where to save the analysis results
+- **output_path**: Where the parent will save the analysis results (you return them; you do not write)
 
 ## Process
 
@@ -92,7 +92,7 @@ Priority levels:
 
 ### Step 8: Write Analysis Results
 
-Save structured analysis to `{output_path}` as JSON:
+Return the structured analysis as JSON in your final message (the parent saves it to `{output_path}` — this agent is read-only and must not write files):
 
 ```json
 {
@@ -147,7 +147,7 @@ Review all benchmark run results and generate freeform notes that help the user 
 
 - **benchmark_data_path**: Path to the in-progress benchmark.json with all run results
 - **skill_path**: Path to the skill being benchmarked
-- **output_path**: Where to save the notes (as JSON array of strings)
+- **output_path**: Where the parent will save the notes (you return them; you do not write)
 
 ## Process
 
@@ -175,7 +175,7 @@ Look at time_seconds, tokens, tool_calls:
 
 ### Generate Notes
 
-Write freeform observations as a JSON array of strings to `{output_path}`. Each note should:
+Return freeform observations as a JSON array of strings in your final message (the parent saves them to `{output_path}` — this agent is read-only). Each note should:
 - State a specific observation
 - Be grounded in the data (not speculation)
 - Help the user understand something the aggregate metrics don't show

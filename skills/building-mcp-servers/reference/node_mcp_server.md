@@ -764,48 +764,47 @@ if (transport === 'http') {
 Expose data as resources for efficient, URI-based access:
 
 ```typescript
-import { ResourceTemplate } from "@modelcontextprotocol/sdk/types.js";
+import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
 
-// Register a resource with URI template
+// 1) Fixed-URI resource: 4 positional args — name, uri, metadata, readCallback.
+//    The read callback receives a URL object, not a string.
 server.registerResource(
-  {
-    uri: "file://documents/{name}",
-    name: "Document Resource",
-    description: "Access documents by name",
-    mimeType: "text/plain"
-  },
-  async (uri: string) => {
-    // Extract parameter from URI
-    const match = uri.match(/^file:\/\/documents\/(.+)$/);
-    if (!match) {
-      throw new Error("Invalid URI format");
-    }
-
-    const documentName = match[1];
-    const content = await loadDocument(documentName);
-
-    return {
-      contents: [{
-        uri,
-        mimeType: "text/plain",
-        text: content
-      }]
-    };
+  "Document",
+  "file://documents/index",
+  { title: "Document Resource", description: "Access the document index", mimeType: "text/plain" },
+  async (uri: URL) => {
+    const content = await loadDocumentIndex();
+    return { contents: [{ uri: uri.href, mimeType: "text/plain", text: content }] };
   }
 );
 
-// List available resources dynamically
-server.registerResourceList(async () => {
-  const documents = await getAvailableDocuments();
-  return {
-    resources: documents.map(doc => ({
-      uri: `file://documents/${doc.name}`,
-      name: doc.name,
-      mimeType: "text/plain",
-      description: doc.description
-    }))
-  };
+// 2) Listable, templated resource. The list callback belongs on the
+//    ResourceTemplate (its constructor requires it — pass `undefined` to
+//    explicitly opt out of listing); the read callback is the 4th arg to
+//    registerResource and receives (url, variables, extra).
+const documentTemplate = new ResourceTemplate("file://documents/{name}", {
+  list: async () => {
+    const documents = await getAvailableDocuments();
+    return {
+      resources: documents.map(doc => ({
+        uri: `file://documents/${doc.name}`,
+        name: doc.name,
+        mimeType: "text/plain",
+        description: doc.description
+      }))
+    };
+  }
 });
+
+server.registerResource(
+  "Document By Name",
+  documentTemplate,
+  { title: "Document Resource", description: "Access documents by name", mimeType: "text/plain" },
+  async (uri: URL, variables: { [key: string]: string }) => {
+    const content = await loadDocument(variables.name);
+    return { contents: [{ uri: uri.href, mimeType: "text/plain", text: content }] };
+  }
+);
 ```
 
 **When to use Resources vs Tools:**
@@ -858,21 +857,20 @@ await server.connect(transport);
 
 ### Notification Support
 
-Notify clients when server state changes:
+Notify clients when server state changes. The high-level server emits tool/resource list-changed notifications automatically on registration; to send one explicitly (e.g. after a dynamic update), use the dedicated methods — there is no generic `server.notification()` call:
 
 ```typescript
-// Notify when tools list changes
-server.notification({
-  method: "notifications/tools/list_changed"
-});
+// Notify when the resource list changed
+server.sendResourceListChanged();
 
-// Notify when resources change
-server.notification({
-  method: "notifications/resources/list_changed"
-});
+// Notify when the tool list changed
+server.sendToolListChanged();
+
+// Log messages go to the client's logging channel
+server.sendLoggingMessage({ level: "info", data: "reindexed document store" });
 ```
 
-Use notifications sparingly - only when server capabilities genuinely change.
+Use notifications sparingly — only when server capabilities genuinely change.
 
 ---
 

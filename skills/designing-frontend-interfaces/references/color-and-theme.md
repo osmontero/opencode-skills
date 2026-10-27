@@ -96,12 +96,12 @@ def contrast(fg, bg):
     lo, hi = sorted((a, b))
     return round((hi + 0.05) / (lo + 0.05), 2)
 
-print(contrast('#55504a', '#f4f1ea'))   # 7.15 — passes AA for body
+print(contrast('#55504a', '#f4f1ea'))   # 7.07 — passes AA for body
 ```
 
 The `applying-themes` skill bundles `scripts/check_contrast.py`, which validates a whole theme file at once.
 
-**The most common failure:** a mid-saturation accent used as a text color on a light background. `#4a90d9` on white is 2.9:1 — it fails. Darken the accent for text use and keep the bright value for fills only. This is exactly why the ramp needs a `-700` step.
+**The most common failure:** a mid-saturation accent used as a text color on a light background. `#4a90d9` on white is 3.34:1 — it fails. Darken the accent for text use and keep the bright value for fills only. This is exactly why the ramp needs a `-700` step.
 
 ## Semantic Token Layers
 

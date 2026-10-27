@@ -34,6 +34,8 @@ Both installers must stay in sync. A new deployable directory added to one is a 
 source ~/.local/opencode-venv/bin/activate
 ```
 
+(Windows: the venv is at `~\.local\opencode-venv\` — use `& ~\.local\opencode-venv\Scripts\python.exe <script>` or `.\Scripts\Activate.ps1`.)
+
 ### Agent files use YAML frontmatter
 
 Each `agents/<name>.md` has frontmatter with `description`, `mode: subagent`, and optionally `permissions` (ordered array) and `model` fields, in the native v2 shape. The body is Markdown instructions. The `description` triggers the agent — keep it specific and actionable. `agents/LICENSE.txt` is not an agent file.

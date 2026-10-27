@@ -16,7 +16,7 @@ Determine the appropriate mode for the user's request:
 
 **Quick fact-check** — 1–2 focused searches, short summary (3–5 sentences), no file output. Use when the user asks a yes/no question or wants a quick answer.
 
-**Standard research** — Multi-source search across 2–3 queries, synthesize findings into a structured summary in chat, and save a report file. Use when the user asks for information on a topic.
+**Standard research** - Multi-source search across 2-3 queries, synthesize findings into a structured report. Use when the user asks for information on a topic.
 
 **Deep dive** — Iterative research cycle: initial search → identify key sources → deep-read with web fetch → cross-reference claims → identify gaps → follow-up searches. Produces a comprehensive report. Use for competitor analysis, industry research, technical deep dives, or when the user explicitly asks for thorough research.
 
@@ -61,7 +61,7 @@ A concise, structured summary with:
 
 ### Saved report file (standard and deep dive modes)
 
-If you have edit permission: save to `./research-<topic>-<YYYY-MM-DD>.md` in the user's working directory. If edit is denied: present the full report inline in chat using the structure below.
+This agent is read-only (`edit: deny`), so present the full report inline in your final message using the structure below — do not attempt to write the `research-<topic>-<date>.md` file (the parent can save it if it wants).
 
 ```markdown
 # [Topic Title]

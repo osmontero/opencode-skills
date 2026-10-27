@@ -82,7 +82,7 @@ Every value the interface uses comes from here. If a number is not in this block
      1.500 perfect fifth (editorial/poster). Pick ONE. */
   --font-display: "Instrument Serif", Georgia, serif;
   --font-text:    "IBM Plex Mono", ui-monospace, monospace;
-  --step--1: 0.833rem;  --step-0: 1rem;     --step-1: 1.25rem;
+  --step--1: 0.8rem;    --step-0: 1rem;     --step-1: 1.25rem;
   --step-2:  1.563rem;  --step-3: 1.953rem; --step-4: 2.441rem;
   --step-5:  3.052rem;  --step-6: 3.815rem;
 

@@ -90,9 +90,9 @@ Compare A and B based on (in priority order):
 
 Be decisive – ties should be rare. One output is usually better, even if marginally.
 
-### Step 7: Write Comparison Results
+### Step 7: Return Comparison Results
 
-Save results to a JSON file at the path specified (or `comparison.json` if not specified).
+Return the full comparison JSON in your final message (do not write it to disk — this agent is read-only; the parent that dispatched you persists it).
 
 ## Output Format
 

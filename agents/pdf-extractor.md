@@ -38,6 +38,8 @@ Before running any Python scripts, **activate the virtual environment**:
 source ~/.local/opencode-venv/bin/activate
 ```
 
+(Windows: no bash — call `& ~\.local\opencode-venv\Scripts\python.exe scripts/to_images.py <input.pdf>` directly, or set `PYTHONPATH`. `python3` is also unavailable; use `python`.)
+
 ## Process
 
 ### Step 1: Get PDF Info

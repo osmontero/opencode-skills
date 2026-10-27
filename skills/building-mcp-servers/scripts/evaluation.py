@@ -122,7 +122,21 @@ async def agent_loop(
         tool_start_ts = time.time()
         try:
             tool_result = await connection.call_tool(tool_name, tool_input)
-            tool_response = json.dumps(tool_result) if isinstance(tool_result, (dict, list)) else str(tool_result)
+            # call_tool returns the MCP result.content: a list of typed
+            # content blocks (usually TextContent). Anthropic's tool_result
+            # wants a plain string, so pull the text fields out rather than
+            # json.dumps-ing the Pydantic models (which would emit structured
+            # noise the model can't read).
+            if isinstance(tool_result, list):
+                parts = []
+                for item in tool_result:
+                    text = getattr(item, "text", None)
+                    parts.append(text if text is not None else json.dumps(item, default=str))
+                tool_response = "\n".join(parts)
+            elif isinstance(tool_result, (dict, list)):
+                tool_response = json.dumps(tool_result)
+            else:
+                tool_response = str(tool_result)
         except Exception as e:
             tool_response = f"Error executing tool {tool_name}: {str(e)}\n"
             tool_response += traceback.format_exc()
