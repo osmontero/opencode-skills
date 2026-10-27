@@ -9,10 +9,8 @@ dependencies = [
     "pdfplumber>=0.11.0",
     "pypdf>=6.0.0",
     "pypdfium2>=5.0.0",
-    # slack-gif-creator skill
+    # canvas-art skill (PIL + numpy rendering)
     "pillow>=10.0.0",
-    "imageio>=2.31.0",
-    "imageio-ffmpeg>=0.4.9",
     "numpy>=1.24.0",
     # webapp-testing skill
     "playwright>=1.40.0",

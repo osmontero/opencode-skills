@@ -52,7 +52,6 @@ The following skills are licensed under Apache 2.0 and adapted from Anthropic's 
 - `writing-internal-comms` — Internal communications templates and guidance
 - `building-mcp-servers` — Model Context Protocol server development
 - `creating-skills` — Skill development, testing, and benchmarking lifecycle
-- `creating-slack-gifs` — Animated GIF creation for Slack
 - `applying-themes` — Thematic styling for artifacts and documents
 - `building-web-artifacts` — Multi-component HTML artifact creation
 - `testing-webapps` — Playwright-based web application testing
@@ -150,7 +149,6 @@ cp agents/* ~/.config/opencode/agents/
 | `coauthoring-docs`               | Documents     |
 | `creating-algorithmic-art`       | Design        |
 | `creating-skills`                | Development   |
-| `creating-slack-gifs`            | Design        |
 | `designing-canvas-art`           | Design        |
 | `designing-frontend-interfaces`  | Design        |
 | `designing-user-experience`      | Design        |
