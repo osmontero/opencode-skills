@@ -19,6 +19,8 @@ dependencies = [
     # ThreatWinds Vision MCP server
     "mcp>=1.1.0",
     "pydantic>=2.13.4",
+    # creating-skills quick_validate/package_skill (frontmatter YAML)
+    "pyyaml>=6.0",
 ]
 
 [tool.setuptools.packages]

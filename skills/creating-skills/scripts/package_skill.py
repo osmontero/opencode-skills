@@ -16,6 +16,15 @@ import zipfile
 from pathlib import Path
 from scripts.quick_validate import validate_skill
 
+# Windows consoles default to the legacy codepage (cp1252), which cannot
+# encode the emoji this script prints — that raised UnicodeEncodeError mid-run.
+# Force UTF-8 on stdout/stderr so packaging works cross-platform.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
+
 # Patterns to exclude when packaging skills.
 EXCLUDE_DIRS = {"__pycache__", "node_modules"}
 EXCLUDE_GLOBS = {"*.pyc"}

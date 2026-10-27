@@ -14,6 +14,14 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
 
+# Windows consoles default to the legacy codepage (cp1252), which cannot
+# encode the emoji this script prints — force UTF-8 on stdout/stderr.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
+
 from anthropic import Anthropic
 
 from connections import create_connection
