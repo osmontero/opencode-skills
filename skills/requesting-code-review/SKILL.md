@@ -31,9 +31,9 @@ BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
 HEAD_SHA=$(git rev-parse HEAD)
 ```
 
-**2. Dispatch `code-reviewer`, `code-quality-reviewer`, or `security-reviewer` global agent using the `subagent` tool:**
+**2. Dispatch `spec-reviewer`, `code-reviewer`, `code-quality-reviewer`, or `security-reviewer` global agent using the `subagent` tool:**
 
-The `code-reviewer`, `code-quality-reviewer`, and `security-reviewer` agents are registered globally with appropriate review checklists. Invoke with context about what was implemented, plan reference, and git diff range. The agent will use `git diff {BASE_SHA}..{HEAD_SHA}` to inspect changes.
+These four agents are registered globally with appropriate review checklists. Invoke with context about what was implemented, plan reference, and git diff range. The agent will use `git diff {BASE_SHA}..{HEAD_SHA}` to inspect changes.
 
 **Context to include in your subagent prompt:**
 - What you just built (brief summary)

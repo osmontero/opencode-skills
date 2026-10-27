@@ -62,12 +62,14 @@ If the user describes a need rather than naming a theme ("something serious for 
 ## Verifying Contrast
 
 ```bash
-source ~/.local/opencode-venv/bin/activate
+source ~/.local/opencode-venv/bin/activate        # POSIX
 
 python3 scripts/check_contrast.py themes/ocean-depths.md   # one theme
 python3 scripts/check_contrast.py themes/*.md              # all of them
 python3 scripts/check_contrast.py --pair "#8a7357" "#fbf5ea"   # ad-hoc pair
 ```
+
+Windows (no bash): `& ~\.local\opencode-venv\Scripts\python.exe scripts\check_contrast.py themes\<theme>.md` — pass each theme file explicitly (PowerShell does not expand `themes/*.md` into Python args).
 
 Exit code is non-zero on any failure, so it works as a gate. All ten bundled themes pass all six checks.
 

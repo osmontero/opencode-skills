@@ -5,7 +5,7 @@ license: Complete terms in LICENSE.txt
 ---
 
 
-Algorithmic philosophies are computational aesthetic movements that are then expressed through code. Output .md files (philosophy), .html files (interactive viewer), and .js files (generative algorithms).
+Algorithmic philosophies are computational aesthetic movements that are then expressed through code. Output .md files (philosophy) and a single self-contained .html file (the interactive viewer with the algorithm embedded inline — see OUTPUT FORMAT).
 
 This happens in two steps:
 1. Algorithmic Philosophy Creation (.md file)
@@ -215,7 +215,7 @@ Output:
 1. **Algorithmic Philosophy** - As markdown or text explaining the generative aesthetic
 2. **Single HTML Artifact** - Self-contained interactive generative art built from `templates/viewer.html` (see STEP 0 and next section)
 
-The HTML artifact contains everything: p5.js (from CDN), the algorithm, parameter controls, and UI - all in one file that works immediately in opencode artifacts or any browser. Start from the template file, not from scratch.
+The HTML artifact contains everything: p5.js (from CDN), the algorithm, parameter controls, and UI - all in one file. It works immediately from a local `file://` open or any normal browser. If the target host runs a strict CSP that blocks CDNs (see building-web-artifacts), inline the p5.js source instead of loading it from the CDN. Start from the template file, not from scratch.
 
 ---
 
@@ -236,9 +236,8 @@ The `templates/viewer.html` file is the foundation. It contains the exact struct
   - Seed display
   - Previous/Next buttons
   - Random button
-  - Jump to seed input + Go button
+  - Jump to seed input (applies on change)
 - Actions section in sidebar:
-  - Regenerate button
   - Reset button
 
 **VARIABLE (customize for each artwork):**
@@ -269,8 +268,7 @@ The `templates/viewer.html` file is the foundation. It contains the exact struct
 - Display current seed number
 - "Previous" and "Next" buttons to cycle through seeds
 - "Random" button for random seed
-- Input field to jump to specific seed
-- Generate 100 variations when requested (seeds 1-100)
+- Input field to jump to specific seed (applies on change; no separate "Go" button)
 
 **3. Single Artifact Structure**
 ```html
@@ -326,14 +324,12 @@ Add as many control-group divs as there are parameters.
 - Skip if the art is monochrome
 
 **4. Actions (FIXED)** - Always include exactly as shown:
-- Regenerate button
 - Reset button
-- Download PNG button
 
 **Requirements**:
 - Seed controls must work (prev/next/random/jump/display)
 - All parameters must have UI controls
-- Regenerate, Reset, Download buttons must work
+- Reset must work (Regenerate/Download buttons are optional extras if you add them)
 - Keep consistent branding (UI styling, not art colors)
 
 ### USING THE ARTIFACT
@@ -426,12 +422,16 @@ with sync_playwright() as p:
     pg.on("pageerror", lambda e: errs.append(str(e)))
     for seed in (1, 7, 42, 1337):
         pg.goto(url); pg.wait_for_timeout(400)
-        pg.evaluate(f"() => {{ if (window.setSeed) setSeed({seed}); }}")
+        # The template exposes no setSeed() — drive its real seed API:
+        # set the input and call updateSeed(), which re-initializes the system.
+        pg.evaluate(f"() => {{ document.getElementById('seed-input').value = {seed}; updateSeed(); }}")
         pg.wait_for_timeout(3500)                    # let the system reach equilibrium
         pg.locator("canvas").screenshot(path=f"/tmp/seed-{seed}.png")
     print("CONSOLE ERRORS:", errs); b.close()
 PY
 ```
+
+(Windows: use `~\.local\opencode-venv\Scripts\python.exe` instead of activating the POSIX venv, and write the PNGs under `C:\Users\osmon\AppData\Local\Temp\opencode\` instead of `/tmp`.)
 
 Read all four PNGs and check:
 

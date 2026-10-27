@@ -44,7 +44,7 @@ $session = "<project>/.opencode/brainstorm/<session-id>"
 New-Item -ItemType Directory -Force -Path "$session/content" | Out-Null
 New-Item -ItemType Directory -Force -Path "$session/state"  | Out-Null
 $env:BRAINSTORM_DIR  = $session
-$env:BRAINSTORM_HOST = "127.0.0.1"          # BRAINSTORM_PORT optional: omit to auto-pick a free high port
+$env:BRAINSTORM_HOST = "127.0.0.1"          # BRAINSTORM_PORT optional: omit to auto-pick a random high port (49152+; on a collision the poll below times out — set BRAINSTORM_PORT to a free one)
 Start-Process -FilePath "node" `
   -ArgumentList "scripts/server.cjs" `
   -WorkingDirectory "<skill-dir>" `
@@ -62,6 +62,7 @@ Get-Content $info
 
 **POSIX / WSL / Docker:**
 ```bash
+cd <skill-dir>   # so scripts/server.cjs resolves (the server reads its template from __dirname)
 mkdir -p "<project>/.opencode/brainstorm/<session-id>"/{content,state}
 BRAINSTORM_DIR="<project>/.opencode/brainstorm/<session-id>" \
 BRAINSTORM_HOST=127.0.0.1 \
@@ -82,7 +83,7 @@ When launching through the `shell` tool, keep the process alive across turns: us
 ## The Loop
 
 1. **Check server is alive**, then **write HTML** to a new file in `screen_dir`:
-   - Before each write, check that `$STATE_DIR/server-info` exists. If it doesn't (or `$STATE_DIR/server-stopped` exists), the server has shut down — restart it with `start-server.sh` before continuing. The server auto-exits after 30 minutes of inactivity.
+   - Before each write, check that `$STATE_DIR/server-info` exists. If it doesn't (or `$STATE_DIR/server-stopped` exists), the server has shut down — restart it with the launch sequence above (direct `node` + env vars; the `start-server.sh` wrapper only where bash exists, and it uses a different session dir). The server auto-exits after 30 minutes of inactivity.
    - Use semantic filenames: `platform.html`, `visual-style.html`, `layout.html`
    - **Never reuse filenames** — each screen gets a fresh file
    - Use the `write` tool — **never use cat/heredoc** (dumps noise into terminal)

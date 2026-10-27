@@ -29,7 +29,7 @@ benchstat before.txt after.txt      # go install golang.org/x/perf/cmd/benchstat
 ```bash
 go test -bench=. -cpuprofile cpu.out -memprofile mem.out -blockprofile block.out
 go tool pprof -http=:8080 cpu.out          # flame graph in a browser
-go tool pprof -top -nodecount=20 cpu.out   # text, top by cumulative
+go tool pprof -top -nodecount=20 cpu.out   # text, top by flat time (add -cum for cumulative)
 ```
 
 **Profiles from a running server** — import `net/http/pprof`, then:
@@ -162,6 +162,8 @@ pidstat -p <pid> 1                  # per-process CPU, memory, I/O over time
 iostat -xz 1                        # disk saturation (%util, await)
 ss -ti                              # per-socket RTT, retransmits, congestion window
 ```
+
+Windows equivalents (no Linux toolchain on a Windows host): Process Explorer / PerfView for per-process CPU and sampling, `Get-Process` + `Get-Counter '\Process(*)\%% Processor Time'` for counters, `netstat -ano` (or `Test-NetConnection`) for sockets, `Get-Volume`/`Get-PhysicalDisk` for disk.
 
 The USE method is a fast triage pass over these: for each resource — CPU, memory, disk, network — check **U**tilization, **S**aturation (queue depth), and **E**rrors. Saturation usually points at the bottleneck before utilization does.
 

@@ -49,7 +49,7 @@ Then translate every candidate through one question: **what can the reader do no
 
 ## Step 3: Categorize
 
-Use these six, in this order, and omit any that are empty. Breaking changes lead — always, regardless of how minor they seem relative to the rest.
+Use these seven, in this order, and omit any that are empty. Security and Breaking lead — always, regardless of how minor they seem relative to the rest (Security first when present, since it is the one category with a time pressure attached).
 
 | Category | Contains |
 |---|---|
@@ -59,7 +59,7 @@ Use these six, in this order, and omit any that are empty. Breaking changes lead
 | **Deprecated** | Still works, will be removed — with the version it goes away in |
 | **Removed** | Gone, previously deprecated |
 | **Fixed** | Bugs, described by the symptom the reader saw |
-| **Security** | Always its own section, always near the top, never buried in Fixed |
+| **Security** | Always its own section, always first when present, never buried in Fixed |
 
 **Deprecations need a date or a version, not "soon".** A deprecation notice without a removal target gets ignored, and then removal is a surprise.
 

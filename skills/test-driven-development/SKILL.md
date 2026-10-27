@@ -174,9 +174,7 @@ Don't add features, refactor other code, or "improve" beyond the test.
 npm test path/to/test.test.ts
 ```
 
-Confirm:
-- Test passes
-- Other tests still pass
+Confirm the new test passes. Before the Refactor step, run the full suite to confirm the change didn't break other tests.
 - Output pristine (no errors, warnings)
 
 **Test fails?** Fix code, not test.

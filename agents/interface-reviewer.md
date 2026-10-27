@@ -50,8 +50,8 @@ Every finding carries three things. A finding missing any of them is not reporta
 ❌ "Consider improving the contrast."
 ✅ "`.card` uses `padding: 14px` (Card.tsx:8) while the rest of the app uses the
    8px scale from `:root`. Change to `var(--space-s)`."
-✅ "`--ink-3` #8b857c on `--base` #f4f1ea is 2.9:1 (needs 4.5:1). It is used for
-   body text in Meta.tsx:12. Darken to #6b6459 → 4.6:1."
+✅ "`--ink-3` #8b857c on `--base` #f4f1ea is 3.24:1 (needs 4.5:1). It is used for
+   body text in Meta.tsx:12. Darken to #6b6459 → 5.18:1."
 ```
 
 **Verify before reporting.** Do not claim a contrast failure without computing the ratio. Do not claim an inconsistency without the computed values. Do not claim a missing state without checking the code for it.
