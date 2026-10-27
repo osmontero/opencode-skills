@@ -32,64 +32,52 @@ The server watches a directory for HTML files and serves the newest one to the b
 
 ## Starting a Session
 
-```bash
-# Start server with persistence (mockups saved to project)
-scripts/start-server.sh --project-dir /path/to/project
+The server is pure Node (`server.cjs`) and reads **environment variables only — it ignores any CLI flags.** Launch it with `node` directly so it works on Windows (no bash/WSL required), WSL, and Docker alike. The only dependency is `node`.
 
-# Returns: {"type":"server-started","port":52341,"url":"http://localhost:52341",
-#           "screen_dir":"/path/to/project/.opencode/brainstorm/12345-1706000000/content",
-#           "state_dir":"/path/to/project/.opencode/brainstorm/12345-1706000000/state"}
+**Session dir convention:** put each session at `<project>/.opencode/brainstorm/<session-id>/` with `content/` and `state/` inside. Mockups persist there and survive restarts; remind the user to gitignore `.opencode/` if it isn't already.
+
+Pick a session id (e.g. `$(date +%s)` on POSIX, or `[System.DateTimeOffset]::Now.ToUnixTimeMilliseconds()` in PowerShell).
+
+**Windows / PowerShell (no bash needed):**
+```powershell
+$session = "<project>/.opencode/brainstorm/<session-id>"
+New-Item -ItemType Directory -Force -Path "$session/content" | Out-Null
+New-Item -ItemType Directory -Force -Path "$session/state"  | Out-Null
+$env:BRAINSTORM_DIR  = $session
+$env:BRAINSTORM_HOST = "127.0.0.1"          # BRAINSTORM_PORT optional: omit to auto-pick a free high port
+Start-Process -FilePath "node" `
+  -ArgumentList "scripts/server.cjs" `
+  -WorkingDirectory "<skill-dir>" `
+  -WindowStyle Hidden
+# The server writes connection info after listen() fires — poll for it rather than
+# sleeping a fixed time (startup can take longer than 2s):
+$info = "$session/state/server-info"
+$deadline = (Get-Date).AddSeconds(10)
+while (-not (Test-Path $info)) {
+  if ((Get-Date) -gt $deadline) { break }
+  Start-Sleep -Milliseconds 200
+}
+Get-Content $info
 ```
 
-Save `screen_dir` and `state_dir` from the response. Tell user to open the URL.
-
-**Finding connection info:** The server writes its startup JSON to `$STATE_DIR/server-info`. If you launched the server in the background and didn't capture stdout, read that file to get the URL and port. When using `--project-dir`, check `<project>/.opencode/brainstorm/` for the session directory.
-
-**Note:** Pass the project root as `--project-dir` so mockups persist in `.opencode/brainstorm/` and survive server restarts. Without it, files go to `/tmp` and get cleaned up. Remind the user to add `.opencode/` to `.gitignore` if it's not already there.
-
-**Launching the server by platform:**
-
-**opencode (macOS / Linux):**
+**POSIX / WSL / Docker:**
 ```bash
-# Default mode works — the script backgrounds the server itself
-scripts/start-server.sh --project-dir /path/to/project
+mkdir -p "<project>/.opencode/brainstorm/<session-id>"/{content,state}
+BRAINSTORM_DIR="<project>/.opencode/brainstorm/<session-id>" \
+BRAINSTORM_HOST=127.0.0.1 \
+  node scripts/server.cjs &
+info="<project>/.opencode/brainstorm/<session-id>/state/server-info"
+for _ in $(seq 1 50); do [ -f "$info" ] && break; sleep 0.2; done
+cat "$info"
 ```
 
-**opencode (Windows):**
-```bash
-# Windows auto-detects and uses foreground mode, which blocks the tool call.
-# Use background: true on the shell tool call so the server survives
-# across conversation turns.
-scripts/start-server.sh --project-dir /path/to/project
-```
-When calling this via the `shell` tool, set `background: true`. Then read `$STATE_DIR/server-info` on the next turn to get the URL and port.
+When launching through the `shell` tool, keep the process alive across turns: use `background: true` (or `Start-Process` on Windows). If the harness reaps detached processes, that is fine — the server self-terminates only on 30-min idle or when its owner dies; a killed server just needs a restart before the next screen.
 
-**Codex:**
-```bash
-# Codex reaps background processes. The script auto-detects CODEX_CI and
-# switches to foreground mode. Run it normally — no extra flags needed.
-scripts/start-server.sh --project-dir /path/to/project
-```
+**`scripts/start-server.sh` is an optional POSIX/WSL convenience wrapper** (backgrounds via `nohup`, resolves the harness PID for owner monitoring, prints the JSON). Use it where bash exists. Note it stores sessions under `<project>/.superpowers/brainstorm/` rather than `.opencode/brainstorm/` — prefer the direct `node` path above so the location is consistent with the rest of opencode.
 
-**Gemini CLI:**
-```bash
-# Use --foreground and set is_background: true on your shell tool call
-# so the process survives across turns
-scripts/start-server.sh --project-dir /path/to/project --foreground
-```
+**Return value:** the server prints `{"type":"server-started","port":...,"url":"http://localhost:<port>","screen_dir":"...","state_dir":"..."}` to stdout **and** writes it to `$STATE_DIR/server-info`. Save `screen_dir` and `state_dir` and tell the user to open the URL. If you launched in the background and didn't capture stdout, read `server-info`.
 
-**Other environments:** The server must keep running in the background across conversation turns. If your environment reaps detached processes, use `--foreground` and launch the command with your platform's background execution mechanism.
-
-If the URL is unreachable from your browser (common in remote/containerized setups), bind a non-loopback host:
-
-```bash
-scripts/start-server.sh \
-  --project-dir /path/to/project \
-  --host 0.0.0.0 \
-  --url-host localhost
-```
-
-Use `--url-host` to control what hostname is printed in the returned URL JSON.
+**Remote / containerized:** if the URL is unreachable from the browser, bind a non-loopback host — set `BRAINSTORM_HOST=0.0.0.0` and `BRAINSTORM_URL_HOST=localhost` (the URL host controls the hostname that is printed).
 
 ## The Loop
 
@@ -279,7 +267,7 @@ If `$STATE_DIR/events` doesn't exist, the user didn't interact with the browser 
 scripts/stop-server.sh $SESSION_DIR
 ```
 
-If the session used `--project-dir`, mockup files persist in `.opencode/brainstorm/` for later reference. Only `/tmp` sessions get deleted on stop.
+If `bash` is unavailable (plain Windows) or the server was launched directly with `node`, kill it by PID or port instead — e.g. on PowerShell: `Get-NetTCPConnection -LocalPort <port> | Select-Object -ExpandProperty OwningProcess | ForEach-Object { Stop-Process -Id $_ }`. The server also cleans up its own `server-info` file on shutdown and writes a `server-stopped` marker; deleting the session directory is safe once it is down.
 
 ## Reference
 

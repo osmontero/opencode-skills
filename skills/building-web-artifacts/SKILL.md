@@ -8,9 +8,9 @@ license: Complete terms in LICENSE.txt
 # Building Web Artifacts
 
 To build powerful frontend opencode artifacts, follow these steps:
-1. Initialize the frontend repo using `scripts/init-artifact.sh`
+1. Initialize the frontend repo using `scripts/init-artifact.cjs`
 2. Develop your artifact by editing the generated code
-3. Bundle all code into a single HTML file using `scripts/bundle-artifact.sh`
+3. Bundle all code into a single HTML file using `scripts/bundle-artifact.cjs`
 4. Save the artifact file and inform the user of its location
 5. (Optional) Test the artifact
 
@@ -112,7 +112,7 @@ Then read both screenshots. A bundle that builds successfully can still render b
 
 Run the initialization script to create a new React project:
 ```bash
-bash scripts/init-artifact.sh <project-name>
+node scripts/init-artifact.cjs <project-name>
 cd <project-name>
 ```
 
@@ -133,7 +133,7 @@ To build the artifact, edit the generated files. See **Common Development Tasks*
 
 To bundle the React app into a single HTML artifact:
 ```bash
-bash scripts/bundle-artifact.sh
+node scripts/bundle-artifact.cjs
 ```
 
 This creates `bundle.html` - a self-contained artifact with all JavaScript, CSS, and dependencies inlined. This file can be directly shared in the agent conversations as an artifact.
