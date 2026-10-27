@@ -6,7 +6,10 @@ from pathlib import Path
 
 def parse_skill_md(skill_path: Path) -> tuple[str, str, str]:
     """Parse a SKILL.md file, returning (name, description, full_content)."""
-    content = (skill_path / "SKILL.md").read_text()
+    # UTF-8 explicitly: the default locale codepage (cp1252 on Windows)
+    # mangles non-ASCII characters in descriptions (e.g. an em-dash becomes
+    # "â€"", which then poisons the stub skill and the improver prompt).
+    content = (skill_path / "SKILL.md").read_text(encoding="utf-8")
     lines = content.split("\n")
 
     if lines[0].strip() != "---":

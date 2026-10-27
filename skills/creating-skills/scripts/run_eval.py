@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 """Run trigger evaluation for a skill description.
 
-Tests whether a skill's description causes trigger (read the skill)
-for a set of queries. Outputs results as JSON.
+Tests whether a skill's description causes the skill to be triggered
+(via the `skill` tool) for a set of queries. Outputs results as JSON.
+
+Runs each query through `opencode run --standalone --format json` in a
+scratch project whose `.opencode/skills/` contains a single stub skill
+with the description under test. Triggering is detected from the JSON
+event stream: a `tool_use` event with `part.tool == "skill"` whose
+`part.state.input.id` contains the stub's skill name.
 """
 
 import argparse
 import json
 import os
-import select
+import shutil
 import subprocess
 import sys
 import time
@@ -22,8 +28,8 @@ from scripts.utils import parse_skill_md
 def find_project_root() -> Path:
     """Find the project root by walking up from cwd looking for .opencode/.
 
-    Mimics how opencode discovers its project root, so the command file
-    we create ends up where model API will look for it.
+    Used as the default scratch location for eval runs so the temporary
+    project sits next to (not inside) the repo being evaluated.
     """
     current = Path.cwd()
     for parent in [current, *current.parents]:
@@ -37,148 +43,94 @@ def run_single_query(
     skill_name: str,
     skill_description: str,
     timeout: int,
-    project_root: str,
+    scratch_dir: str,
     model: str | None = None,
 ) -> bool:
     """Run a single query and return whether the skill was triggered.
 
-    Creates a command file in .opencode/commands/ so it appears in Claude's
-    available_skills list, then runs `model API` with the raw query.
-    Uses --include-partial-messages to detect triggering early from
-    stream events (content_block_start) rather than waiting for the
-    full assistant message, which only arrives after tool execution.
+    Creates a stub skill under the scratch project's `.opencode/skills/`
+    using the *real* skill name (so it shadows the same-named globally
+    installed skill) with the description under test and a unique marker
+    in the body. Then runs the raw query through
+    `opencode run --standalone --format json` and detects the trigger from
+    the `skill` tool_use event: `part.state.input.id == skill_name` AND the
+    event output contains the marker (proves the stub's description was the
+    one in the model's available_skills list, not a global copy).
     """
     unique_id = uuid.uuid4().hex[:8]
-    clean_name = f"{skill_name}-skill-{unique_id}"
-    project_commands_dir = Path(project_root) / ".opencode" / "commands"
-    command_file = project_commands_dir / f"{clean_name}.md"
+    marker = f"EVAL-TRIGGER-MARKER-{unique_id}"
+    # Each concurrent query gets its own project dir so parallel workers do not
+    # clobber each other's stub skill file.
+    project_dir = Path(scratch_dir) / unique_id
+    skills_dir = project_dir / ".opencode" / "skills" / skill_name
 
     try:
-        project_commands_dir.mkdir(parents=True, exist_ok=True)
+        skills_dir.mkdir(parents=True, exist_ok=True)
         # Use YAML block scalar to avoid breaking on quotes in description
         indented_desc = "\n  ".join(skill_description.split("\n"))
         command_content = (
             f"---\n"
+            f"name: {skill_name}\n"
             f"description: |\n"
             f"  {indented_desc}\n"
             f"---\n\n"
-            f"# {skill_name}\n\n"
-            f"This skill handles: {skill_description}\n"
+            f"# {skill_name} (eval stub)\n\n"
+            f"{marker}\n"
         )
-        command_file.write_text(command_content)
+        (skills_dir / "SKILL.md").write_text(command_content, encoding="utf-8")
 
         cmd = [
-            "claude",
-            "-p", query,
-            "--output-format", "stream-json",
-            "--verbose",
-            "--include-partial-messages",
+            "opencode",
+            "run",
+            "--standalone",
+            "--format", "json",
+            query,
         ]
         if model:
             cmd.extend(["--model", model])
 
-        # Remove OPENCODE env var to allow nesting model API inside a
-        # opencode session. The guard is for interactive terminal conflicts;
-        # programmatic subprocess usage is safe.
-        env = {k: v for k, v in os.environ.items() if k != "OPENCODE"}
-
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
-            cwd=project_root,
-            env=env,
-        )
-
-        triggered = False
-        start_time = time.time()
-        buffer = ""
-        # Track state for stream event detection
-        pending_tool_name = None
-        accumulated_json = ""
-
         try:
-            while time.time() - start_time < timeout:
-                if process.poll() is not None:
-                    remaining = process.stdout.read()
-                    if remaining:
-                        buffer += remaining.decode("utf-8", errors="replace")
-                    break
+            process = subprocess.run(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.DEVNULL,
+                cwd=project_dir,
+                timeout=timeout,
+                check=False,
+            )
+            buffer = process.stdout.decode("utf-8", errors="replace")
+        except subprocess.TimeoutExpired as e:
+            # The query did not finish in time. If the skill was triggered
+            # before the timeout, count it; otherwise treat as no trigger.
+            out = e.stdout or b""
+            buffer = out.decode("utf-8", errors="replace")
 
-                ready, _, _ = select.select([process.stdout], [], [], 1.0)
-                if not ready:
-                    continue
-
-                chunk = os.read(process.stdout.fileno(), 8192)
-                if not chunk:
-                    break
-                buffer += chunk.decode("utf-8", errors="replace")
-
-                while "\n" in buffer:
-                    line, buffer = buffer.split("\n", 1)
-                    line = line.strip()
-                    if not line:
-                        continue
-
-                    try:
-                        event = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
-
-                    # Early detection via stream events
-                    if event.get("type") == "stream_event":
-                        se = event.get("event", {})
-                        se_type = se.get("type", "")
-
-                        if se_type == "content_block_start":
-                            cb = se.get("content_block", {})
-                            if cb.get("type") == "tool_use":
-                                tool_name = cb.get("name", "")
-                                if tool_name in ("Skill", "Read"):
-                                    pending_tool_name = tool_name
-                                    accumulated_json = ""
-                                else:
-                                    return False
-
-                        elif se_type == "content_block_delta" and pending_tool_name:
-                            delta = se.get("delta", {})
-                            if delta.get("type") == "input_json_delta":
-                                accumulated_json += delta.get("partial_json", "")
-                                if clean_name in accumulated_json:
-                                    return True
-
-                        elif se_type in ("content_block_stop", "message_stop"):
-                            if pending_tool_name:
-                                return clean_name in accumulated_json
-                            if se_type == "message_stop":
-                                return False
-
-                    # Fallback: full assistant message
-                    elif event.get("type") == "assistant":
-                        message = event.get("message", {})
-                        for content_item in message.get("content", []):
-                            if content_item.get("type") != "tool_use":
-                                continue
-                            tool_name = content_item.get("name", "")
-                            tool_input = content_item.get("input", {})
-                            if tool_name == "Skill" and clean_name in tool_input.get("skill", ""):
-                                triggered = True
-                            elif tool_name == "Read" and clean_name in tool_input.get("file_path", ""):
-                                triggered = True
-                            return triggered
-
-                    elif event.get("type") == "result":
-                        return triggered
-        finally:
-            # Clean up process on any exit path (return, exception, timeout)
-            if process.poll() is None:
-                process.kill()
-                process.wait()
-
-        return triggered
+        # Parse the NDJSON event stream for a `skill` tool_use that names
+        # the stub and whose output carries the marker.
+        for line in buffer.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                event = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if event.get("type") != "tool_use":
+                continue
+            part = event.get("part", {})
+            if part.get("tool") != "skill":
+                continue
+            state = part.get("state", {}) or {}
+            tool_input = state.get("input", {}) or {}
+            if tool_input.get("id") != skill_name:
+                continue
+            output = state.get("output", "") or ""
+            if marker in output:
+                return True
+        return False
     finally:
-        if command_file.exists():
-            command_file.unlink()
+        # Remove the per-query project dir so the next run starts clean.
+        shutil.rmtree(project_dir, ignore_errors=True)
 
 
 def run_eval(
@@ -191,8 +143,10 @@ def run_eval(
     runs_per_query: int = 1,
     trigger_threshold: float = 0.5,
     model: str | None = None,
+    scratch_dir: str | None = None,
 ) -> dict:
     """Run the full eval set and return results."""
+    scratch = Path(scratch_dir or (project_root / ".skill-eval-scratch"))
     results = []
 
     with ProcessPoolExecutor(max_workers=num_workers) as executor:
@@ -205,7 +159,7 @@ def run_eval(
                     skill_name,
                     description,
                     timeout,
-                    str(project_root),
+                    str(scratch),
                     model,
                 )
                 future_to_info[future] = (item, run_idx)
@@ -244,6 +198,9 @@ def run_eval(
     passed = sum(1 for r in results if r["pass"])
     total = len(results)
 
+    # Clean up scratch on the way out.
+    shutil.rmtree(scratch, ignore_errors=True)
+
     return {
         "skill_name": skill_name,
         "description": description,
@@ -262,14 +219,15 @@ def main():
     parser.add_argument("--skill-path", required=True, help="Path to skill directory")
     parser.add_argument("--description", default=None, help="Override description to test")
     parser.add_argument("--num-workers", type=int, default=10, help="Number of parallel workers")
-    parser.add_argument("--timeout", type=int, default=30, help="Timeout per query in seconds")
+    parser.add_argument("--timeout", type=int, default=120, help="Timeout per query in seconds")
     parser.add_argument("--runs-per-query", type=int, default=3, help="Number of runs per query")
     parser.add_argument("--trigger-threshold", type=float, default=0.5, help="Trigger rate threshold")
-    parser.add_argument("--model", default=None, help="Model to use for model API (default: user's configured model)")
+    parser.add_argument("--model", default=None, help="Model in provider/model form (default: opencode config's model)")
+    parser.add_argument("--scratch-dir", default=None, help="Scratch dir for temp eval projects (default: <project_root>/.skill-eval-scratch)")
     parser.add_argument("--verbose", action="store_true", help="Print progress to stderr")
     args = parser.parse_args()
 
-    eval_set = json.loads(Path(args.eval_set).read_text())
+    eval_set = json.loads(Path(args.eval_set).read_text(encoding="utf-8"))
     skill_path = Path(args.skill_path)
 
     if not (skill_path / "SKILL.md").exists():
@@ -293,6 +251,7 @@ def main():
         runs_per_query=args.runs_per_query,
         trigger_threshold=args.trigger_threshold,
         model=args.model,
+        scratch_dir=args.scratch_dir,
     )
 
     if args.verbose:
