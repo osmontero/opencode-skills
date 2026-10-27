@@ -3,7 +3,7 @@ name: building-web-artifacts
 description: Use when building elaborate, multi-component HTML artifacts using modern frontend technologies (React, Tailwind CSS, shadcn/ui). Triggers include requests for complex web artifacts requiring state management, routing, or shadcn/ui components. Not for simple single-file HTML/JSX artifacts — use direct generation for those.
 license: Complete terms in LICENSE.txt
 ---
-------
+
 
 # Building Web Artifacts
 

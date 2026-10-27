@@ -12,6 +12,9 @@ dependencies = [
     # canvas-art skill (PIL + numpy rendering)
     "pillow>=10.0.0",
     "numpy>=1.24.0",
+    "cairosvg>=2.7.0",
+    "reportlab>=4.0.0",
+    "matplotlib>=3.8",
     # webapp-testing skill
     "playwright>=1.40.0",
     # mcp-builder skill

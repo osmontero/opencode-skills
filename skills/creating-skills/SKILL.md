@@ -383,15 +383,14 @@ Put each with_skill version before its baseline counterpart.
 
    3. **Do an analyst pass** — use the `analyzer` global agent to read the benchmark data and surface patterns the aggregate stats might hide. Look for things like assertions that always pass regardless of skill (non-discriminating), high-variance evals (possibly flaky), and time/token tradeoffs.
 
-4. **Launch the viewer** with both qualitative outputs and quantitative data:
+4. **Launch the viewer** with both qualitative outputs and quantitative data. It starts a local web server and opens a browser tab, so run it as a **background** shell command (`background: true` on the `shell` tool) and let the URL print to stdout:
    ```bash
-   nohup python <skill-creator-path>/eval-viewer/generate_review.py \
+   python <skill-creator-path>/eval-viewer/generate_review.py \
      <workspace>/iteration-N \
      --skill-name "my-skill" \
-     --benchmark <workspace>/iteration-N/benchmark.json \
-     > /dev/null 2>&1 &
-   VIEWER_PID=$!
+     --benchmark <workspace>/iteration-N/benchmark.json
    ```
+   (Run as a background shell command so the viewer survives across turns; the URL is printed to stdout.)
    For iteration 2+, also pass `--previous-workspace <workspace>/iteration-<N-1>`.
 
    **Cowork / headless environments:** If `webbrowser.open()` is not available or the environment has no display, use `--static <output_path>` to write a standalone HTML file instead of starting a server. Feedback will be downloaded as a `feedback.json` file when the user clicks "Submit All Reviews". After download, copy `feedback.json` into the workspace directory for the next iteration to pick up.
@@ -431,11 +430,7 @@ When the user tells you they're done, read `feedback.json`:
 
 Empty feedback means the user thought it was fine. Focus your improvements on the test cases where the user had specific complaints.
 
-Kill the viewer server when you're done with it:
-
-```bash
-kill $VIEWER_PID 2>/dev/null
-```
+Kill the viewer server when you're done with it — stop the background shell process that runs it (`Stop-Process` on the owning PID on Windows, `kill <pid>` on POSIX).
 
 ---
 

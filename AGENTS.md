@@ -76,7 +76,7 @@ The separate top-level `compaction` block (`auto`, `keep.tokens`, `buffer`) cont
 
 ### Memory is two MEMORY.md files wired through `instructions`
 
-`build.txt` has a **Memory** section telling the agent to record durable lessons on its own initiative — corrections, standing preferences, undocumented failure modes — into `~/.config/opencode/MEMORY.md` (global) or `.opencode/MEMORY.md` (per project). Global writes are autonomous; project writes are proposed first, because they land in the user's repository. This replaces the plugin-based memory system in `docs/specs/2026-08-05-local-memory-design.md`, which is superseded.
+`build.txt` has a **Memory** section telling the agent to record durable lessons on its own initiative — corrections, standing preferences, undocumented failure modes — into `~/.config/opencode/MEMORY.md` (global) or `.opencode/MEMORY.md` (per project). Global writes are autonomous; project writes are proposed first, because they land in the user's repository. This replaces the earlier plugin-based memory design (superseded 2026-08-05).
 
 ```json
 "instructions": ["~/.config/opencode/MEMORY.md", ".opencode/MEMORY.md"]

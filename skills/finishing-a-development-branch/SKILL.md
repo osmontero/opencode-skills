@@ -183,8 +183,8 @@ Removing a worktree whose session is still inside it is not safe, so do this in 
 ## Integration
 
 **Called by:**
-- **subagent-driven-development** (Step 7) - After all tasks complete
-- **executing-plans** (Step 5) - After all batches complete
+- **subagent-driven-development** — after the final code review, once all tasks are complete
+- **executing-plans** (Step 7: Hand Off) — after all batches complete
 
 **Pairs with:**
 - **using-git-worktrees** - Cleans up worktree created by that skill

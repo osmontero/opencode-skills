@@ -124,6 +124,8 @@ Write-Host "Setting up Python environment..."
 if (-not (Get-Command uv -ErrorAction SilentlyContinue)) {
     Write-Host "  Installing uv..."
     powershell -ExecutionPolicy Bypass -Command "irm https://astral.sh/uv/install.ps1 | iex"
+    # uv installs to %USERPROFILE%\.local\bin, which is not on this session's PATH yet.
+    $env:Path += ";$env:USERPROFILE\.local\bin"
 }
 
 if (Test-Path -LiteralPath $OPENVEN) {
@@ -131,11 +133,7 @@ if (Test-Path -LiteralPath $OPENVEN) {
     uv pip install --python "$OPENVEN\Scripts\python.exe" -e "$SCRIPT_DIR"
 } else {
     Write-Host "  Creating virtual environment..."
-    try {
-        uv venv $OPENVEN --python 3.12 --allow-incomplete-chapters 2>$null
-    } catch {
-        uv venv $OPENVEN --python 3.12
-    }
+    uv venv $OPENVEN --python 3.12
     uv pip install --python "$OPENVEN\Scripts\python.exe" -e "$SCRIPT_DIR"
 }
 

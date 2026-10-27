@@ -18,3 +18,8 @@ build/
 
 # brainstorming visual-companion session mockups (generated, per-session)
 .opencode/brainstorm/
+
+# Generated skill artifacts (evals, packaging, rendered flowcharts)
+*.skill
+*-workspace/
+skills/**/diagrams/

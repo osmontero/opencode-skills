@@ -3,7 +3,6 @@ name: testing-webapps
 description: Use when testing local web applications using Playwright. Triggers include requests to verify frontend functionality, debug UI behavior, capture browser screenshots, view browser logs, or test any web application interactively. Write native Python Playwright scripts for all web application testing tasks.
 license: Complete terms in LICENSE.txt
 ---
-------
 
 # Testing Web Applications
 

@@ -107,13 +107,15 @@ function main() {
     process.exit(1);
   }
 
-  // Check if dot is available
+  // Check if dot is available (which on POSIX, where on Windows)
+  const dotLookup = process.platform === 'win32' ? 'where dot' : 'which dot';
   try {
-    execSync('which dot', { encoding: 'utf-8' });
+    execSync(dotLookup, { encoding: 'utf-8' });
   } catch {
     console.error('Error: graphviz (dot) not found. Install with:');
     console.error('  brew install graphviz    # macOS');
     console.error('  apt install graphviz     # Linux');
+    console.error('  winget install Graphviz.Graphviz   # Windows');
     process.exit(1);
   }
 

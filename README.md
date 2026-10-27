@@ -4,7 +4,7 @@ Adapted skills and agents for the opencode agent ecosystem.
 
 ## Contents
 
-**35 skills** covering development workflows, design and UX, accessibility, security, performance, schema evolution, document processing, code review, testing, debugging, LLM fine-tuning, and more.
+**33 skills** covering development workflows, design and UX, accessibility, security, performance, schema evolution, document processing, code review, testing, debugging, LLM fine-tuning, and more.
 
 **11 global agents** for implementation, review, and evaluation.
 
@@ -54,6 +54,7 @@ The following skills are licensed under Apache 2.0 and adapted from Anthropic's 
 - `creating-skills` — Skill development, testing, and benchmarking lifecycle
 - `applying-themes` — Thematic styling for artifacts and documents
 - `building-web-artifacts` — Multi-component HTML artifact creation
+- `designing-frontend-interfaces` — Visual design system for web interfaces
 - `testing-webapps` — Playwright-based web application testing
 
 #### MIT License (Jesse Vincent / obra/superpowers)
@@ -79,14 +80,13 @@ The following skills are MIT-licensed adaptations from [obra/superpowers](https:
 
 The agent prompts in `.opencode/prompts/` are adapted from opencode's own built-in agent prompts ([sst/opencode](https://github.com/sst/opencode), MIT), extracted from the opencode 1.18.4 binary:
 
-- `build.txt`, `plan.txt` — from opencode's default agent system prompt
-- `compaction.txt` — from opencode's built-in compaction prompt
+- `build.txt`, `plan.txt` — from opencode's default agent system prompt (a third file, `compaction.txt`, existed in v1 and was deleted during the v2 migration, because v2 compacts under the session agent's prompt rather than a dedicated compaction agent)
 
-All three have since been substantially rewritten to be general-purpose rather than coding-specific (see `AGENTS.md`). What remains derived is the structure plus a small amount of verbatim text: the opencode self-help block, the code-reference example, and two lines of the compaction anchoring contract.
+Both remaining files have since been substantially rewritten to be general-purpose rather than coding-specific (see `AGENTS.md`). What remains derived is the structure plus a small amount of verbatim text: the opencode self-help block and the code-reference example.
 
 #### MIT License (this repository)
 
-The following are original to this repository and carry the repository's MIT license:
+The following 8 skills and 2 agents are original to this repository and carry the repository's MIT license:
 
 - `designing-user-experience` — Interaction design, state coverage, forms, microcopy
 - `building-accessible-interfaces` — Practical WCAG 2.2 AA guidance and component patterns
@@ -94,6 +94,7 @@ The following are original to this repository and carry the repository's MIT lic
 - `reviewing-security` — Path-based security review with a vulnerability-patterns reference
 - `evolving-apis-and-schemas` — Backward-compatible proto, SQL, and API evolution
 - `investigating-performance` — Measurement-first performance investigation and profiling
+- `processing-pdf` — PDF data extraction, scanning, and form manipulation
 - `writing-release-notes` — Changelogs, release notes, and upgrade guides
 - `agents/interface-reviewer.md` — UI review subagent
 - `agents/security-reviewer.md` — Security review subagent

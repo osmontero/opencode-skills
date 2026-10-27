@@ -83,14 +83,16 @@ def run_single_query(
             "run",
             "--standalone",
             "--format", "json",
-            query,
         ]
         if model:
             cmd.extend(["--model", model])
 
+        # The query goes over stdin (not argv): Windows caps the command line
+        # at ~32k chars, and `opencode run` reads the message from stdin.
         try:
             process = subprocess.run(
                 cmd,
+                input=query,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.DEVNULL,
                 cwd=project_dir,

@@ -49,7 +49,7 @@ Need to process a PDF?
 │
 ├─ Fill a form?
 │  ├─ Check fields: python3 scripts/check_forms.py input.pdf
-│  └─ Fill: python3 scripts/fill_form.py input.pdf fields.json output.pdf
+│  └─ Fill: python3 scripts/fill_form.py input.pdf fields.json -o output.pdf
 │
 ├─ Read a scanned PDF (quick)?
 │  ├─ Convert: python3 scripts/to_images.py scanned.pdf -o ./pages/ --dpi 200
@@ -190,7 +190,7 @@ python3 scripts/check_forms.py input.pdf
 ### Fill a form
 
 ```bash
-python3 scripts/fill_form.py input.pdf fields.json output.pdf
+python3 scripts/fill_form.py input.pdf fields.json -o output.pdf
 ```
 
 Where `fields.json` contains:

@@ -25,7 +25,7 @@ done
 
 # Clean and install agents — remove any agent not in the repo
 echo "Installing agents to $CONFIG_DIR/agents/..."
-for f in "$CONFIG_DIR/agents/"*.md; do
+for f in "$CONFIG_DIR/agents/"*; do
   [ -f "$f" ] || continue
   name="$(basename "$f")"
   if [ ! -f "$SCRIPT_DIR/agents/$name" ]; then
@@ -110,8 +110,7 @@ if [ -d "$OPENVEN" ]; then
   uv pip install --python "$OPENVEN/bin/python" -e "$SCRIPT_DIR"
 else
   echo "  Creating virtual environment..."
-  uv venv "$OPENVEN" --python 3.12 --allow-incomplete-chapters 2>/dev/null || \
-    uv venv "$OPENVEN" --python 3.12
+  uv venv "$OPENVEN" --python 3.12
   uv pip install --python "$OPENVEN/bin/python" -e "$SCRIPT_DIR"
 fi
 

@@ -1,7 +1,7 @@
 ---
 name: brainstorming
 description: >
-  Use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user
+  Use when about to start any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user
   intent, requirements and design before implementation.
 compatibility: opencode
 ---

@@ -14,7 +14,7 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
-**Context:** This should be run in a dedicated worktree (created by brainstorming skill).
+**Context:** Planning is read-only — the `plan` agent can only write `docs/plans/*` and `docs/specs/*`. Write the plan there in the current checkout; the worktree is created at execution time (see using-git-worktrees, invoked by executing-plans / subagent-driven-development before implementation starts).
 
 **Save plans to:** `docs/plans/YYYY-MM-DD-<feature-name>.md`
 - (User preferences for plan location override this default)
