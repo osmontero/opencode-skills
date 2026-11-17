@@ -109,7 +109,61 @@ Breakpoints in `em` respond to user font-size settings; `px` breakpoints ignore 
 
 **Test widths that matter:** 390 (iPhone), 768 (tablet portrait), 1024 (tablet landscape / small laptop), 1440 (desktop), 1920. The 390 and 1440 checks are mandatory; the rest as the design warrants.
 
-**Touch targets:** minimum 44×44 CSS px for anything tappable, with at least 8px between adjacent targets. This is WCAG 2.2 SC 2.5.8.
+**Touch targets:** minimum 44×44 CSS px for anything tappable, with at least 8px between adjacent targets. (WCAG 2.2 SC 2.5.8's legal floor is 24px; 44 is the platform standard — design for that.)
+
+## Safari / iOS 26 Layout Regressions (verified 2026-11)
+
+Apple switched to year-based versioning in 2025: iOS 26 / Safari 26 shipped Sept 2025, with 26.1-26.4 fixes through Mar 2026 and Safari 27 through Oct 2026. These are the shipped behaviors that break real layouts — treat this section as dated, like the tell lists, and re-verify against WebKit release notes before relying on it.
+
+### 1. The per-site text size flips your breakpoints (the "content limits" problem)
+
+iOS 26 gives users a **per-site** text-size control (the A/A− buttons). Raising it changes the effective layout viewport width enough to **cross a media-query breakpoint** — an iPhone can render your *desktop* layout, and lowering it flips back. Reported behavior, not Apple-documented mechanism.
+
+Consequences for the CSS you write:
+
+- **Do not anchor a layout to a single breakpoint boundary.** A site whose mobile layout is `max-width: 767px` and desktop is `min-width: 768px` will swap at the moment the user touches the font slider, mid-session.
+- **Make the mobile layout tolerant of a wider effective viewport.** A centered max-width column (the one you already use for measure) is the robust answer: at 390px it fills the screen, and if the effective width grows to 500px under text zoom it still reads as mobile, not as a broken desktop.
+- **Prefer `em` breakpoints** — they scale with the root font, so they move *with* the user's text size instead of fighting it. (Already recommended above for a different reason; this makes it load-bearing.)
+- There is no clean CSS reset for this. The mitigation is layout robustness, not a feature query.
+
+### 2. `position: fixed` / `sticky` drift ~24px after the keyboard opens (WebKit 297779)
+
+On iOS 26, after the software keyboard is shown and dismissed, `window.visualViewport.offsetTop` becomes ~24 and `innerHeight` and `visualViewport.height` disagree. Fixed/sticky headers and footers then drift 10-24px, exposing a gap; it persists across tabs and reload — only a full Safari relaunch clears it. Partially fixed in 26.1; residual reports into early 2026.
+
+Workarounds, in order of preference:
+
+- **Use `position: sticky` for chrome** (top bars, bottom bars) — it goes through a different WebKit render path and does not jitter (Mastodon's confirmed fix).
+- **Use dynamic viewport units** — `dvh`/`svh`/`dvw` instead of `vh`/`100vw` — so the chrome tracks the real visual viewport (Zulip's fix).
+- **In JS, never cache `window.innerHeight`.** Re-query `visualViewport` on its `resize`/`scroll` events and subtract `visualViewport.offsetTop`.
+
+### 3. Opaque `fixed; inset: 0` overlays get a hole at the Liquid Glass bottom bar
+
+Safari 26's floating tab/URL bar sits *above* `bottom: 0` by design. A full-viewport overlay (modal, fullscreen menu) with a **solid** background fails to cover the screen — page content shows through under the bar. Semi-transparent backgrounds (`opacity < 1`) route through the compositor and cover fully.
+
+Workarounds:
+
+```css
+/* Option A — force the compositor path with a near-opaque background */
+.overlay { position: fixed; inset: 0; background: rgba(15, 17, 21, 0.99); }
+
+/* Option B — paint the gap yourself */
+.overlay::after {
+  content: ""; position: fixed; left: 0; right: 0; bottom: 0;
+  height: env(safe-area-inset-bottom); background: inherit;
+}
+```
+
+`viewport-fit=cover` does not override this in portrait, and `theme-color` no longer affects the bars in 26. If a `100vh`-sized overlay is the only thing misbehaving, try `100dvh` — the fixed-overlay bug and the viewport-unit bug share a render path.
+
+### 4. CSS `zoom` now scales layout (26.4 rewrite, 27.x fixes)
+
+Safari 26.4 rewrote `zoom`: it now affects `width/height/min/max`, offsets, `margin`, `calc()`, `line-height`, `getBoundingClientRect()`, and `devicePixelRatio`, and composes with page zoom. If you (or a legacy framework) use `zoom` for responsive scaling, the computed sizes you measured are wrong on Safari 26.4+. `scrollWidth`/`clientWidth` were also inconsistent under zoom until STP 253.
+
+**Rule:** do not use `zoom` for layout. Transform or fluid units instead.
+
+### Test matrix implication
+
+The 390px and 1440px render checks in this cluster assume a stock viewport. On iOS 26 hardware (or the simulator with a text-size bump), add one pass: **raise the per-site text size and re-check that the layout did not flip mode or expose a gap under fixed chrome.** That single pass catches items 1-3, which no desktop screenshot will.
 
 ## Vertical Rhythm
 
@@ -208,3 +262,7 @@ Use `svh`/`dvh` rather than `vh` — mobile browser chrome makes `100vh` overflo
 **`gap` forgotten in favor of child margins.** Margins on children collapse unpredictably and break when items reorder. Use `gap` on the container.
 
 **`100vh` on mobile.** Address bar behavior makes it overflow. Use `100dvh` or `100svh`.
+
+**Anchoring a layout to one breakpoint.** iOS 26's per-site text-size control changes the effective viewport width, so a user's font slider can flip mobile↔desktop mid-session. A centered max-width column and `em` breakpoints absorb this; a hard `min-width: 768px` desktop layout does not. See the Safari section above.
+
+**Caching `window.innerHeight` in JS.** On iOS 26 it can disagree with `visualViewport.height` by ~24px after the keyboard opens, and the drift persists. Re-query `visualViewport` on its events instead.

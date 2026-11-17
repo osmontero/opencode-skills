@@ -212,6 +212,7 @@ Audit against `designing-frontend-interfaces/references/app-styles.md`:
 - [ ] Tables and code blocks scroll inside their own container, not the page
 - [ ] Images have `width`/`height` or `aspect-ratio` — no layout shift
 - [ ] `100dvh`/`100svh` rather than `100vh`
+- [ ] Layout does not anchor to a single breakpoint boundary (iOS 26 per-site text size changes effective viewport width and can flip mobile↔desktop; see `layout-and-composition.md`, Safari section)
 - [ ] The grid is broken at least once, deliberately — or the design is a uniform centered column
 
 ## Step 8: States and Behavior
@@ -230,7 +231,7 @@ Check each against `designing-user-experience`. These are usually **missing**, n
 - [ ] Destructive actions have undo or a specific confirmation
 - [ ] All five interactive states exist: rest, hover, active, focus-visible, disabled
 - [ ] Filter/tab/modal state is in the URL
-- [ ] Touch targets ≥ 44px, nothing hover-only
+- [ ] Touch targets ≥ 44px (WCAG floor is 24px), nothing hover-only
 
 ## Step 9: Accessibility
 

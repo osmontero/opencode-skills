@@ -264,6 +264,8 @@ body { min-height: 100dvh; }  /* not 100vh — browser chrome makes it overflow 
 
 Every gesture needs a visible equivalent. Swipe-to-delete is fine as an accelerator; it cannot be the only way to delete.
 
+**iOS 26 text size is a user control that moves your layout.** The per-site A/A− slider changes the effective viewport width, so a user raising their font can push the layout past a breakpoint into the wrong mode. Design the mobile layout to *tolerate* a wider effective viewport (a centered max-width column, `em` breakpoints) rather than anchoring to a single boundary. Full regression list and workarounds: `designing-frontend-interfaces` → `references/layout-and-composition.md`, "Safari / iOS 26 Layout Regressions."
+
 ## Self-Review
 
 - [ ] Every data component has all four empty states distinguished
