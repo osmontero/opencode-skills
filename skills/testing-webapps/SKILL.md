@@ -24,6 +24,7 @@ playwright install chromium
 
 **Helper Scripts Available**:
 - `scripts/with_server.py` - Manages server lifecycle (supports multiple servers)
+- `scripts/capture_evidence.py` - Captures the 8-shot review bundle (first-view, full, mobile, dark, empty, loading, error, focus) plus DOM measurements; see the Visual Evidence Capture section
 
 **Always run scripts with `--help` first** to see usage. DO NOT read the source until you try running the script first and find that a customized solution is abslutely necessary. These scripts can be very large and thus pollute your context window. They exist to be called directly as black-box scripts rather than ingested into your context window.
 
@@ -171,23 +172,42 @@ assert not invisible, f"focusable elements with no visible focus: {invisible}"
 ## Responsive and Visual Checks
 
 ```python
+# device_scale_factor=2 — 1x text is unreadable in a review
+page = browser.new_page(viewport={"width": 1440, "height": 900}, device_scale_factor=2)
 for name, w, h in [("mobile", 390, 844), ("tablet", 768, 1024), ("desktop", 1440, 900)]:
     page.set_viewport_size({"width": w, "height": h})
-    page.wait_for_timeout(200)                       # settle layout/animation
+    page.evaluate("document.fonts.ready")              # never screenshot the fallback font
+    page.wait_for_timeout(200)                          # settle layout/animation
     overflow = page.evaluate("""() => [...document.querySelectorAll('*')]
         .filter(e => e.getBoundingClientRect().right > document.documentElement.clientWidth + 1)
         .slice(0,5).map(e => e.tagName + '.' + e.className)""")
     assert not overflow, f"{name}: horizontal overflow from {overflow}"
     page.screenshot(path=f"/tmp/{name}.png", full_page=True)
+# The first-view shot — what a user sees before scrolling — is viewport-only:
+page.screenshot(path="/tmp/first-view.png")
 ```
 
-**Then read the screenshots.** A passing assertion says the DOM is not overflowing; it says nothing about whether the page looks right. For a full visual audit use the `reviewing-interface-quality` skill.
+**Then read the screenshots.** A passing assertion says the DOM is not overflowing; it says nothing about whether the page looks right.
 
 Deterministic screenshots — disable animation and caret so repeat runs match:
 
 ```python
 page.screenshot(path="x.png", animations="disabled", caret="hide", full_page=True)
 ```
+
+## Visual Evidence Capture (the review bundle)
+
+For a UI review, a single happy-path screenshot is not evidence — the states are where defects hide. The `capture_evidence.py` helper produces the full 8-shot bundle (first-view, full-page, mobile, dark, empty, loading, error, focus) plus `measurements.json` (distinct font-size/radius/shadow/padding/color counts, overflow list, console errors). The per-shot checklist and the report format live in `reviewing-interface-quality`.
+
+```bash
+# Static HTML — happy-path shots only
+python scripts/capture_evidence.py --url file:///abs/path/index.html --shots first,full,mobile,dark,focus
+
+# Running app — full bundle; name the API that feeds the main data view
+python scripts/capture_evidence.py --url http://localhost:5173 --data-api "**/api/items" --out /tmp/evidence
+```
+
+The empty/loading/error shots use route mocks against `--data-api` so they capture the app's *real* rendered state, not a faked class. For state shots that depend on user data (a first-run empty state behind auth), drive the setup in your own script and use the same hygiene: `device_scale_factor=2`, wait on `document.fonts.ready`, then shoot.
 
 ## Controlling the Network
 
@@ -240,6 +260,8 @@ context.tracing.stop(path="/tmp/trace.zip")   # then: playwright show-trace /tmp
 | Passes headed, fails headless | Timing, or a font/layout difference | Wait on conditions, not timeouts; set an explicit viewport |
 | `strict mode violation` | Locator matched multiple elements | Narrow with `.first`, a role, or a more specific name |
 | Screenshot is blank | Captured before paint | `wait_for_load_state("networkidle")` plus a settle timeout |
+| Screenshot shows fallback fonts | Captured before webfonts loaded | `page.evaluate("document.fonts.ready")` before shooting |
+| Screenshot text is unreadable | 1x device scale | `device_scale_factor=2` when creating the page |
 | Works once, fails on rerun | Test mutated state and did not reset | Use a fresh `browser.new_context()` per run |
 | Selector breaks after a restyle | CSS-class-based locator | Use `get_by_role` / `get_by_label` / `data-testid` |
 
@@ -252,7 +274,8 @@ context.tracing.stop(path="/tmp/trace.zip")   # then: playwright show-trace /tmp
 
 ## Related Skills
 
-- **reviewing-interface-quality** — full visual/UX/a11y audit of a rendered UI
+- **reviewing-interface-quality** — full visual/UX/a11y audit; `capture_evidence.py` produces its evidence bundle
+- **designing-frontend-interfaces** — Step 8 (Verify Visually) uses the same capture discipline
 - **building-accessible-interfaces** — what the axe results mean and how to fix them
 - **designing-user-experience** — the state matrix these network mocks exist to exercise
 - **systematic-debugging** — when a test failure is a real bug, not a test bug
