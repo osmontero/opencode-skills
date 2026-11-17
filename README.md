@@ -14,8 +14,8 @@ Four skills that compose into a full interface workflow, plus a review agent:
 
 | Skill | Covers |
 |---|---|
-| `designing-frontend-interfaces` | Visual craft — aesthetic direction, type scales, color ramps, layout, motion. Five reference files including a catalog of 12 parameterized aesthetic directions. |
-| `designing-user-experience` | Behavior — flows, the empty/loading/error/partial state matrix, forms, microcopy, destructive actions, touch. |
+| `designing-frontend-interfaces` | Visual craft — marketing and **app** (dashboard/admin) modes, tokens, type, color, motion, and dated AI-slop tell lists. Seven reference files including a catalog of 12 aesthetic directions, app-style recipes (shells, tables, KPI cards), and NN/g-verified app-UI numbers. |
+| `designing-user-experience` | Behavior — flows, the empty/loading/error/partial state matrix, forms, microcopy, destructive actions, touch, and app-specific patterns (data tables, progressive disclosure, latency research). |
 | `building-accessible-interfaces` | WCAG 2.2 AA in practice — semantics, keyboard, focus management, ARIA, contrast, live regions, component patterns. |
 | `reviewing-interface-quality` | Critique rubric tying the three together, with an evidence requirement and severity grading. |
 

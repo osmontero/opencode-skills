@@ -92,7 +92,7 @@ The separate top-level `compaction` block (`auto`, `keep.tokens`, `buffer`) cont
 
 ### Design and UX is a four-skill cluster
 
-`designing-frontend-interfaces` (visual craft, 5 reference files) → `designing-user-experience` (flows and states) → `building-accessible-interfaces` (WCAG 2.2 AA) → `reviewing-interface-quality` (audit rubric). `applying-themes` supplies contrast-verified palettes; the `interface-reviewer` agent runs the audit as a subagent.
+`designing-frontend-interfaces` (visual craft, 7 reference files incl. `app-styles.md`) → `designing-user-experience` (flows and states, 2 reference files incl. `app-ui-numbers.md`) → `building-accessible-interfaces` (WCAG 2.2 AA) → `reviewing-interface-quality` (audit rubric). `applying-themes` supplies contrast-verified palettes; the `interface-reviewer` agent runs the audit as a subagent.
 
 **When editing any of them, keep the cross-references intact** — they name each other by skill name and by reference-file path, and the design skills are written to compose rather than duplicate. Contrast values in `applying-themes/themes/*.md` are machine-checked:
 

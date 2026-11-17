@@ -1,6 +1,6 @@
 ---
 name: designing-user-experience
-description: Use when designing how an interface behaves rather than how it looks — user flows, navigation and information architecture, forms and validation, loading/empty/error states, confirmation and undo for destructive actions, button and error message wording, feedback for slow operations, or mobile and touch behavior. Also use when a UI looks finished but breaks on bad input, slow networks, no data, or first use.
+description: Use when designing how an interface behaves rather than how it looks — user flows, navigation and information architecture, forms and validation, data tables, loading/empty/error states, confirmation and undo for destructive actions, button and error message wording, feedback for slow operations, or mobile and touch behavior. Also use when a UI looks finished but breaks on bad input, slow networks, no data, or first use.
 ---
 
 # Designing User Experience
@@ -11,7 +11,7 @@ Visual design decides what an interface looks like when everything goes right. U
 
 **Core principle:** Design the states, not the screens. A "screen" is one state of a component; shipping only that one is why generated UI looks finished and breaks on contact with real data.
 
-**Companion skills:** `designing-frontend-interfaces` for visual craft, `building-accessible-interfaces` for access, `reviewing-interface-quality` to audit a finished UI.
+**Companion skills:** `designing-frontend-interfaces` for visual craft (its `references/app-styles.md` carries the app-UI visual conventions), `building-accessible-interfaces` for access, `reviewing-interface-quality` to audit a finished UI. **Reference:** `references/app-ui-numbers.md` — NN/g- and platform-verified numbers for latency, loading, confirm/undo, tables, and dashboards. Load it whenever a concrete value is in question.
 
 ## The Iron Law
 
@@ -29,10 +29,11 @@ Create a task for each item:
 2. **Fill the state matrix** — for every component that touches data
 3. **Design the failure paths** — what breaks, what the user sees, how they recover
 4. **Write the copy** — buttons, errors, empty states, confirmations
-5. **Set the feedback budget** — what happens at 100ms, 1s, 10s
-6. **Handle the destructive and irreversible** — confirm, undo, or both
-7. **Check touch and small viewport** — targets, reach, keyboard-open behavior
-8. **Walk the flow as a first-time user** — with no data, no permissions, on a slow connection
+5. **Design the tables** — find, compare, view/edit, act (for anything data-dense)
+6. **Set the feedback budget** — what happens at 100ms, 1s, 10s
+7. **Handle the destructive and irreversible** — confirm, undo, or both
+8. **Check touch and small viewport** — targets, reach, keyboard-open behavior
+9. **Walk the flow as a first-time user** — with no data, no permissions, on a slow connection
 
 ## Step 1: Map the Flow
 
@@ -138,7 +139,24 @@ Use `inputmode="numeric"` rather than `type="number"` for codes, PINs, and card 
 - **Be liberal in what you accept.** Strip spaces from card numbers and phone numbers rather than rejecting them. Accept `+1 (555) 123-4567` and normalize it yourself.
 - **Disable submit only while submitting**, never as a validation gate. A permanently disabled button with no explanation gives the user nothing to act on.
 
-## Step 4: Copy
+## Step 4: Data Tables
+
+Tables are the workhorse of every app, and the place where generated UI most often looks amateur. NN/g's framing: a table exists to do exactly four things — **find, compare, view/edit, act** — and must support each explicitly. The numeric conventions live in `references/app-ui-numbers.md` and `designing-frontend-interfaces/references/app-styles.md`.
+
+| Task | Requirement |
+|---|---|
+| **Find** | First column is a human-readable identifier, never a generated one. Default column order = importance; related columns adjacent. Filters discoverable, quick, with a visible "active" indication. |
+| **Compare** | Freeze the header row (and the identifier column) once the table scrolls. Hover row highlight. Hidden/reordered columns must be cheap to restore and visibly indicated ("15 columns hidden"). A column chooser beats horizontal scroll for wide tables. |
+| **View/edit** | In-place editing only for narrow tables, and the row must visibly change in edit mode. Deep editing in a **non-modal side panel** — a modal covers the reference rows. |
+| **Act** | 1-2 actions inline; more in a per-row menu; never hover-revealed only. Bulk: per-row checkbox + action bar + select-all with an indeterminate state. |
+
+**Rows, density, and numbers:** 14px font at *every* density — density is padding, not type (standard ~52px rows / 16px padding, compact ~40px / 8px). Horizontal rules only; zebra stripes only if hover + rules still lose the user's row. Numeric columns right-aligned with `tabular-nums`. Status values get a pill, never color alone. A 96px-tall centered empty state that names what is missing and offers the action that fills it.
+
+**Pagination:** one default page size (10 or 20) plus "View all" for power users. Filters + a result count ("1-20 of 347") are what make any listing pattern work. Sorting a column must complete in under a second or the app feels sluggish.
+
+**Mobile:** two columns is the portrait floor; when horizontal scroll is unavoidable, make it *apparent* (cut-off content), not hinted with dots.
+
+## Step 5: Copy
 
 Interface copy is UX, not decoration. It is often the entire difference between a usable and an unusable state.
 
@@ -176,42 +194,50 @@ Never blame the user. "You entered an invalid date" → "That date has already p
 - No jargon the user did not introduce — "authentication token expired" → "you've been signed out."
 - Sentence case for buttons and headings; Title Case reads as shouting in UI.
 
-## Step 5: Feedback and Latency
+## Step 6: Feedback and Latency
 
-Every user action needs acknowledgment within 100ms, even if the result takes longer.
+Every user action needs acknowledgment within 100ms, even if the result takes longer. The research behind the numbers (NN/g's three limits) is in `references/app-ui-numbers.md`.
 
 | Elapsed | Requirement |
 |---|---|
 | 0-100ms | Feels instant. Show nothing extra. A flashing spinner is worse than none. |
-| 100ms-1s | Immediate local feedback — button enters a pressed/busy state |
-| 1-10s | Skeleton or determinate progress. Keep the layout stable. |
-| 10s+ | Real progress, an estimate, and a cancel control |
+| 100ms-1s | Immediate local feedback — button enters a pressed/busy state. The user still feels in control. |
+| 1-10s | **Skeleton matching the real layout** for a whole screen; **a spinner in that module only** for a single widget. Keep the layout stable. |
+| 10s+ | Determinate progress with a real estimate, and a cancel control. Beyond here the user stops watching. |
 
-**Optimistic updates** for actions that nearly always succeed (like, star, reorder): apply the change immediately, reconcile on response, and revert with a clear message on failure. Do not use them for anything with financial or destructive consequences.
+**Skeleton vs spinner is a scope decision, not a style preference.** Frame-only skeletons (a header and footer with a blank body) are the worst option — on a long wait they read as a broken page. A full-screen skeleton must mimic the real content's shape; a single delayed module gets a spinner. Any work that is not a *load* (upload, export, transform) gets a progress bar, never a skeleton.
+
+**Optimistic updates** for actions that nearly always succeed (like, star, reorder): apply the change immediately, reconcile on response, and revert with a clear message on failure. Do not use them for anything with financial or destructive consequences. The failure mode is not the update — it is the rollback: make the rollback visible, preserve what the user typed, and explain why it failed, or the user will retype into a field that keeps "rejecting" them.
 
 **Never move content under a pointer.** Content that shifts after load causes mis-clicks. Reserve space for anything that will arrive: images with `width`/`height`, ad slots, async badges.
 
-## Step 6: Destructive and Irreversible Actions
+## Step 7: Destructive and Irreversible Actions
 
-**Prefer undo over confirm.** A confirmation dialog interrupts every user to protect against a rare mistake; undo protects against the mistake without interrupting anyone.
+**Prefer undo over confirm.** NN/g's position: go to great lengths to provide undo, because some user errors survive even the best confirmation dialogs. A confirmation dialog interrupts every user to protect against a rare mistake; undo protects against the mistake without interrupting anyone.
 
 ```
 Do:      [Delete]  →  item removed  →  toast: "Message deleted. [Undo]"  (8-10s)
 Instead of:  [Delete]  →  "Are you sure?"  →  [Yes] [No]
 ```
 
-**Confirm when undo is genuinely impossible** — sending an email, charging a card, permanently destroying data, anything affecting other people.
+A transient contextual undo (toast) needs a **persistent Undo entry** alongside it for desktop power users — the contextual one disappears in seconds. Data tools where actions happen in rapid succession need multi-level undo.
 
-A real confirmation dialog:
-- States the **specific** consequence with the count and name: "Delete 47 records from *Q3 Archive*? This cannot be undone."
-- Labels the buttons with the actions, never Yes/No.
-- Puts the destructive action in a destructive color **and** distinct wording.
-- Requires typing the resource name only when the action is catastrophic and irreversible. Reserve that friction; overusing it trains users to type past it.
-- Focuses the **safe** option by default.
+**Confirm when undo is genuinely impossible** — sending an email, charging a card, permanently destroying data, anything affecting other people. Calibrate with **consequence × frequency**: confirm a payment only when it is ~2× the user's normal range, not every payment. A dialog that always gets "yes" has lost all protective power — that is the "cry wolf" failure.
+
+The eight rules for a confirmation dialog that works (NN/g):
+
+1. Confirm only actions with serious consequences.
+2. Never for routine actions — overused confirmations get auto-clicked.
+3. Be specific: restate the exact effect with the count and name: "Delete 47 records from *Q3 Archive*? This cannot be undone." Never "these items".
+4. Label buttons with the consequences, not Yes/No: "Delete 47 records" / "Keep them".
+5. Progressive disclosure for details; the first screen is the decision.
+6. No default "Yes" — best, no default at all; the safe option gets focus.
+7. Type-the-name only for the rarest, catastrophic, irreversible actions — overusing it trains users to type past it.
+8. Offer "Don't ask again" for semi-routine confirmations.
 
 Never use `window.confirm()` in production UI — it is unstyleable, blocks the main thread, and reads poorly to screen readers.
 
-## Step 7: Navigation and Information Architecture
+## Step 8: Navigation and Information Architecture
 
 - **The user must always know where they are.** Current section indicated in nav; page title matching the destination they clicked.
 - **Breadcrumbs for hierarchies deeper than two levels.**
@@ -220,11 +246,11 @@ Never use `window.confirm()` in production UI — it is unstyleable, blocks the 
 - **Flat beats deep.** Seven items at one level are easier than three levels of three. Add a level only when a category genuinely has its own landing content.
 - **Search is a feature, not a fallback.** If the answer to "how do users find X" is "search", the IA needs work — but ship search anyway.
 
-## Step 8: Touch and Small Viewports
+## Step 9: Touch and Small Viewports
 
 | Rule | Value |
 |---|---|
-| Minimum touch target | 44×44 CSS px (WCAG 2.2 SC 2.5.8) |
+| Minimum touch target | 24×24 CSS px (WCAG 2.2 SC 2.5.8 AA) — but design for **44×44**, the Apple/Material platform standard. 24 is the legal floor; 44 is what feels right. |
 | Spacing between targets | 8px minimum |
 | Primary actions | Bottom half of the screen — thumb reach |
 | Destructive actions | Away from primary actions, never adjacent |
@@ -241,16 +267,17 @@ Every gesture needs a visible equivalent. Swipe-to-delete is fine as an accelera
 ## Self-Review
 
 - [ ] Every data component has all four empty states distinguished
-- [ ] Loading never blanks already-visible content
+- [ ] Loading never blanks already-visible content; no frame-only skeletons
+- [ ] Tables support find, compare, view/edit, and act; identifier column readable; deep edit in a side panel not a modal
 - [ ] Every error says what to do next, and has a control to do it
 - [ ] No error text exposes a status code or stack trace
 - [ ] Forms never clear on error
 - [ ] Validation fires on blur, not on keystroke
 - [ ] Every input has the right `type`, `inputmode`, and `autocomplete`
 - [ ] Button labels name their action and are readable out of context
-- [ ] Destructive actions have undo, or a confirmation naming the specific consequence
+- [ ] Destructive actions have undo, or a confirmation following the eight rules
 - [ ] Filters, tabs, and modals are reflected in the URL
-- [ ] Touch targets ≥ 44px, primary actions in thumb reach
+- [ ] Touch targets ≥ 44px (24px WCAG floor), primary actions in thumb reach
 - [ ] Nothing is reachable by hover alone
 - [ ] Walked the whole flow with no data, no permission, and a throttled connection
 
@@ -259,6 +286,8 @@ Every gesture needs a visible equivalent. Swipe-to-delete is fine as an accelera
 **The happy path is the only path.** Everything renders beautifully with three seeded items and collapses with zero or ten thousand.
 
 **"No data" as an empty state.** It tells the user nothing and offers no action. Empty states are the highest-leverage onboarding surface in the product.
+
+**A misleading interim empty state.** "No records" that flashes and then gets replaced by real data (a slow query) destroys trust — users who learned the lesson will hit refresh on a *genuine* empty state and never see the results that actually arrived. Either don't render the empty state until the query is certain, or label the in-flight state as loading, not empty.
 
 **Spinner replacing the whole page on refresh.** The user had content; now they have nothing. Keep it and indicate the update.
 
